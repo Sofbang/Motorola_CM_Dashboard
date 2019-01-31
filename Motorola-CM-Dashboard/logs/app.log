@@ -1,0 +1,29 @@
+2019-01-31T09:26:14.032Z [Info] error: syntax error at or near "ebs_contracts_state_master"
+2019-01-31T09:31:55.682Z [Info] error: uncaughtException: Cannot find module '../db_configuration/db_operations'
+Error: Cannot find module '../db_configuration/db_operations'
+    at Function.Module._resolveFilename (module.js:547:15)
+    at Function.Module._load (module.js:474:25)
+    at Module.require (module.js:596:17)
+    at require (internal/module.js:11:18)
+    at Object.<anonymous> (D:\Projects\Github\Motorola_CM_Dashboard\Motorola-CM-Dashboard\rest_services\lookup.js:3:14)
+    at Module._compile (module.js:652:30)
+    at Object.Module._extensions..js (module.js:663:10)
+    at Module.load (module.js:565:32)
+    at tryModuleLoad (module.js:505:12)
+    at Function.Module._load (module.js:497:3)
+2019-01-31T09:49:54.677Z [Info] error: uncaughtException: Unexpected token export
+D:\Projects\Github\Motorola_CM_Dashboard\Motorola-CM-Dashboard\app_configuration\response.js:1
+(function (exports, require, module, __filename, __dirname) { export const  response = {
+                                                              ^^^^^^
+
+SyntaxError: Unexpected token export
+    at createScript (vm.js:80:10)
+    at Object.runInThisContext (vm.js:139:10)
+    at Module._compile (module.js:616:28)
+    at Object.Module._extensions..js (module.js:663:10)
+    at Module.load (module.js:565:32)
+    at tryModuleLoad (module.js:505:12)
+    at Function.Module._load (module.js:497:3)
+    at Module.require (module.js:596:17)
+    at require (internal/module.js:11:18)
+    at Object.<anonymous> (D:\Projects\Github\Motorola_CM_Dashboard\Motorola-CM-Dashboard\rest_services\lookup.js:4:16)
