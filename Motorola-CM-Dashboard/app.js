@@ -3,18 +3,19 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const http = require('http');
 const app = express();
+//for app logging
 const logger = require('./app_configuration/logger');
 const { Pool } = require('pg')
 const connectionString = 'postgresql://sofbang_admin:Sofbang2019@sofbanginstance.cxbsn39rr5kp.us-east-2.rds.amazonaws.com/contract_dash';
 //create postgre sql connection pool
 const pool = new Pool({
-  connectionString: connectionString,
+  connectionString: connectionString
 })
 //pass pool object to db_operations
 require('./app_configuration/db_operations')(pool);
 //our rest services
 const lookup = require('./rest_services/lookup');
-app.use('/api', lookup, errorHandler);
+app.use('/Motorola-CM-Dashboard/api', lookup, errorHandler);
 
 
 /**
@@ -36,15 +37,6 @@ function errorHandler(err, req, res) {
   res.status(err.status || 500);
   res.send({ message: err.message })
 }
-//jwt for securing rest apis
-//const jwt = require('jsonwebtoken');
-//for run application on https
-// var fs = require('fs');
-//var https = require('https');
-// const options = {
-//   key: fs.readFileSync("key_certificate/key/privateKey.key"),
-//   cert: fs.readFileSync("key_certificate/certificate/certificate.crt")
-// };
 // Parsers
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }));
@@ -59,25 +51,6 @@ app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
-
-//Route middleware to verfy Authoriztion headers using (JWT) which are passed with every request
-// function verifyToken(req, res, next) {
-//   const header = req.headers['authorization'];
-//   if (header != undefined) {
-//     if (header.split(" ")[0] == "Bearer") {
-//       const token = header.split(" ")[1];
-//       jwt.verify(token, options.key, function (err, decoded) {
-//         if (err) return res.status(401).send({ auth: false, message: 'Unauthorize' });
-//         //res.status(200).send(decoded);
-//         next();
-//       });
-//     } else {
-//       res.status(401).send({ auth: false, "message": "Unauthorize" });
-//     }
-//   } else {
-//     res.status(401).send({ auth: false, "message": "Unauthorize" });
-//   }
-// }
 // Send all other requests to the Angular app
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist/Motorola-CM-Dashboard/index.html'));

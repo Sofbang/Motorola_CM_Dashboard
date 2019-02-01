@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { MainLayoutModule } from './main-layout/main-layout.module';
+import { HttpModule } from '@angular/http';//imp to import to run services
 // import { DashboardComponent } from './dashboard/dashboard.component';
 //import { MainLayoutComponent } from './main-layout/main-layout.component';
 // import { AppHeaderComponent } from './app-header/app-header.component';
@@ -15,7 +16,8 @@ import { MainLayoutModule } from './main-layout/main-layout.module';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    MainLayoutModule
+    MainLayoutModule,
+    HttpModule
   ],
   providers: [],
   bootstrap: [AppComponent]
