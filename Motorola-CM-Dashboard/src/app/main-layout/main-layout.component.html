@@ -1,12 +1,11 @@
-<div class="page-header-fixed page-sidebar-closed-hide-logo">
-  <div class="wrapper">
-    <app-app-header></app-app-header>
-    <div class="container-fluid">
-      <!-- <div class="page-content" (scroll)="scrollHandler($event)"  > -->
-          <div class="page-content">
+<app-app-header></app-app-header>
+<!-- BEGIN CONTAINER -->
+<div class="page-container">
+  <app-app-sidebar></app-app-sidebar>
+  <div class="page-content-wrapper">
+    <!-- BEGIN CONTENT BODY -->
+    <div class="page-content">
         <router-outlet></router-outlet>
-      </div>
-      <!-- <app-footer></app-footer> -->
     </div>
   </div>
 </div>

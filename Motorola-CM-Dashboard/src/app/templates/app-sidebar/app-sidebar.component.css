@@ -1,0 +1,16 @@
+.page-sidebar.navbar-collapse {
+
+    min-height: 100% !important;
+    max-height: 100% !important;
+}
+:host /deep/.page-sidebar-fixed .page-sidebar {
+    margin-left: -19px !important;
+    top: 74px !important;
+}
+@media(min-width:992px){
+  
+    .page-sidebar-fixed .page-sidebar {
+        margin-left: -19px !important;
+        top: 74px !important;
+    }
+}
