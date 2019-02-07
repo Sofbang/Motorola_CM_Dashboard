@@ -1,0 +1,14 @@
+.page-header.navbar {
+    background: white;
+    border-bottom: 1px solid #e9ecf3;
+}
+.page-header.navbar .top-menu .navbar-nav>li.dropdown.open .dropdown-toggle {
+    background-color: white;
+}
+
+.custom-app-logo{
+    width: 151px;
+    height: 74px;
+    margin-top: 0px;
+}
+

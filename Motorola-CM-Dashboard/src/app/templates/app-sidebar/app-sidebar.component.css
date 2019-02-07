@@ -10,7 +10,11 @@
 @media(min-width:992px){
   
     .page-sidebar-fixed .page-sidebar {
-        margin-left: -19px !important;
-        top: 74px !important;
+        margin-left: -19px !important; 
+        top: 74px !important; 
+         position: fixed!important;
+      
     }
 }
+
+
