@@ -10,10 +10,6 @@ export class AppHeaderComponent implements OnInit {
   constructor() { }
   sidebarTogglerClk(){
     this.toggleClkCount++;
-    $('.slimScrollDiv').css('height','90rem');
-    $('.slimScrollDiv').css('max-height','100rem');
-    $('.page-sidebar-menu').css('height','90rem');
-    $('.page-sidebar-menu').css('max-height','100rem');
     if(this.toggleClkCount%2==0){
      $('#app-logo').removeClass('app-logo-shrink').addClass('app-logo-expand');
     }
