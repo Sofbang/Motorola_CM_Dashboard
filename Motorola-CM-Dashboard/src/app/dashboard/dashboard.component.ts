@@ -27,7 +27,7 @@ export class DashboardComponent implements OnInit {
           for (let i in this.contracts) {
             console.log(i);
             // Create new array above and push every object in
-            array.push([this.contracts[i].status, parseInt(this.contracts[i].mediandays), parseInt(this.contracts[i].contractscount), 'c40bb9']);
+            array.push([this.contracts[i].status, parseInt(this.contracts[i].mediandays), parseInt(this.contracts[i].contractscount), 'F25E5E']);
           }
           console.log(array);
           resolve(array);
@@ -80,7 +80,7 @@ export class DashboardComponent implements OnInit {
           chartType: 'BarChart',
           dataTable: res,
           options: {
-            title: 'Smart Client Cases By Status', width: 900, height: 600, legend: { position: 'bottom', color: '#f13561' },
+            title: 'Smart Client Cases By Status',color:'#FFFFFF', width: 800, height: 500, legend: { position: 'bottom', color: '#f13561' },
              backgroundColor:'#011F4B',
              hAxis: {
              textStyle:{color: '#FFFFFF'}
@@ -89,7 +89,7 @@ export class DashboardComponent implements OnInit {
             textStyle: {color:'#FFFFFF'}
              },
             series: {
-              0: { color: '#c40bb9' }
+              0: { color: '#011F4B' }
             },
             tooltip: { isHtml: false }
           }
