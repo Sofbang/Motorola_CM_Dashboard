@@ -6,9 +6,17 @@
     background-color: white;
 }
 
-.custom-app-logo{
-    width: 151px;
+.app-logo-expand{
+    width: 135px;
     height: 74px;
     margin-top: 0px;
 }
-
+.app-logo-shrink{
+    width: 0px;
+    height: 0px;
+    margin-top: 0px;
+}
+.page-header.navbar .top-menu .navbar-nav > li.dropdown-user .dropdown-toggle > .username {
+    margin-right: 12px !important;
+    font-size: 16px !important;
+}
