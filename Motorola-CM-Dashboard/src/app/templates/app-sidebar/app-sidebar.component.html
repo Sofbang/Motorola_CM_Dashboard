@@ -28,14 +28,28 @@
                     <span class="arrow"></span>
                 </a>
                 <ul class="sub-menu">
-                    <li class="nav-item  ">
-                        <a class="nav-link ">
+                    <li class="nav-item  sidebar-elm-child1">
+                        <a class="nav-link nav-toggle" id="sidebar-elm-child1" (click)="sidebarElmClk('sidebar-elm-child1')">
                             <span class="title title-black">Contracts</span>
+                            <span class="arrow"></span>
                         </a>
+                        <ul class="sub-menu">
+                            <li class="nav-item ">
+                                <a class="nav-link ">
+                                    <span class="title title-black">EBS- Contracts By Status</span>
+                                </a>
+
+                            </li>
+                            <li class="nav-item  ">
+                                <a class="nav-link ">
+                                    <span class="title title-black">EBS- New Contracts</span>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                     <!-- Give id to anchor and put that id as class in li by which submenus works -->
-                    <li class="nav-item sidebar-elm-child1">
-                        <a class="nav-link nav-toggle" id="sidebar-elm-child1" (click)="sidebarElmClk('sidebar-elm-child1')">
+                    <li class="nav-item sidebar-elm-child2">
+                        <a class="nav-link nav-toggle" id="sidebar-elm-child2" (click)="sidebarElmClk('sidebar-elm-child2')">
                             <span class="title title-black">Cases</span>
                             <span class="arrow"></span>
                         </a>
