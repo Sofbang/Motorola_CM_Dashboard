@@ -14,8 +14,9 @@ const pool = new Pool({
 //pass pool object to db_operations
 require('./app_configuration/db_operations')(pool);
 //our rest services
-const lookup = require('./rest_services/lookup');
-app.use('/Motorola-CM-Dashboard/api', lookup, errorHandler);
+const lookupebs = require('./rest_services/ebs');
+const lookupsc = require('./rest_services/smartclient');
+app.use('/Motorola-CM-Dashboard/api', lookupebs,lookupsc, errorHandler);
 
 
 /**
@@ -58,7 +59,7 @@ app.get('*', (req, res) => {
 
 //Set Port
 // const port = process.env.PORT || '3000';
-const port = process.env.PORT || '4000';
+const port = process.env.PORT || '4001';
 app.set('port', port);
 
 const server = http.createServer(app);
