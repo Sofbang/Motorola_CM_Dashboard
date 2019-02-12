@@ -1,3 +1,13 @@
-<p>
-  ebs-contract-by-status works!
-</p>
+<!-- Dahsboard Chart for EBS implemented by Vishal Sehgal as on 8/2/2019 -->
+<div class="row" >
+  <div class="col-md-2" >
+   <label for="options" style="display: block;font-size: 18px;margin-top:5%;font-weight: 200;">Territory</label>
+   <ng-multiselect-dropdown [placeholder]="'Select Territory'" [data]="dropdownListCaseStatusTerritory" [settings]="dropdownSettings"
+       (onSelect)="onItemSelect($event)" (onSelectAll)="onSelectAll($event)" (onDeSelect)="onItemDeSelect($event)" (onDeSelectAll)="onDeSelectAll($event)" >
+   </ng-multiselect-dropdown>
+  </div>
+  <div class="col-md-7" >
+      <google-chart #cchart [data]="columnChartData"></google-chart>
+
+      </div>
+</div>

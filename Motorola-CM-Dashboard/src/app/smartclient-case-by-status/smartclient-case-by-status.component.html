@@ -1,3 +1,13 @@
-<p>
-  smartclient-case-by-status works!
-</p>
+<!-- Dahsboard Chart for Smart Client implemented by Vishal Sehgal as on 11/2/2019 -->
+<div class="row" >
+  <div class="col-md-2" >
+   <label for="options" style="display: block;font-size: 18px;margin-top:5%;font-weight: 200;">Territory</label>
+   <ng-multiselect-dropdown [placeholder]="'Select Case Type'" [data]="dropdownListTerritory" [settings]="dropdownSettings"
+       (onSelect)="onItemSelect($event)" (onSelectAll)="onSelectAll($event)" (onDeSelect)="onItemDeSelect($event)" (onDeSelectAll)="onDeSelectAll($event)" >
+   </ng-multiselect-dropdown>
+</div>
+  <div class="col-md-7" >
+      <google-chart #cchartnew [data]="barChartData"></google-chart>
+
+      </div>
+</div>

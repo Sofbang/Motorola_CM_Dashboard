@@ -19,23 +19,19 @@ export class LookupService {
   /**
    * Get lookup data 
    */
-  // TESTING SERVICE
+  // TESTING SERVICE implemented by Abhinav Singh as on 4/2/2019
   getLookup():Observable<any> {
     return this.http.get("api/lookup", this.options)
       .map(result => this.result = result.json().data);
   }
 
-// Smart Client data
+  // EBS data service implemented by Vishal Sehgal as on 8/2/2019
   getContracts(territory) {
     return this.http.get('api/contract_state?territory='+territory)
     .map(result => this.result = result.json().data);
   }
-   // MOTOROLA WORKING SERVICE CODE FROM POC
-  // Uses http.get() to load data from a single API endpoint
-//   getContracts(territory) {
-//     return this.http.get('cm_dashboard_api/v1/contract_state?territory='+territory);
-// }
-
+   
+// Territories Data from Aurora DB 
 // getTerritories() {
 //     return this.http.get('cm_dashboard_api/v1/territories');
 // }
