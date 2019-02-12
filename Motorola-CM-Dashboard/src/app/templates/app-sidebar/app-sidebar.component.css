@@ -55,10 +55,10 @@
     height: 70rem !important;
     max-height: 80rem !important;
 }
-.sub-menu{
+.second-child{
     background-color: #083853;
 }
-.sub-menu>li>a>span.title{
+.second-child>li>a>span.title{
     color:#FFFF !important;
 }
 .page-sidebar-menu .sub-menu > li:hover > a{

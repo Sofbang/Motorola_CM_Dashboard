@@ -1,0 +1,26 @@
+/* .side-view-dropDowns label{
+    display: block;
+    font-size: 18px;
+    margin-top:5%;
+    font-weight: 200;
+} */
+
+/* .side-view-dropDowns{
+    background-color: #083853;
+    min-height: 100%;
+    max-height: 100%;
+} */
+
+.side-view-dropDowns .dropdown{
+    /* margin-bottom: 18px; */
+    padding: 12px;
+    background-color: #032636;
+}
+
+:host /deep/ .multiselect-dropdown{
+    background-color: #083853;
+}
+
+:host /deep/ .multiselect-dropdown .dropdown-btn span{
+color: #FFFF;
+}

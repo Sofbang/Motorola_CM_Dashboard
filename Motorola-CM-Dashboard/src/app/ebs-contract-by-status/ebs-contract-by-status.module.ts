@@ -4,7 +4,7 @@ import { EbsContractByStatusComponent } from './ebs-contract-by-status.component
 import { EbsContractByStatusRoutingModule } from './ebs-contract-by-status-routing.module';
 import { Ng2GoogleChartsModule } from 'ng2-google-charts';
 import { EbsService } from '../services/lookup/ebs.service';
-import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+// import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 
 
 @NgModule({
@@ -12,8 +12,7 @@ import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
   imports: [
     CommonModule,
     EbsContractByStatusRoutingModule,
-    Ng2GoogleChartsModule,
-    NgMultiSelectDropDownModule.forRoot()
+    Ng2GoogleChartsModule
 
   ],
   providers:[EbsService]
