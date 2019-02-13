@@ -13,6 +13,7 @@ export class EbsContractByStatusComponent implements OnInit {
   public contracts: any;
   public selectedTerritories: any = 'all';
   public columnChartData: any;
+  public territories: any;
   public caseStatusTerritories: any;
   public dropdownListTerritory = [];
   public dropdownListCaseStatusTerritory = [];
@@ -40,7 +41,7 @@ export class EbsContractByStatusComponent implements OnInit {
    * calling the Angular Lookup Service Method getContracts() implemented by Vishal Sehgal as on 8/2/2019
    * 
    */
-  public getData() {
+  public getContractData() {
     return new Promise((resolve, reject) => {
       this._ebsService.getContracts(this.selectedTerritories).subscribe(data => {
         this.contracts = data;
@@ -66,23 +67,23 @@ export class EbsContractByStatusComponent implements OnInit {
     })
   }
 
-  public getCaseStatusTerritoriesData() {
+  public getebsTerritoriesData() {
     return new Promise((resolve, reject) => {
-      this._ebsService.getCaseStatusTerritories().subscribe(data => {
-        this.caseStatusTerritories = data;
-        console.log("territories" + this.caseStatusTerritories)
+      this._ebsService.getebsTerritories().subscribe(data => {
+        this.territories = data;
+        console.log("territories" + this.territories)
       }, err => console.error(err),
         // the third argument is a function which runs on completion
         () => {
           let array = [];
           let count = 0;
-          let otherTerritory = '';
-          for (let i in this.caseStatusTerritories) {
-            if (this.caseStatusTerritories[i].territory == 'OTHER') {
-              console.log("The other territory " + this.caseStatusTerritories[i].territory)
-              otherTerritory = this.caseStatusTerritories[i].territory
-            } else {
-              array.push({ 'item_id': this.caseStatusTerritories[i].territory, 'item_text': this.caseStatusTerritories[i].territory });
+          let otherTerritory='';
+          for (let i in this.territories) {
+            if (this.territories[i].territory == 'OTHER'){
+              console.log("The other territory "+ this.territories[i].territory )
+              otherTerritory=this.territories[i].territory 
+            }else{
+            array.push({ 'item_id': this.territories[i].territory, 'item_text': this.territories[i].territory });
             }
           }
           array.push(otherTerritory);
@@ -96,6 +97,8 @@ export class EbsContractByStatusComponent implements OnInit {
     })
   }
 
+
+  
   public drawchart1(res) {
     this.columnChartData = {
       chartType: 'BarChart',
@@ -128,7 +131,7 @@ export class EbsContractByStatusComponent implements OnInit {
 
   ngOnInit() {
     //EBS Chart Number 1 Data Binding from the Express API implemented by Vishal Sehgal as on 8/2/2019
-    this.getData().then((res: any) => {
+    this.getContractData().then((res: any) => {
       console.log(res)
       this.columnChartData = {
         chartType: 'BarChart',
@@ -157,7 +160,7 @@ export class EbsContractByStatusComponent implements OnInit {
         }
       };
     });
-    this.getCaseStatusTerritoriesData().then((res: any) => {
+    this.getebsTerritoriesData().then((res: any) => {
       console.log("territories" + res)
       //this.dropdownListCaseStatusTerritory = res;
       this.sideViewDropDowns.showTerritory = true;
@@ -186,7 +189,7 @@ export class EbsContractByStatusComponent implements OnInit {
     console.log("this.selecteditems" + this.selectedItems);
     this.selectedTerritories += ",'" + item + "'";
     console.log(this.selectedTerritories);
-    this.getData().then((res: any) => {
+    this.getContractData().then((res: any) => {
       console.log(res)
       this.drawchart1(res);
     });
@@ -198,7 +201,7 @@ export class EbsContractByStatusComponent implements OnInit {
     arr = arr.filter(e => e !== "'" + items + "'");
     this.selectedTerritories = arr.join(', ').replace(/\s/g, '');
     console.log(this.selectedTerritories);
-    this.getData().then((res: any) => {
+    this.getContractData().then((res: any) => {
       console.log(res)
       // error handling 
       this.drawchart1(res);
@@ -211,7 +214,7 @@ export class EbsContractByStatusComponent implements OnInit {
     this.selectedTerritories = '\'' + input.split(',').join('\',\'') + '\'';
     console.log("this.selectedterritories" + this.selectedTerritories);
     console.log(this.selectedTerritories);
-    this.getData().then((res: any) => {
+    this.getContractData().then((res: any) => {
       console.log(res)
       this.drawchart1(res);
     });
@@ -221,7 +224,7 @@ export class EbsContractByStatusComponent implements OnInit {
   onDeSelectAll(items: any) {
     this.selectedTerritories = 'all';
     console.log(this.selectedTerritories);
-    this.getData().then((res: any) => {
+    this.getContractData().then((res: any) => {
       console.log(res)
       this.drawchart1(res);
 

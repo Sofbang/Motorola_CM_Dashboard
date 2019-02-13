@@ -56,7 +56,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
      */
   public getTerritoriesData() {
     return new Promise((resolve, reject) => {
-      this._smartclientService.getTerritories().subscribe(data => {
+      this._smartclientService.getCaseTerritories().subscribe(data => {
         this.territories = data;
         console.log("territories" + this.territories)
       }, err => console.error(err),

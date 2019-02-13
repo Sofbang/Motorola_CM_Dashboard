@@ -28,10 +28,12 @@ export class EbsService {
     .map(result => this.result = result.json().data);
   }
 
-  // EBS Case territories data
-  getCaseStatusTerritories() {
-    return this.http.get('api/case_territories').map(result => this.result = result.json().data);
+  getebsTerritories() {
+    return this.http.get('api/ebsterritories')
+    .map(result => this.result = result.json().data);
   }
+
+  
 
 }
 
