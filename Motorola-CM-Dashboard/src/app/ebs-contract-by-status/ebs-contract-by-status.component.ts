@@ -150,7 +150,7 @@ export class EbsContractByStatusComponent implements OnInit {
       chartType: 'BarChart',
       dataTable: res,
       options: {
-        title: 'EBS Contract State',
+        title: '',
         titleTextStyle: {
           color: '#FFFFFF',
           fontName: 'Verdana',
@@ -360,7 +360,7 @@ export class EbsContractByStatusComponent implements OnInit {
       chartType: 'BarChart',
       dataTable: [],
       options: {
-        title: 'EBS Contract State',
+        title: '',
         titleTextStyle: {
           color: '#FFFFFF',
           fontName: 'Verdana',
