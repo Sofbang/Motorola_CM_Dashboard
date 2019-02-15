@@ -3,6 +3,10 @@ import { EbsService } from '../services/lookup/ebs.service';
 import { reject } from 'q';
 import { SideViewDropDowns } from '../beans/sideBarDropdown';
 import { DataHandlerService } from '../services/data-handler/data-handler.service';
+import { ViewChild, ElementRef } from '@angular/core';
+import * as $ from 'jquery';
+import { ChartSelectEvent } from 'ng2-google-charts';
+
 @Component({
   selector: 'app-ebs-contract-by-status',
   templateUrl: './ebs-contract-by-status.component.html',
@@ -21,8 +25,11 @@ export class EbsContractByStatusComponent implements OnInit {
   // public dropdownSettings = {};
   // public sideViewDropDowns = new SideViewDropDowns();
   public territoriesArr: any = [];
+  public data:any;
   public workFlowStatusArr: any = [];
   public sideViewDropDowns = new SideViewDropDowns();
+  @ViewChild('openSCModal') openScModel: ElementRef;
+
   constructor(private _ebsService: EbsService, private _dataHandlerService: DataHandlerService) {
     this._dataHandlerService.dataFromSideView
       .subscribe(res => {
@@ -40,6 +47,22 @@ export class EbsContractByStatusComponent implements OnInit {
         }
       });
   }
+
+  public selectBar(event: ChartSelectEvent) {
+    console.log("in the selectBar"+JSON.stringify(event.selectedRowValues[0]));
+    this.data = event.selectedRowValues[0];
+    console.log("the data is:",this.data);
+    this.openScModel.nativeElement.click();
+    $('.modal .modal-dialog').css('width', $(window).width() * 0.95);//fixed
+    $('.modal .modal-body').css('height', $(window).height() * 0.85);//fixed
+    $('tbody.SCModlTbody').css('max-height', $(window).height() * 0.69);
+    $('tbody.SCModlTbody').css('overflow-y', 'scroll');
+    $('tbody.SCModlTbody').css('overflow-x', 'hidden');
+    // $('tbody.SCModlTbody').css('display', 'block');
+    $('tbody.SCModlTbody').css('width', '100%');
+     
+  }
+
   /**
    * calling the Angular Lookup Service Method getContracts() implemented by Vishal Sehgal as on 8/2/2019
    * 

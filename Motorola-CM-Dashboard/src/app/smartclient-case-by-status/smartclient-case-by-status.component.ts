@@ -5,6 +5,8 @@ import { SideViewDropDowns } from '../beans/sideBarDropdown';
 import { DataHandlerService } from '../services/data-handler/data-handler.service';
 import { ViewChild, ElementRef } from '@angular/core';
 import * as $ from 'jquery';
+import { ChartSelectEvent } from 'ng2-google-charts';
+
 @Component({
   selector: 'app-smartclient-case-by-status',
   templateUrl: './smartclient-case-by-status.component.html',
@@ -18,6 +20,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
   public territoriesArr: any = [];
   public workFlowStatusArr: any = [];
   public caseData = [];
+  public data:any;
   public sideViewDropDowns = new SideViewDropDowns();
   @ViewChild('openSCModal') openScModel: ElementRef;
   constructor(private _smartclientService: SmartclientService, private _dataHandlerService: DataHandlerService) {
@@ -36,6 +39,22 @@ export class SmartclientCaseByStatusComponent implements OnInit {
           this.onDeSelectAll(incomingData, from);
         }
       });
+  }
+
+
+  public selectBar(event: ChartSelectEvent) {
+    console.log("in the selectBar"+JSON.stringify(event.selectedRowValues[0]));
+    this.data = event.selectedRowValues[0];
+    console.log("the data is:",this.data);
+    this.openScModel.nativeElement.click();
+    $('.modal .modal-dialog').css('width', $(window).width() * 0.95);//fixed
+    $('.modal .modal-body').css('height', $(window).height() * 0.85);//fixed
+    $('tbody.SCModlTbody').css('max-height', $(window).height() * 0.69);
+    $('tbody.SCModlTbody').css('overflow-y', 'scroll');
+    $('tbody.SCModlTbody').css('overflow-x', 'hidden');
+    // $('tbody.SCModlTbody').css('display', 'block');
+    $('tbody.SCModlTbody').css('width', '100%');
+     
   }
 
   /**
@@ -391,14 +410,10 @@ export class SmartclientCaseByStatusComponent implements OnInit {
       }, error => {
         console.log("error getWorkflowStatus " + error);
       });
-    this.openScModel.nativeElement.click();
-    $('.modal .modal-dialog').css('width', $(window).width() * 0.95);//fixed
-    $('.modal .modal-body').css('height', $(window).height() * 0.85);//fixed
-    $('tbody.OwnerExpModlTbody').css('max-height', $(window).height() * 0.69);
-    $('tbody.OwnerExpModlTbody').css('overflow-y', 'scroll');
-    $('tbody.OwnerExpModlTbody').css('overflow-x', 'hidden');
-    $('tbody.OwnerExpModlTbody').css('display', 'block');
-    $('tbody.OwnerExpModlTbody').css('width', '100%');
+
+      
+      
+   
   }
 
 }
