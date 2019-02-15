@@ -342,7 +342,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
     for (let i in cases) {
       //console.log(i);
       // Create new array above and push every object in
-      array.push([cases[i].status, parseInt(cases[i].mediandays), parseInt(cases[i].contractscount), 'FF5253']);
+      array.push([cases[i].status, parseInt(cases[i].mediandays), parseInt(cases[i].contractscount), '0B91E2']);
     }
     return array;
   }

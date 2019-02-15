@@ -336,7 +336,7 @@ export class EbsContractByStatusComponent implements OnInit {
     for (let i in cases) {
       //console.log(i);
       // Create new array above and push every object in
-      array.push([cases[i].status, parseInt(cases[i].mediandays), parseInt(cases[i].contractscount), 'FF5253']);
+      array.push([cases[i].status, parseInt(cases[i].mediandays), parseInt(cases[i].contractscount), '0B91E2']);
     }
     // console.log("the final cases are as under:" + JSON.stringify(array));
     return array;
