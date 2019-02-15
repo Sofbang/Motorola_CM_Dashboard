@@ -23,14 +23,30 @@ export class EbsService {
 
 
   // EBS data service implemented by Vishal Sehgal as on 8/2/2019
-  getContracts(territory) {
-    return this.http.get('api/contract_state?territory='+territory)
-    .map(result => this.result = result.json().data);
+  // getContractState(territory) {
+  //   return this.http.get('api/contract_state?territory='+territory)
+  //   .map(result => this.result = result.json().data);
+  // }
+
+  // getebsTerritories() {
+  //   return this.http.get('api/ebsterritories')
+  //   .map(result => this.result = result.json().data);
+  // }
+
+
+  getEBSContractState() {
+    return this.http.get('api/ebs_contract_state')
+      .map(result => this.result = result.json().data);
   }
 
-  getebsTerritories() {
-    return this.http.get('api/ebsterritories')
-    .map(result => this.result = result.json().data);
+  getEBSTerritories() {
+    return this.http.get('api/ebs_territories')
+      .map(result => this.result = result.json().data);
+  }
+
+  getEBSWorkflowStatus() {
+    return this.http.get('api/ebs_workflow_status')
+      .map(result => this.result = result.json().data);
   }
 
   
