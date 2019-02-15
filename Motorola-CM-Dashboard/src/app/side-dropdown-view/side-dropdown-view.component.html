@@ -33,7 +33,8 @@
           (onDeSelect)="onItemDeSelect($event,'territory')" (onDeSelectAll)="onDeSelectAll($event,'territory')">
         </ng-multiselect-dropdown>
       </div>
-      <div class="dropdown" *ngIf="sideViewDDObj.showArrivalType">
+      <!-- <div class="dropdown" *ngIf="sideViewDDObj.showArrivalType"> -->
+          <div class="dropdown">
         <!-- <label for="options">Arrival Type</label> -->
         <ng-multiselect-dropdown [placeholder]="'Arrival Type'" [data]="sideViewDDObj.arrivalTypeData"
           [settings]="dropdownSettings" (onSelect)="onItemSelect($event,'arrivalType')" (onSelectAll)="onSelectAll($event,'arrivalType')"

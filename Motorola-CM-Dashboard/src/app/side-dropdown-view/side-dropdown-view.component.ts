@@ -26,6 +26,7 @@ export class SideDropdownViewComponent implements OnInit {
   getScreenSize() {
     this.screenHeight = window.innerHeight;
     this.screenWidth = window.innerWidth;
+    $('.side-view-dropDowns').css('height', this.screenHeight);//to make side dropdown view to screen height
   }
   onItemSelect(item, dropDownName) {
     let jsonObj = { 'event': 'onItemSelect', 'from': dropDownName, 'data': item }
@@ -54,11 +55,11 @@ export class SideDropdownViewComponent implements OnInit {
       textField: 'item_text',
       selectAllText: 'All',
       unSelectAllText: 'UnSelect All',
-      itemsShowLimit: 6,
+      itemsShowLimit: 8,
       allowSearchFilter: true,
       dir: 'asc'
     };
-    $('.side-view-dropDowns').css('height', this.screenHeight);//fixed
+    $('.side-view-dropDowns').css('height', this.screenHeight);//to make side dropdown view to screen height
   }
 
 }

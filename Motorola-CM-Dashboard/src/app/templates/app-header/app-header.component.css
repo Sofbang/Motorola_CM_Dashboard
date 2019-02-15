@@ -20,3 +20,7 @@
     margin-right: 12px !important;
     font-size: 16px !important;
 }
+
+.page-header.navbar .top-menu .navbar-nav > li.dropdown-language > .dropdown-toggle > .langname, .page-header.navbar .top-menu .navbar-nav > li.dropdown-user > .dropdown-toggle > .username, .page-header.navbar .top-menu .navbar-nav > li.dropdown-user > .dropdown-toggle > i {
+    color: #484E51 !important;
+}
