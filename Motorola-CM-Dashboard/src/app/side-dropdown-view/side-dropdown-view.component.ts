@@ -12,32 +12,27 @@ export class SideDropdownViewComponent implements OnInit {
   constructor(private _dataHandlerService: DataHandlerService) {
     this._dataHandlerService.sideViewDropDownData
       .subscribe(res => {
-
         this.sideViewDDObj = res;
-        console.log("subscribe inside sideview" + JSON.stringify(this.sideViewDDObj));
+        //console.log("subscribe inside sideview" + JSON.stringify(this.sideViewDDObj));
       });
   }
-
-
-
-  // ng multiselect events implemented by Vishal Sehgal 12/2/2019
-  onItemSelect(item: any) {
-    let jsonObj = { 'from': 'onItemSelect', 'data': item }
+  onItemSelect(item, dropDownName) {
+    let jsonObj = { 'event': 'onItemSelect', 'from': dropDownName, 'data': item }
     this._dataHandlerService.setDataFromSideView(jsonObj);
   }
 
-  onItemDeSelect(items: any) {
-    let jsonObj = { 'from': 'onItemDeSelect', 'data': items }
+  onItemDeSelect(items, dropDownName) {
+    let jsonObj = { 'event': 'onItemDeSelect', 'from': dropDownName, 'data': items }
     this._dataHandlerService.setDataFromSideView(jsonObj);
   }
 
-  onSelectAll(items: any) {
-    let jsonObj = { 'from': 'onSelectAll', 'data': items }
+  onSelectAll(items, dropDownName) {
+    let jsonObj = { 'event': 'onSelectAll', 'from': dropDownName, 'data': items }
     this._dataHandlerService.setDataFromSideView(jsonObj);
 
   }
-  onDeSelectAll(items: any) {
-    let jsonObj = { 'from': 'onDeSelectAll', 'data': items }
+  onDeSelectAll(items, dropDownName) {
+    let jsonObj = { 'event': 'onDeSelectAll', 'from': dropDownName, 'data': items }
     this._dataHandlerService.setDataFromSideView(jsonObj);
   }
   ngOnInit() {

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+// import { Observable } from 'rxjs';
 import { Http, Headers, RequestOptions } from '@angular/http';
 import 'rxjs/add/operator/map';
 
@@ -7,7 +7,6 @@ import 'rxjs/add/operator/map';
   providedIn: 'root'
 })
 export class SmartclientService {
-
   result: any;
   headers = new Headers({
     'Content-Type': 'application/json',
@@ -16,20 +15,20 @@ export class SmartclientService {
     'Pragma': 'no-cache'
   });
   options = new RequestOptions({ headers: this.headers });
-
-
   constructor(private http: Http) { }
 
-
-  getCases(territory) {
-    return this.http.get('api/case_status?territory='+territory).map(result => this.result = result.json().data);
+  getSCCases() {
+    return this.http.get('api/sc_case_status')
+      .map(result => this.result = result.json().data);
   }
 
-  getTerritories() {
-    return this.http.get('api/territories').map(result => this.result = result.json().data);
+  getScTerritories() {
+    return this.http.get('api/sc_territories')
+      .map(result => this.result = result.json().data);
   }
 
-
-
-
+  getScWorkflowStatus() {
+    return this.http.get('api/sc_workflow_status')
+      .map(result => this.result = result.json().data);
+  }
 }

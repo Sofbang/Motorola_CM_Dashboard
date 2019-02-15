@@ -24,4 +24,17 @@ export class DataHandlerService {
   setDataFromSideView(data) {
     this.dataFromSideView.next(data);
   }
+
+ /**
+   * Group by elements acc to same category
+   * @param {Array} xs - Array of items.
+   * @param {string} k - On which element to group by.
+   * @return return elements in similar category.
+   */
+  groupBySameKeyValues(xs, k) {
+    return xs.reduce(function (rv, x) {
+      (rv[x[k]] = rv[x[k]] || []).push(x);
+      return rv;
+    }, {});
+  }
 }

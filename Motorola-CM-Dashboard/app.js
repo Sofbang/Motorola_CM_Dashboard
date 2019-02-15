@@ -16,7 +16,8 @@ require('./app_configuration/db_operations')(pool);
 //our rest services
 const lookupebs = require('./rest_services/ebs');
 const lookupsc = require('./rest_services/smartclient');
-app.use('/Motorola-CM-Dashboard/api', lookupebs,lookupsc, errorHandler);
+app.use('/Motorola-CM-Dashboard/api', lookupebs);
+app.use('/Motorola-CM-Dashboard/api', lookupsc);
 
 
 /**

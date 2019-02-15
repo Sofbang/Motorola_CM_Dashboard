@@ -23,6 +23,7 @@ export class EbsContractByStatusComponent implements OnInit {
   constructor(private _ebsService: EbsService, private _dataHandlerService: DataHandlerService) {
     this._dataHandlerService.dataFromSideView
       .subscribe(res => {
+        console.log("ebs sub"+JSON.stringify(res));
         let incomingData = res.data
         if (res.from == 'onItemSelect') {
           this.onItemSelect(incomingData)
