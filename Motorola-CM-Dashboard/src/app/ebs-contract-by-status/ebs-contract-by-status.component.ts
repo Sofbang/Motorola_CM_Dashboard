@@ -10,7 +10,7 @@ import { DataHandlerService } from '../services/data-handler/data-handler.servic
 })
 export class EbsContractByStatusComponent implements OnInit {
 
-  public contractsData: any=[];
+  public contractsData: any = [];
   // public selectedTerritories: any = 'all';
   public ebscolumnChartData: any;
   public territories: any;
@@ -26,7 +26,7 @@ export class EbsContractByStatusComponent implements OnInit {
   constructor(private _ebsService: EbsService, private _dataHandlerService: DataHandlerService) {
     this._dataHandlerService.dataFromSideView
       .subscribe(res => {
-        console.log("sub ebs" + JSON.stringify(res));
+        //console.log("sub ebs" + JSON.stringify(res));
         let incomingData = res.data, event = res.event.toLowerCase(), from = res.from;
         if (event == 'onitemselect') {
           this.onItemSelect(incomingData, from)
@@ -54,15 +54,6 @@ export class EbsContractByStatusComponent implements OnInit {
       }, err => console.error(err),
         // the third argument is a function which runs on completion
         () => {
-          // let array = [];
-          // array.push(['Status', 'No. of Contracts', { role: "annotation" }, { role: "style" }]);
-          // // ARRAY OF OBJECTS
-          // for (let i in this.contracts) {
-          //   console.log(i);
-          //   // Create new array above and push every object in
-          //   array.push([this.contracts[i].status, parseInt(this.contracts[i].contractscount), parseInt(this.contracts[i].mediandays), 'FF5253']);
-          // }
-          //console.log("Contrat state" + JSON.stringify(contractData));
           resolve(this.makeChartArr(contractData));
         }
       )
@@ -118,17 +109,8 @@ export class EbsContractByStatusComponent implements OnInit {
             let count = 0;
             let otherStatus, otherFlag = false;
             for (let i in workflowStatus) {
-              // if (workflowStatus[i].status_order == 'OTHER') {
-              //   //console.log("The other territory " + territories[i].territory);
-              //   if (!otherFlag) { otherStatus = { 'item_id': workflowStatus[i].status_order, 'item_text': workflowStatus[i].status_order } };
-              //   otherFlag = true;
-              // } else {
-              //   array.push({ 'item_id': workflowStatus[i].to_status, 'item_text': workflowStatus[i].to_status });
-              // }
               array.push({ 'item_id': workflowStatus[i].to_status, 'item_text': workflowStatus[i].to_status });
             }
-            //array.push(otherStatus);
-            // console.log("workflowStatus" + JSON.stringify(array));
             resolve(array);
           }
         )
@@ -154,7 +136,7 @@ export class EbsContractByStatusComponent implements OnInit {
           italic: false
         },
         width: 800, height: 500, legend: { position: 'bottom', textStyle: { color: '#FFFFFF' } },
-        backgroundColor: '#011F4B',
+        backgroundColor: '#083853',
         hAxis: {
           textStyle: { color: '#FFFFFF' }
         },
@@ -223,7 +205,7 @@ export class EbsContractByStatusComponent implements OnInit {
       for (let j in this.workFlowStatusArr) {
         let workflowItem = this.workFlowStatusArr[j];
         let workflowFilterarr = this.contractsData.filter(item => {
-          return (item.to_status == workflowItem);
+          return (item.status == workflowItem);
         });
         for (let i = 0; i < workflowFilterarr.length; i++) {
           finalArr.push(workflowFilterarr[i]);
@@ -264,7 +246,7 @@ export class EbsContractByStatusComponent implements OnInit {
         for (let j in this.workFlowStatusArr) {
           let workflowItem = this.workFlowStatusArr[j];
           let workflowFilterarr = territoryFilterarr.filter(item => {
-            return (item.to_status == workflowItem);
+            return (item.status == workflowItem);
           });
           for (let i = 0; i < workflowFilterarr.length; i++) {
             finalArr.push(workflowFilterarr[i]);
@@ -277,9 +259,9 @@ export class EbsContractByStatusComponent implements OnInit {
     let cases = this.makeChartData(finalArr);
     let chartArr = this.makeChartArr(cases)
     this.drawchart(chartArr);
-    console.log("chartArr"+JSON.stringify(chartArr));
-    console.log("final arr" + JSON.stringify(finalArr));
-    console.log("group by arr" + JSON.stringify(cases));
+    // console.log("chartArr" + JSON.stringify(chartArr));
+    // console.log("final arr" + JSON.stringify(finalArr));
+    // console.log("group by arr" + JSON.stringify(cases));
   }
 
   /**
@@ -333,7 +315,7 @@ export class EbsContractByStatusComponent implements OnInit {
       // Create new array above and push every object in
       array.push([cases[i].status, parseInt(cases[i].mediandays), parseInt(cases[i].contractscount), 'FF5253']);
     }
-   // console.log("the final cases are as under:" + JSON.stringify(array));
+    // console.log("the final cases are as under:" + JSON.stringify(array));
     return array;
   }
 

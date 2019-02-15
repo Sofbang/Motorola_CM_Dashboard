@@ -17,22 +17,7 @@ export class EbsService {
   });
   options = new RequestOptions({ headers: this.headers });
 
-
   constructor(private http: Http) { }
-
-
-
-  // EBS data service implemented by Vishal Sehgal as on 8/2/2019
-  // getContractState(territory) {
-  //   return this.http.get('api/contract_state?territory='+territory)
-  //   .map(result => this.result = result.json().data);
-  // }
-
-  // getebsTerritories() {
-  //   return this.http.get('api/ebsterritories')
-  //   .map(result => this.result = result.json().data);
-  // }
-
 
   getEBSContractState() {
     return this.http.get('api/ebs_contract_state')

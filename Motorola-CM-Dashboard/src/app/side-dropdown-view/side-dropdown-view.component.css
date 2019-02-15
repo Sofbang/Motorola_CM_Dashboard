@@ -14,8 +14,9 @@
 .side-view-dropDowns .dropdown{
     /* margin-bottom: 18px; */
     padding: 12px;
-    background-color: #032636;
-}
+} 
+
+.side-view-dropDowns{background-color: #032636;}
 
 :host /deep/ .multiselect-dropdown{
     background-color: #083853;

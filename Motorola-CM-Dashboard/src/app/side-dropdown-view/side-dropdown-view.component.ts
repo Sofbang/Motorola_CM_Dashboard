@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { SideViewDropDowns } from '../beans/sideBarDropdown';
 import { DataHandlerService } from '../services/data-handler/data-handler.service';
+import * as $ from 'jquery';
+import { HostListener } from "@angular/core";
 @Component({
   selector: 'app-side-dropdown-view',
   templateUrl: './side-dropdown-view.component.html',
@@ -9,12 +11,21 @@ import { DataHandlerService } from '../services/data-handler/data-handler.servic
 export class SideDropdownViewComponent implements OnInit {
   public sideViewDDObj = new SideViewDropDowns();
   public dropdownSettings = {};
+  screenHeight: any;
+  screenWidth: any;
   constructor(private _dataHandlerService: DataHandlerService) {
     this._dataHandlerService.sideViewDropDownData
       .subscribe(res => {
         this.sideViewDDObj = res;
         //console.log("subscribe inside sideview" + JSON.stringify(this.sideViewDDObj));
       });
+    this.getScreenSize();
+  }
+
+  @HostListener('window:resize', ['$event'])
+  getScreenSize() {
+    this.screenHeight = window.innerHeight;
+    this.screenWidth = window.innerWidth;
   }
   onItemSelect(item, dropDownName) {
     let jsonObj = { 'event': 'onItemSelect', 'from': dropDownName, 'data': item }
@@ -47,6 +58,7 @@ export class SideDropdownViewComponent implements OnInit {
       allowSearchFilter: true,
       dir: 'asc'
     };
+    $('.side-view-dropDowns').css('height', this.screenHeight);//fixed
   }
 
 }
