@@ -158,7 +158,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
       chartType: 'BarChart',
       dataTable: data,
       options: {
-        title: 'Smart Client Case Status',
+        title: '',
         titleTextStyle: {
           color: '#FFFFFF',    // any HTML string color ('red', '#cc00cc')
           fontName: 'Verdana', // i.e. 'Times New Roman'
@@ -363,7 +363,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
       chartType: 'BarChart',
       dataTable: [],
       options: {
-        title: 'Smart Client Case Status',
+        title: '',
         titleTextStyle: {
           color: '#FFFFFF',    // any HTML string color ('red', '#cc00cc')
           fontName: 'Verdana', // i.e. 'Times New Roman'
