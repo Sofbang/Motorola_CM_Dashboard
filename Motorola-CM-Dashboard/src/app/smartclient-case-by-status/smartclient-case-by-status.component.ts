@@ -152,6 +152,32 @@ export class SmartclientCaseByStatusComponent implements OnInit {
     })
   }
 
+  // public getArrivalTypeData() {
+  //   return new Promise((resolve, reject) => {
+  //     let arrivalType;
+  //     this._smartclientService.getScArrivalType()
+  //       .subscribe(data => {
+  //         arrivalType = data;
+  //         //console.log("territories" + territories)
+  //       }, err => console.error(err),
+  //         // the third argument is a function which runs on completion
+  //         () => {
+  //           let array = [];
+  //           let count = 0;
+  //           let otherStatus, otherFlag = false;
+  //           for (let i in arrivalType) {
+  //             array.push({ 'item_id': arrivalType[i].to_status, 'item_text': arrivalType[i].to_status });
+  //           }
+  //           resolve(array);
+  //         }
+  //       )
+  //   }).catch((error) => {
+  //     console.log('errorin getting data :', error);
+  //     reject(error);
+  //   })
+  // }
+
+
   public drawChart(data) {
     //this.barChartData.dataTable = data;
     this.barChartData = {
@@ -410,7 +436,10 @@ export class SmartclientCaseByStatusComponent implements OnInit {
       }, error => {
         console.log("error getWorkflowStatus " + error);
       });
-
+      
+        this.sideViewDropDowns.showArrivalType = true;
+        this.sideViewDropDowns.arrivalTypeData = ['SAOF','CPQ','Q2SC','Other'];
+        this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
       
       
    

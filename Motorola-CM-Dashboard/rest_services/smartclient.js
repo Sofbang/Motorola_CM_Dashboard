@@ -57,6 +57,31 @@ router.get('/sc_territories', (req, res, next) => {
   });
 });
 
+// // API for sc_case_territories
+// router.get('/sc_arrival_type', (req, res, next) => {
+//   //call doConnect method in db_operations
+//   conn.doConnect((err, dbConn) => {
+//     if (err) { return; }
+//     //execute query using using connection instance returned by doConnect method
+//     conn.doExecute(dbConn,
+//       `SELECT DISTINCT( arrival_type ) 
+//       FROM   sc_case_state_master 
+//       ORDER  BY arrival_type ASC`, [],
+//       function (err, result) {
+//         if (err) {
+//           conn.doRelease(dbConn);
+//           //call error handler
+//           return next(err);
+//         }
+//         response.data = result.rows;
+//         res.json(response);
+//         //release connection back to pool
+//         conn.doRelease(dbConn);
+//       });
+//   });
+// });
+
+
 // API for sc_workflow_status
 router.get('/sc_workflow_status', (req, res, next) => {
   //call doConnect method in db_operations
