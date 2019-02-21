@@ -39,6 +39,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
           this.onDeSelectAll(incomingData, from);
         }
       });
+      this._dataHandlerService.setDataForMainLayout(true);
   }
 
 

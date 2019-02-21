@@ -46,6 +46,7 @@ export class EbsContractByStatusComponent implements OnInit {
           this.onDeSelectAll(incomingData, from);
         }
       });
+      this._dataHandlerService.setDataForMainLayout(true);
   }
 
   public selectBar(event: ChartSelectEvent) {
