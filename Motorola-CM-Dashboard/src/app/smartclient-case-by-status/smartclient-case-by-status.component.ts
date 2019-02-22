@@ -228,7 +228,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
           textStyle: { color: '#444444' }
         },
         series: {
-          0: { color: '#444444' }
+          0: { color: '0B91E2' }
         },
         tooltip: { isHtml: false }
       }
@@ -391,12 +391,13 @@ export class SmartclientCaseByStatusComponent implements OnInit {
    */
   public makeChartArr(cases) {
     let array = [];
+    let text='Median Days';
     array.push(['Status', 'No. of Median Days', { role: "annotation" }, { role: "style" }]);
     // ARRAY OF OBJECTS
     for (let i in cases) {
       //console.log(i);
       // Create new array above and push every object in
-      array.push([cases[i].status+"  "+cases[i].status_percent, parseInt(cases[i].mediandays), parseInt(cases[i].contractscount), '0B91E2']);
+      array.push([cases[i].status+"  "+cases[i].status_percent,parseInt(cases[i].mediandays), parseInt(cases[i].contractscount), '0B91E2']);
     }
     return array;
   }
@@ -434,7 +435,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
           textStyle: { color: '#444444' }
         },
         series: {
-          0: { color: '#444444' }
+          0: { color: '0B91E2' }
         },
         tooltip: { isHtml: false }
       }

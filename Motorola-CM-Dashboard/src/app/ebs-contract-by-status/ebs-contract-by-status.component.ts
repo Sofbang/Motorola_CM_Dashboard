@@ -168,7 +168,7 @@ export class EbsContractByStatusComponent implements OnInit {
           textStyle: { color: '#444444' }
         },
         series: {
-          0: { color: '#444444' }
+          0: { color: '0B91E2' }
         },
         tooltip: { isHtml: false, type: 'string' }
       }
@@ -378,7 +378,7 @@ export class EbsContractByStatusComponent implements OnInit {
           textStyle: { color: '#444444' }
         },
         series: {
-          0: { color: '#444444' }
+          0: { color: '0B91E2' }
         },
         tooltip: { isHtml: false, type: 'string' }
       }
