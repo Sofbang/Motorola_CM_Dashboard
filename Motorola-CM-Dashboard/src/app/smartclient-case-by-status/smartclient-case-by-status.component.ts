@@ -20,6 +20,8 @@ export class SmartclientCaseByStatusComponent implements OnInit {
   public territoriesArr: any = [];
   public workFlowStatusArr: any = [];
   public caseData = [];
+  public Total:any;
+
   public data:any;
   public sideViewDropDowns = new SideViewDropDowns();
   @ViewChild('openSCModal') openScModel: ElementRef;
@@ -68,7 +70,18 @@ export class SmartclientCaseByStatusComponent implements OnInit {
       this._smartclientService.getSCCases().
         subscribe(data => {
           cases = this.makeChartData(data);
+          console.log("the cases data is :"+JSON.stringify(cases));
+          let arr=[];
+          for(let i in cases){
+            arr.push(cases[i].contractscount);
+            
+          }
+          this.Total = arr.reduce(this.sum);
+          console.log("the contractscount are as under:"+JSON.stringify(arr));
+          console.log("the total cases are :"+JSON.stringify(this.Total));
           this.caseData = data;
+          cases=this.calculatePerc(cases);
+          console.log("contracts cases with percentages:" + JSON.stringify(cases));
           //console.log("contracts" + cases)
         }, err => console.error(err),
           // the third argument is a function which runs on completion
@@ -80,6 +93,19 @@ export class SmartclientCaseByStatusComponent implements OnInit {
       console.log('errorin getting data :', error);
       reject(error);
     })
+  }
+
+  public calculatePerc(cases){
+    for(let i in cases){
+
+      console.log("the cases are as under:"+JSON.stringify(cases));
+      let calcPer=((cases[i].contractscount/this.Total)*100).toFixed(2)
+      cases[i]['status_percent']=calcPer+'%';
+      //console.log("the values are :"+JSON.stringify(value));
+
+    }
+    //console.log("after the for loop in the calcPerc method:"+JSON.stringify(value));
+    return cases;
   }
 
   /**
@@ -193,16 +219,16 @@ export class SmartclientCaseByStatusComponent implements OnInit {
           bold: true,    // true or false
           italic: false
         },
-        width: 800, height: 500, legend: { position: 'bottom', textStyle: { color: '#FFFFFF' } },
-        backgroundColor: '#083853',
+        width: 800, height: 500, legend: { position: 'bottom', textStyle: { color: '#444444' } },
+        backgroundColor: '#FFFFFF',
         hAxis: {
-          textStyle: { color: '#FFFFFF' }
+          textStyle: { color: '#444444' }
         },
         vAxis: {
-          textStyle: { color: '#FFFFFF' }
+          textStyle: { color: '#444444' }
         },
         series: {
-          0: { color: 'FF5253' }
+          0: { color: '#444444' }
         },
         tooltip: { isHtml: false }
       }
@@ -314,6 +340,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
       }
     }
     let cases = this.makeChartData(finalArr);
+    cases = this.calculatePerc(cases);
     let chartArr = this.makeChartArr(cases)
     this.drawChart(chartArr);
     // console.log("chartArr"+JSON.stringify(chartArr));
@@ -369,7 +396,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
     for (let i in cases) {
       //console.log(i);
       // Create new array above and push every object in
-      array.push([cases[i].status, parseInt(cases[i].mediandays), parseInt(cases[i].contractscount), '0B91E2']);
+      array.push([cases[i].status+"  "+cases[i].status_percent, parseInt(cases[i].mediandays), parseInt(cases[i].contractscount), '0B91E2']);
     }
     return array;
   }
@@ -398,16 +425,16 @@ export class SmartclientCaseByStatusComponent implements OnInit {
           bold: true,    // true or false
           italic: false
         },
-        width: 800, height: 500, legend: { position: 'bottom', textStyle: { color: '#FFFFFF' } },
-        backgroundColor: '#083853',
+        width: 800, height: 500, legend: { position: 'bottom', textStyle: { color: '#444444' } },
+        backgroundColor: '#FFFFFF',
         hAxis: {
-          textStyle: { color: '#FFFFFF' }
+          textStyle: { color: '#444444' }
         },
         vAxis: {
-          textStyle: { color: '#FFFFFF' }
+          textStyle: { color: '#444444' }
         },
         series: {
-          0: { color: 'FF5253' }
+          0: { color: '#444444' }
         },
         tooltip: { isHtml: false }
       }

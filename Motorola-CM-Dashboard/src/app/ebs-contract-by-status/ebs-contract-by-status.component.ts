@@ -159,16 +159,16 @@ export class EbsContractByStatusComponent implements OnInit {
           bold: true,
           italic: false
         },
-        width: 800, height: 500, legend: { position: 'bottom', textStyle: { color: '#FFFFFF' } },
-        backgroundColor: '#083853',
+        width: 800, height: 500, legend: { position: 'bottom', textStyle: { color: '#444444' } },
+        backgroundColor: '#FFFFFF',
         hAxis: {
-          textStyle: { color: '#FFFFFF' }
+          textStyle: { color: '#444444' }
         },
         vAxis: {
-          textStyle: { color: '#FFFFFF' }
+          textStyle: { color: '#444444' }
         },
         series: {
-          0: { color: 'FF5253' }
+          0: { color: '#444444' }
         },
         tooltip: { isHtml: false, type: 'string' }
       }
@@ -369,16 +369,16 @@ export class EbsContractByStatusComponent implements OnInit {
           bold: true,
           italic: false
         },
-        width: 800, height: 500, legend: { position: 'bottom', textStyle: { color: '#FFFFFF' } },
-        backgroundColor: '#083853',
+        width: 800, height: 500, legend: { position: 'bottom', textStyle: { color: '#444444' } },
+        backgroundColor: '#FFFFFF',
         hAxis: {
-          textStyle: { color: '#FFFFFF' }
+          textStyle: { color: '#444444' }
         },
         vAxis: {
-          textStyle: { color: '#FFFFFF' }
+          textStyle: { color: '#444444' }
         },
         series: {
-          0: { color: 'FF5253' }
+          0: { color: '#444444' }
         },
         tooltip: { isHtml: false, type: 'string' }
       }

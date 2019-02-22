@@ -114,4 +114,30 @@ router.get('/ebs_workflow_status', (req, res, next) => {
   });
 });
 
+
+// // API for arrival_type
+// router.get('/arrival_type', (req, res, next) => {
+//   //call doConnect method in db_operations
+//   conn.doConnect((err, dbConn) => {
+//     if (err) { return; }
+//     //execute query using using connection instance returned by doConnect method
+//     conn.doExecute(dbConn,
+//       `SELECT DISTINCT( arrival_type ) 
+//       FROM   ebs_contracts_state_master 
+//       ORDER  BY arrival_type ASC`, [],
+//       function (err, result) {
+//         if (err) {
+//           conn.doRelease(dbConn);
+//           //call error handler
+//           return next(err);
+//         }
+//         response.data = result.rows;
+//         res.json(response);
+//         //release connection back to pool
+//         conn.doRelease(dbConn);
+//       });
+//   });
+// });
+
+
 module.exports = router;
