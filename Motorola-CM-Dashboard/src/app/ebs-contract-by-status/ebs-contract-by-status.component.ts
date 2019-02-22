@@ -332,12 +332,12 @@ export class EbsContractByStatusComponent implements OnInit {
   public makeChartArr(cases) {
     //console.log("the make chart data is :" + JSON.stringify(cases));
     let array = [];
-    array.push(['Status', 'No. of Median Days', { role: "annotation" }, { role: "style" }]);
+    array.push(['Status', 'No. of Contracts', { role: "annotation" }, { role: "style" }]);
     // ARRAY OF OBJECTS
     for (let i in cases) {
       //console.log(i);
       // Create new array above and push every object in
-      array.push([cases[i].status, parseInt(cases[i].mediandays), parseInt(cases[i].contractscount), '0B91E2']);
+      array.push([cases[i].status, parseInt(cases[i].contractscount),parseInt(cases[i].mediandays), '0B91E2']);
     }
     // console.log("the final cases are as under:" + JSON.stringify(array));
     return array;

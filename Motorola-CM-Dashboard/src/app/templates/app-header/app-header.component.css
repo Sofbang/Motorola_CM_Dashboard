@@ -2,11 +2,17 @@
     background: white;
     border-bottom: 1px solid #e9ecf3;
 }
-.page-header.navbar .top-menu .navbar-nav>li.dropdown.open .dropdown-toggle {
+.page-header.navbar .navbar-nav>li.dropdown.open .dropdown-toggle {
     background-color: white;
+    width: 1024px;
+    height: 130px;
 }
+/* .page-header.navbar{ */
+    /* height: 130px;	 */
+    /* width: 1024px;
+} */
 
-.app-logo-expand{
+/* .app-logo-expand{
     width: 135px;
     height: 74px;
     margin-top: 0px;
@@ -15,12 +21,18 @@
     width: 0px;
     height: 0px;
     margin-top: 0px;
-}
-.page-header.navbar .top-menu .navbar-nav > li.dropdown-user .dropdown-toggle > .username {
+} */
+/* .page-header.navbar .top-menu .navbar-nav > li.dropdown-user .dropdown-toggle > .username {
     margin-right: 12px !important;
     font-size: 16px !important;
-}
+} */
 
-.page-header.navbar .top-menu .navbar-nav > li.dropdown-language > .dropdown-toggle > .langname, .page-header.navbar .top-menu .navbar-nav > li.dropdown-user > .dropdown-toggle > .username, .page-header.navbar .top-menu .navbar-nav > li.dropdown-user > .dropdown-toggle > i {
+/* .page-header.navbar .top-menu .navbar-nav > li.dropdown-language > .dropdown-toggle > .langname, .page-header.navbar .top-menu .navbar-nav > li.dropdown-user > .dropdown-toggle > .username, .page-header.navbar .top-menu .navbar-nav > li.dropdown-user > .dropdown-toggle > i {
     color: #484E51 !important;
+} */
+.cmd-headings{
+    padding-top: 24px;
+    font-family: Open Sans,open-sans,sans-serif;
+    font-weight: 500;
+    font-size: 20px;    
 }
