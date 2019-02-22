@@ -1,65 +1,28 @@
-/* .sidenav {
-    height: 100%;
-    width: 0;
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    left: 0;
-    background-color: #111;
-    overflow-x: hidden;
-    transition: 0.5s;
-    padding-top: 60px;
-  }
-  .sidenav a {
-    padding: 8px 8px 8px 32px;
-    text-decoration: none;
-    font-size: 25px;
-    color: #818181;
-    display: block;
-    transition: 0.3s;
-  }
-  .sidenav a:hover {
-    color: #f1f1f1;
-  }
-  
-  .sidenav .closebtn {
-    position: absolute;
-    top: 0;
-    right: 25px;
-    font-size: 36px;
-    margin-left: 50px;
-  }
-  
-  #main {
-    transition: margin-left .5s;
-    padding: 16px;
-  } */
-
-  /* @media screen and (max-height: 450px) {
-    .sidenav {padding-top: 15px;}
-    .sidenav a {font-size: 18px;}
-  } */
-  
-  .page-sidebar.navbar-collapse {
+.page-sidebar.navbar-collapse {
 
     min-height: 100% !important;
     max-height: 100% !important;
 }
 .title-blue{
-    color:#0072C2;
+    color:#4A90E2;
 }
 .title-black{
-   color: #373737;
+   color: #4A4A4A;
 }
 :host /deep/ .slimScrollDiv{
     height: 70rem !important;
     max-height: 80rem !important;
 }
-.second-child{
-    background-color: #083853;
+.page-sidebar .page-sidebar-menu > li > a > .title, .page-sidebar-closed.page-sidebar-fixed .page-sidebar:hover .page-sidebar-menu > li > a > .title {
+  font-size: 14px;
+  font-weight: bold;
 }
-.second-child>li>a>span.title{
-    color:#FFFF !important;
+.sub-menu .title{
+  font-size: 14px;
+  font-weight: bold;
+}
+.active span{
+  color:#4A90E2;
 }
 .page-sidebar-menu .sub-menu > li:hover > a{
     background-color: unset !important;
