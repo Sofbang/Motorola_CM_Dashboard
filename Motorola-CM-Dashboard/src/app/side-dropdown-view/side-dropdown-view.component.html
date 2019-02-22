@@ -1,54 +1,58 @@
-<div class="row">
-  <div class="col-lg-12 col-md-12 col-sm-12">
-     <div class="side-view-dropDowns">
-      <div class="dropdown" *ngIf="sideViewDDObj.showWorkFlow">
-        <!-- <label for="options">Workflow
-          Status</label> -->
-        <ng-multiselect-dropdown [placeholder]="'Workflow
+<div class="navbar">
+  <div class="dropdown" *ngIf="sideViewDDObj.showWorkFlow">
+    <label for="options">Workflow
+          Status</label>
+    <ng-multiselect-dropdown [placeholder]="'Workflow
             Status'" [data]="sideViewDDObj.workFlowData" [settings]="dropdownSettings"
-          (onSelect)="onItemSelect($event,'workflow')" (onSelectAll)="onSelectAll($event,'workflow')" (onDeSelect)="onItemDeSelect($event,'workflow')"
-          (onDeSelectAll)="onDeSelectAll($event,'workflow')">
-        </ng-multiselect-dropdown>
-      </div>
-      <div class="dropdown" *ngIf="sideViewDDObj.showCaseCategory">
-        <!-- <label for="options">Case
-          Category</label> -->
-        <ng-multiselect-dropdown [placeholder]="'Case Category'" [data]="sideViewDDObj.caseCatData"
-          [settings]="dropdownSettings" (onSelect)="onItemSelect($event,'caseType')" (onSelectAll)="onSelectAll($event,'caseType')"
-          (onDeSelect)="onItemDeSelect($event,'caseType')" (onDeSelectAll)="onDeSelectAll($event,'caseType')">
-        </ng-multiselect-dropdown>
-      </div>
-      <div class="dropdown" *ngIf="sideViewDDObj.showContracType">
-        <!-- <label for="options">Contract
-          Type</label> -->
-        <ng-multiselect-dropdown [placeholder]="'Contract Type'" [data]="sideViewDDObj.contractTypeData"
-          [settings]="dropdownSettings" (onSelect)="onItemSelect($event,'contractType')" (onSelectAll)="onSelectAll($event,'contractType')"
-          (onDeSelect)="onItemDeSelect($event,'contractType')" (onDeSelectAll)="onDeSelectAll($event,'contractType')">
-        </ng-multiselect-dropdown>
-      </div>
-      <div class="dropdown" *ngIf="sideViewDDObj.showTerritory">
-        <!-- <label for="options">Territory</label> -->
-        <ng-multiselect-dropdown [placeholder]="'Territory'" [data]="sideViewDDObj.territoryData"
-          [settings]="dropdownSettings" (onSelect)="onItemSelect($event,'territory')" (onSelectAll)="onSelectAll($event,'territory')"
-          (onDeSelect)="onItemDeSelect($event,'territory')" (onDeSelectAll)="onDeSelectAll($event,'territory')">
-        </ng-multiselect-dropdown>
-      </div>
-      <!-- <div class="dropdown" *ngIf="sideViewDDObj.showArrivalType"> -->
-          <div class="dropdown">
-        <!-- <label for="options">Arrival Type</label> -->
-        <ng-multiselect-dropdown [placeholder]="'Arrival Type'" [data]="sideViewDDObj.arrivalTypeData"
-          [settings]="dropdownSettings" (onSelect)="onItemSelect($event,'arrivalType')" (onSelectAll)="onSelectAll($event,'arrivalType')"
-          (onDeSelect)="onItemDeSelect($event,'arrivalType')" (onDeSelectAll)="onDeSelectAll($event,'arrivalType')">
-        </ng-multiselect-dropdown>
-      </div>
-      <div class="dropdown" *ngIf="sideViewDDObj.showContractTime">
-        <!-- <label for="options">Contract
-          Time</label> -->
-        <ng-multiselect-dropdown [placeholder]="'Contract Time'" [data]="sideViewDDObj.contractTimeData"
-          [settings]="dropdownSettings" (onSelect)="onItemSelect($event,'contractTime')" (onSelectAll)="onSelectAll($event,'contractTime')"
-          (onDeSelect)="onItemDeSelect($event,'contractTime')" (onDeSelectAll)="onDeSelectAll($event,'contractTime')">
-        </ng-multiselect-dropdown>
-      </div>
-    </div>
+      (onSelect)="onItemSelect($event,'workflow')" (onSelectAll)="onSelectAll($event,'workflow')"
+      (onDeSelect)="onItemDeSelect($event,'workflow')" (onDeSelectAll)="onDeSelectAll($event,'workflow')">
+    </ng-multiselect-dropdown>
   </div>
+  <div class="dropdown" *ngIf="sideViewDDObj.showCaseCategory">
+    <label for="options">Case
+          Category</label>
+    <ng-multiselect-dropdown [placeholder]="'Case Category'" [data]="sideViewDDObj.caseCatData"
+      [settings]="dropdownSettings" (onSelect)="onItemSelect($event,'caseType')"
+      (onSelectAll)="onSelectAll($event,'caseType')" (onDeSelect)="onItemDeSelect($event,'caseType')"
+      (onDeSelectAll)="onDeSelectAll($event,'caseType')">
+    </ng-multiselect-dropdown>
+  </div>
+  <div class="dropdown" *ngIf="sideViewDDObj.showContracType">
+    <label for="options">Contract
+          Type</label>
+    <ng-multiselect-dropdown [placeholder]="'Contract Type'" [data]="sideViewDDObj.contractTypeData"
+      [settings]="dropdownSettings" (onSelect)="onItemSelect($event,'contractType')"
+      (onSelectAll)="onSelectAll($event,'contractType')" (onDeSelect)="onItemDeSelect($event,'contractType')"
+      (onDeSelectAll)="onDeSelectAll($event,'contractType')">
+    </ng-multiselect-dropdown>
+  </div>
+  <div class="dropdown" *ngIf="sideViewDDObj.showTerritory">
+    <label for="options">Territory</label>
+    <ng-multiselect-dropdown [placeholder]="'Territory'" [data]="sideViewDDObj.territoryData"
+      [settings]="dropdownSettings" (onSelect)="onItemSelect($event,'territory')"
+      (onSelectAll)="onSelectAll($event,'territory')" (onDeSelect)="onItemDeSelect($event,'territory')"
+      (onDeSelectAll)="onDeSelectAll($event,'territory')">
+    </ng-multiselect-dropdown>
+  </div>
+  <!-- <div class="dropdown" *ngIf="sideViewDDObj.showArrivalType"> -->
+  <div class="dropdown">
+    <label for="options">Arrival Type</label>
+    <ng-multiselect-dropdown [placeholder]="'Arrival Type'" [data]="sideViewDDObj.arrivalTypeData"
+      [settings]="dropdownSettings" (onSelect)="onItemSelect($event,'arrivalType')"
+      (onSelectAll)="onSelectAll($event,'arrivalType')" (onDeSelect)="onItemDeSelect($event,'arrivalType')"
+      (onDeSelectAll)="onDeSelectAll($event,'arrivalType')">
+    </ng-multiselect-dropdown>
+  </div>
+  <div class="dropdown" *ngIf="sideViewDDObj.showContractTime">
+    <label for="options">Contract
+          Time</label>
+    <ng-multiselect-dropdown [placeholder]="'Contract Time'" [data]="sideViewDDObj.contractTimeData"
+      [settings]="dropdownSettings" (onSelect)="onItemSelect($event,'contractTime')"
+      (onSelectAll)="onSelectAll($event,'contractTime')" (onDeSelect)="onItemDeSelect($event,'contractTime')"
+      (onDeSelectAll)="onDeSelectAll($event,'contractTime')">
+    </ng-multiselect-dropdown>
+  </div>
+  <!-- <a href="#home">Home</a>
+    <a href="#news">News</a>
+    <a href="#news">Dropdown</a> -->
 </div>

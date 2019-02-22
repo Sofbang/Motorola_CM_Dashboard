@@ -55,11 +55,11 @@ export class SideDropdownViewComponent implements OnInit {
       textField: 'item_text',
       selectAllText: 'All',
       unSelectAllText: 'UnSelect All',
-      itemsShowLimit: 8,
+      itemsShowLimit: 0,
       allowSearchFilter: true,
       dir: 'asc'
     };
-    $('.side-view-dropDowns').css('height', this.screenHeight);//to make side dropdown view to screen height
+    //$('.side-view-dropDowns').css('height', this.screenHeight);//to make side dropdown view to screen height
   }
 
 }

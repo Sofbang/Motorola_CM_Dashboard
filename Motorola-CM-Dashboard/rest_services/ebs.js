@@ -138,6 +138,42 @@ router.get('/ebs_workflow_status', (req, res, next) => {
 //       });
 //   });
 // });
-
+// API for ebs_workflow_status
+// router.get('/ebs_average', (req, res, next) => {
+//   //call doConnect method in db_operations
+//   conn.doConnect((err, dbConn) => {
+//     if (err) { return; }
+//     //execute query using using connection instance returned by doConnect method
+//     conn.doExecute(dbConn,
+//       `select to_status as Status, trim(to_char(avg(DaysInStatus)::interval, 'DD')) as AverageDays,   
+//       count(contract_number) as contractPerStatus, TERRITORY  from
+//         (
+//           select contract_number, to_status, min(sts_changed_on), DateMoved,  
+//           DateMoved - min(sts_changed_on) as DaysInStatus, TERRITORY    from 
+//             (
+//               select A2.contract_number, A2.to_status, A2.sts_changed_on,TERRITORY,
+//               coalesce(
+//                 (
+//                   select max(A1.sts_changed_on) from ebs_contracts_state_master A1 
+//                   where A1.contract_number = A2.contract_number
+//                   and A1.from_STATUS = A2.to_status),
+//                   current_date
+//                  ) as DateMoved 
+//               from ebs_contracts_state_master A2 order by contract_number, sts_changed_on  
+//             ) resultset group by contract_number, to_status, DateMoved, TERRITORY
+//         )R2 group by to_status, TERRITORY ORDER BY TO_STATUS`, [],
+//       function (err, result) {
+//         if (err) {
+//           conn.doRelease(dbConn);
+//           //call error handler
+//           return next(err);
+//         }
+//         response.data = result.rows;
+//         res.json(response);
+//         //release connection back to pool
+//         conn.doRelease(dbConn);
+//       });
+//   });
+// });
 
 module.exports = router;

@@ -1,11 +1,14 @@
-<div class="row">
+<!-- <div class="row">
     <button id="openSCModal" #openSCModal [hidden]="true" data-toggle="modal" data-target="#smartClientModal">Open Modal</button>
     <h3 style="color:#FFFF;margin-left: 30px;font-weight: 400;">R12 - Contracts by Status  </h3>
-    <!-- <h5 style="color:#67757F;margin-left: 30px;margin-left: 30px;font-weight: 550;width: 350px;">Backlog (quantity of -->
     
     <div class="col-lg-12 col-md-12  col-sm-12">
         <google-chart #cchart [data]="ebscolumnChartData" (chartSelect)='selectBar($event)'></google-chart>
     </div>
+</div> -->
+<div class="chart-div">
+    <button id="openSCModal" #openSCModal [hidden]="true" data-toggle="modal" data-target="#smartClientModal">Open Modal</button>
+        <google-chart #cchart [data]="ebscolumnChartData" (chartSelect)='selectBar($event)'></google-chart>
 </div>
 <!-- modal -->
 <div id="smartClientModal" class="modal fade" role="dialog">

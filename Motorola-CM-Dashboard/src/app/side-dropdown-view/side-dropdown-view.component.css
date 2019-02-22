@@ -19,9 +19,35 @@
 .side-view-dropDowns{background-color: #032636;}
 
 :host /deep/ .multiselect-dropdown{
-    background-color: #083853;
+    background-color: #FFFF;
+    min-width: 160px;
 }
 
 :host /deep/ .multiselect-dropdown .dropdown-btn span{
 color: #FFFF;
 }
+
+:host /deep/ .multiselect-dropdown .dropdown-btn .dropdown-down {
+    border-top: 10px solid #005CB9 !important;
+}
+
+
+.navbar {
+    /* overflow: hidden; */
+    background-color: #FFFF;
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 10px;
+  }
+  
+  .navbar a {
+    float: left;
+    font-size: 16px;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+  }
+  .navbar .dropdown{
+      display: inline-block;
+      margin: 10px;
+  }
