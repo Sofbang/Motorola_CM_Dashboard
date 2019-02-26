@@ -99,16 +99,20 @@ export class SmartclientAverageRenewalComponent implements OnInit {
 
   public getCaseDataYearly(dates){
     return new Promise((resolve,reject) => {
-      let dates;
-      this._smartclientService.getScDateFilteredReults()
+      let dates={'from':this.datesData[0],'to':this.datesData[1]};
+      this._smartclientService.getScDateFilteredReults(dates)
       .subscribe(data => {
-        ()=> {
-          resolve(data);
-  
-        }
+      
+        let datesdata = data;	
+               
+         resolve(data);
+
       },err=>console.log(err),
       
       )
+    }).catch((error)=> {		
+      console.log('error in getCaseDataYearly: ',error);		
+      reject(error);		
     })
 
   }
@@ -252,6 +256,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       this.datesData.push(item.firstDay);
       this.datesData.push(item.lastDay);
       console.log("the dates data is:"+JSON.stringify(this.datesData));
+      this.filterChartData();	
    }
   
     onDeSelectAll(item, from) {
@@ -291,19 +296,22 @@ export class SmartclientAverageRenewalComponent implements OnInit {
           //finalArr.push(territoryFilterarr);
           //finalArr = territoryFilterarr;
         }
+        // else{
+        //   console.log("in the else of dates check:")
+        // }
+
+
+      } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length == 0) {
+        //console.log("t0 s0");
         if(this.datesData.length>0){
           // call API for dates 
           console.log("in the if of dates check")
           this.getCaseDataYearly(this.datesData).then(response=>{
-
+            console.log("the res of dates are :"+JSON.stringify(response));
+            // let datesar = response;
+            // this.makeChartArr(datesar);
           });
-        }else{
-          console.log("in the else of dates check:")
         }
-
-
-      } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length == 0) {
-        console.log("t0 s0");
         let cases = this.makeChartData(this.caseData);
         let chartArr = this.makeChartArr(cases)
         this.drawChart(chartArr);

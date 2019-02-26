@@ -37,8 +37,8 @@ export class SmartclientService {
   //     .map(result => this.result = result.json().data);
   // }
 
-  getScDateFilteredReults(){
-    return this.http.get('api/sc_dates')
-    .map(result => this.result = result.json().data);
+  getScDateFilteredReults(dates){
+    return this.http.post("api/sc_case_status_med_yr", JSON.stringify(dates), this.options)
+    .map(response => this.result = response.json().data);
   }
 }
