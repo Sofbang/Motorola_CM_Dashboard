@@ -7,7 +7,11 @@ export const mainRoute: Routes = [
     children: [
       { path: 'dashboard', loadChildren: './dashboard/dashboard.module#DashboardModule' },
       { path: 'ebs-contractByStatus', loadChildren: './ebs-contract-by-status/ebs-contract-by-status.module#EbsContractByStatusModule' },
-      { path: 'sc-caseByStatus', loadChildren: './smartclient-case-by-status/smartclient-case-by-status.module#SmartclientCaseByStatusModule' }
+      { path: 'sc-caseByStatus', loadChildren: './smartclient-case-by-status/smartclient-case-by-status.module#SmartclientCaseByStatusModule' },
+      { path: 'drilldownview', loadChildren: './drilldownview/drilldownview.module#DrilldownviewModule' },
+      { path: 'smartclient-average-renewal', loadChildren: './smartclient-average-renewal/smartclient-average-renewal.module#SmartclientAverageRenewalModule' }
+
+
     ]
   }
 

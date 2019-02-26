@@ -1,0 +1,48 @@
+   
+    .tiles-wrap{width:200px;margin-left: auto;margin-right: auto;background:white;
+    margin-bottom: 40px;}
+    .outer-area{
+        border-radius: 50% !important;
+        border: 1px solid rgba(25,52,83,0.23);
+        padding: 52px 0;
+        text-align: center;
+        height: 200px;
+        width: 100%;
+
+    }
+    .outer-area .fa
+    {
+    margin-left:auto;
+    margin-right: auto;
+    margin-bottom: 15px;
+    color:grey;
+    font-size: 40px;
+    color:#193453;
+
+    
+     }
+    .outer-area h3{
+        color: #0C1E32;
+        font-family: Arial;
+        font-size: 16px;
+        font-weight: bold;
+        line-height: 20px;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+
+
+        
+    }
+    .outer-area h3 > span{display:block;}
+    .button-area{
+        margin-top:20px;
+        
+    }
+    .button-area .btn{
+        outline: 0!important;
+        width: 100%;
+    }
+    .placeholders{
+        padding-top: 15px;
+    }
+

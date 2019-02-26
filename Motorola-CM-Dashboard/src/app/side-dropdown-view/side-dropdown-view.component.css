@@ -23,9 +23,9 @@
     min-width: 160px;
 }
 
-:host /deep/ .multiselect-dropdown .dropdown-btn span{
+/* :host /deep/ .multiselect-dropdown .dropdown-btn span{
 color: #FFFF;
-}
+} */
 
 :host /deep/ .multiselect-dropdown .dropdown-btn .dropdown-down {
     border-top: 10px solid #005CB9 !important;
@@ -51,3 +51,6 @@ color: #FFFF;
       display: inline-block;
       margin: 10px;
   }
+  /* .col-lg-12 {
+    width: 88%;
+  } */

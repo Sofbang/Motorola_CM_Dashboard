@@ -6,6 +6,7 @@ import { DataHandlerService } from '../services/data-handler/data-handler.servic
 import { ViewChild, ElementRef } from '@angular/core';
 import * as $ from 'jquery';
 import { ChartSelectEvent } from 'ng2-google-charts';
+import { appheading } from '../enums/enum';
 
 @Component({
   selector: 'app-ebs-contract-by-status',
@@ -337,7 +338,7 @@ export class EbsContractByStatusComponent implements OnInit {
     for (let i in cases) {
       //console.log(i);
       // Create new array above and push every object in
-      array.push([cases[i].status, parseInt(cases[i].contractscount),parseInt(cases[i].mediandays), '0B91E2']);
+      array.push([cases[i].status, parseInt(cases[i].contractscount),"Median Days  "+parseInt(cases[i].mediandays), '0B91E2']);
     }
     // console.log("the final cases are as under:" + JSON.stringify(array));
     return array;
@@ -359,7 +360,7 @@ export class EbsContractByStatusComponent implements OnInit {
   ngOnInit() {
     this.ebscolumnChartData = {
       chartType: 'BarChart',
-      dataTable: [],
+      dataTable: ['hey','hi'],
       options: {
         title: '',
         titleTextStyle: {
@@ -410,6 +411,10 @@ export class EbsContractByStatusComponent implements OnInit {
       }, error => {
         console.log("error getWorkflowStatus " + error);
       });
+      
+
+
+      this.sideViewDropDowns.compHeading=appheading.graph2;
 
 
   }

@@ -6,30 +6,40 @@ import { DataHandlerService } from '../services/data-handler/data-handler.servic
 import { ViewChild, ElementRef } from '@angular/core';
 import * as $ from 'jquery';
 import { ChartSelectEvent } from 'ng2-google-charts';
+import { resolve } from 'path';
+import { error } from 'util';
+import { from } from 'rxjs';
+import { ConstantPool } from '@angular/compiler';
+import { last } from '@angular/router/src/utils/collection';
 import { appheading } from '../enums/enum';
 
 @Component({
-  selector: 'app-smartclient-case-by-status',
-  templateUrl: './smartclient-case-by-status.component.html',
-  styleUrls: ['./smartclient-case-by-status.component.css']
+  selector: 'app-smartclient-average-renewal',
+  templateUrl: './smartclient-average-renewal.component.html',
+  styleUrls: ['./smartclient-average-renewal.component.css']
 })
-export class SmartclientCaseByStatusComponent implements OnInit {
+export class SmartclientAverageRenewalComponent implements OnInit {
   public barChartData: any;
-  //public cases: any;
-  // public selectedTerritoriesCasetype: any = 'all';
-  // public dropdownListCaseStatusTerritory = [];
   public territoriesArr: any = [];
   public workFlowStatusArr: any = [];
   public caseData = [];
-  public Total:any;
-
+  public dateFilteredDataResults = [];
+  public dateData= [];
+  public datesData=[];
+  public fianldates=[];
+  public toYear = [];
+  public selectedFrom={};
   public data:any;
+  public final = [];
   public sideViewDropDowns = new SideViewDropDowns();
   @ViewChild('openSCModal') openScModel: ElementRef;
+  @ViewChild('FromTo') FromTo; 
+
   constructor(private _smartclientService: SmartclientService, private _dataHandlerService: DataHandlerService) {
     this._dataHandlerService.dataFromSideView
       .subscribe(res => {
-        console.log("suc sc" + JSON.stringify(res));
+        console.log("suc smartclient avg-ren" + JSON.stringify(res));
+
         let incomingData = res.data, event = res.event.toLowerCase(), from = res.from;
         if (event == 'onitemselect') {
           this.onItemSelect(incomingData, from)
@@ -40,13 +50,15 @@ export class SmartclientCaseByStatusComponent implements OnInit {
         }
         else if (event == 'ondeselectall') {
           this.onDeSelectAll(incomingData, from);
+        } else if(event == 'onchangeto'){
+          this.onToYearChange(incomingData);
         }
       });
       this._dataHandlerService.setDataForMainLayout(true);
-  }
 
+   }
 
-  public selectBar(event: ChartSelectEvent) {
+   public selectBar(event: ChartSelectEvent) {
     console.log("in the selectBar"+JSON.stringify(event.selectedRowValues[0]));
     this.data = event.selectedRowValues[0];
     console.log("the data is:",this.data);
@@ -61,28 +73,17 @@ export class SmartclientCaseByStatusComponent implements OnInit {
      
   }
 
+   
   /**
-     * calling the Angular Lookup Service Method getContracts() implemented by Vishal Sehgal as on 8/2/2019
-     * 
-     */
+   * 
+   */
   public getCaseData() {
     return new Promise((resolve, reject) => {
       let cases;
       this._smartclientService.getSCCases().
         subscribe(data => {
           cases = this.makeChartData(data);
-          console.log("the cases data is :"+JSON.stringify(cases));
-          let arr=[];
-          for(let i in cases){
-            arr.push(cases[i].contractscount);
-            
-          }
-          this.Total = arr.reduce(this.sum);
-          console.log("the contractscount are as under:"+JSON.stringify(arr));
-          console.log("the total cases are :"+JSON.stringify(this.Total));
           this.caseData = data;
-          cases=this.calculatePerc(cases);
-          console.log("contracts cases with percentages:" + JSON.stringify(cases));
           //console.log("contracts" + cases)
         }, err => console.error(err),
           // the third argument is a function which runs on completion
@@ -96,23 +97,21 @@ export class SmartclientCaseByStatusComponent implements OnInit {
     })
   }
 
-  public calculatePerc(cases){
-    for(let i in cases){
+  public getCaseDataYearly(dates){
+    return new Promise((resolve,reject) => {
+      let dates;
+      this._smartclientService.getScDateFilteredReults()
+      .subscribe(data => {
+        ()=> {
+          resolve(data);
+  
+        }
+      },err=>console.log(err),
+      
+      )
+    })
 
-      console.log("the cases are as under:"+JSON.stringify(cases));
-      let calcPer=((cases[i].contractscount/this.Total)*100).toFixed(2)
-      cases[i]['status_percent']=calcPer+'%';
-      //console.log("the values are :"+JSON.stringify(value));
-
-    }
-    //console.log("after the for loop in the calcPerc method:"+JSON.stringify(value));
-    return cases;
   }
-
-  /**
-    * calling the Angular smartClient Service Method getTerritoriesData() implemented by Vishal Sehgal as on 11/2/2019
-    * 
-    */
   public getTerritories() {
     return new Promise((resolve, reject) => {
       let territories;
@@ -180,32 +179,6 @@ export class SmartclientCaseByStatusComponent implements OnInit {
     })
   }
 
-  // public getArrivalTypeData() {
-  //   return new Promise((resolve, reject) => {
-  //     let arrivalType;
-  //     this._smartclientService.getScArrivalType()
-  //       .subscribe(data => {
-  //         arrivalType = data;
-  //         //console.log("territories" + territories)
-  //       }, err => console.error(err),
-  //         // the third argument is a function which runs on completion
-  //         () => {
-  //           let array = [];
-  //           let count = 0;
-  //           let otherStatus, otherFlag = false;
-  //           for (let i in arrivalType) {
-  //             array.push({ 'item_id': arrivalType[i].to_status, 'item_text': arrivalType[i].to_status });
-  //           }
-  //           resolve(array);
-  //         }
-  //       )
-  //   }).catch((error) => {
-  //     console.log('errorin getting data :', error);
-  //     reject(error);
-  //   })
-  // }
-
-
   public drawChart(data) {
     //this.barChartData.dataTable = data;
     this.barChartData = {
@@ -229,127 +202,144 @@ export class SmartclientCaseByStatusComponent implements OnInit {
           textStyle: { color: '#444444' }
         },
         series: {
-          0: { color: '0B91E2' }
+          0: { color: '0B91E2' },
+          1: { color: '57A9EA'}
         },
         tooltip: { isHtml: false }
       }
     };
   }
-  // ng multiselect events implemented by Vishal Sehgal 12/2/2019
-  onItemSelect(item, from) {
-    if (from == 'territory') {
-      this.territoriesArr.push(item)
-    } else if (from == 'workflow') {
-      this.workFlowStatusArr.push(item);
+  
+    // ng multiselect events implemented by Vishal Sehgal 12/2/2019
+    onItemSelect(item, from) {
+      if (from == 'territory') {
+        this.territoriesArr.push(item)
+      } else if (from == 'workflow') {
+        this.workFlowStatusArr.push(item);
+      }
+      // console.log("territory" + JSON.stringify(this.territoriesArr));
+      // console.log("workflow" + JSON.stringify(this.workFlowStatusArr));
+      this.filterChartData();
     }
-    // console.log("territory" + JSON.stringify(this.territoriesArr));
-    // console.log("workflow" + JSON.stringify(this.workFlowStatusArr));
-    this.filterChartData();
-  }
-
-  onItemDeSelect(item, from) {
-    if (from == 'territory') {
-      this.territoriesArr = this.removeElementArr(this.territoriesArr, item);
-    } else if (from == 'workflow') {
-      this.workFlowStatusArr = this.removeElementArr(this.workFlowStatusArr, item);;
+  
+    onItemDeSelect(item, from) {
+      if (from == 'territory') {
+        this.territoriesArr = this.removeElementArr(this.territoriesArr, item);
+      } else if (from == 'workflow') {
+        this.workFlowStatusArr = this.removeElementArr(this.workFlowStatusArr, item);;
+      }
+      // console.log("territory" + JSON.stringify(this.territoriesArr));
+      // console.log("workflow" + JSON.stringify(this.workFlowStatusArr));
+      this.filterChartData();
     }
-    // console.log("territory" + JSON.stringify(this.territoriesArr));
-    // console.log("workflow" + JSON.stringify(this.workFlowStatusArr));
-    this.filterChartData();
-  }
+  
+    onSelectAll(item, from) {
+      if (from == 'territory') {
+        this.territoriesArr = [];
+        this.territoriesArr = item
+      } else if (from == 'workflow') {
+        this.workFlowStatusArr = [];
+        this.workFlowStatusArr = item;
+      }
+      this.filterChartData();
+      // console.log("territory" + JSON.stringify(this.territoriesArr));
+      // console.log("workflow" + JSON.stringify(this.workFlowStatusArr));
+    }
 
-  onSelectAll(item, from) {
-    if (from == 'territory') {
+   onToYearChange(item){
+      console.log("the item is:",item);
+      this.datesData = [];
+      this.datesData.push(item.firstDay);
+      this.datesData.push(item.lastDay);
+      console.log("the dates data is:"+JSON.stringify(this.datesData));
+   }
+  
+    onDeSelectAll(item, from) {
       this.territoriesArr = [];
-      this.territoriesArr = item
-    } else if (from == 'workflow') {
       this.workFlowStatusArr = [];
-      this.workFlowStatusArr = item;
+      // console.log("onDeSelectAll" + JSON.stringify(item));
+      this.filterChartData();
     }
-    this.filterChartData();
-    // console.log("territory" + JSON.stringify(this.territoriesArr));
-    // console.log("workflow" + JSON.stringify(this.workFlowStatusArr));
-  }
 
-  onDeSelectAll(item, from) {
-    this.territoriesArr = [];
-    this.workFlowStatusArr = [];
-    // console.log("onDeSelectAll" + JSON.stringify(item));
-    this.filterChartData();
-  }
-
-  /**
-   * This method filters the data according selected territories and workflowstatus
-   */
-  public filterChartData() {
-    let finalArr = [];
-    //console.log("case data" + JSON.stringify(this.caseData));
-    if (this.territoriesArr.length == 0 && this.workFlowStatusArr.length > 0) {
-      //console.log("t0 s>0");
-      for (let j in this.workFlowStatusArr) {
-        let workflowItem = this.workFlowStatusArr[j];
-        let workflowFilterarr = this.caseData.filter(item => {
-          return (item.status.toLowerCase() == workflowItem.toLowerCase() || item.status_order.toLowerCase() == workflowItem.toLowerCase());
-        });
-        for (let i = 0; i < workflowFilterarr.length; i++) {
-          finalArr.push(workflowFilterarr[i]);
-        }
-        //finalArr.push(workflowFilterarr);
-        //finalArr = workflowFilterarr;
-      }
-    } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length > 0) {
-      //console.log("t>1 s0");
-      for (let i in this.territoriesArr) {
-        let territoryItem = this.territoriesArr[i];
-        let territoryFilterarr = this.caseData.filter(item => {
-          console.log("territoryItem" + territoryItem);
-          return item.territory == territoryItem;
-        });
-        for (let i = 0; i < territoryFilterarr.length; i++) {
-          finalArr.push(territoryFilterarr[i]);
-        }
-        //finalArr.push(territoryFilterarr);
-        //finalArr = territoryFilterarr;
-      }
-    } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length == 0) {
-      console.log("t0 s0");
-      let cases = this.makeChartData(this.caseData);
-      let chartArr = this.makeChartArr(cases)
-      this.drawChart(chartArr);
-      return;
-    }
-    else {
-      //console.log("t>0 s>0");
-      for (let i in this.territoriesArr) {
-        let territoryItem = this.territoriesArr[i];
-        let territoryFilterarr = this.caseData.filter(item => {
-          return item.territory.toLowerCase() == territoryItem.toLowerCase();
-        });
-        //console.log("territoryFilterarr" + JSON.stringify(territoryFilterarr));
-        //finalArr = territoryFilterarr;
+    public filterChartData() {
+      let finalArr = [];
+      //console.log("case data" + JSON.stringify(this.caseData));
+      if (this.territoriesArr.length == 0 && this.workFlowStatusArr.length > 0) {
+        //console.log("t0 s>0");
         for (let j in this.workFlowStatusArr) {
           let workflowItem = this.workFlowStatusArr[j];
-          let workflowFilterarr = territoryFilterarr.filter(item => {
+          let workflowFilterarr = this.caseData.filter(item => {
             return (item.status.toLowerCase() == workflowItem.toLowerCase() || item.status_order.toLowerCase() == workflowItem.toLowerCase());
           });
           for (let i = 0; i < workflowFilterarr.length; i++) {
             finalArr.push(workflowFilterarr[i]);
           }
-          //console.log("workflowFilterarr" + JSON.stringify(workflowFilterarr));
+          //finalArr.push(workflowFilterarr);
           //finalArr = workflowFilterarr;
         }
-      }
-    }
-    let cases = this.makeChartData(finalArr);
-    cases = this.calculatePerc(cases);
-    let chartArr = this.makeChartArr(cases)
-    this.drawChart(chartArr);
-    // console.log("chartArr"+JSON.stringify(chartArr));
-    // console.log("final arr" + JSON.stringify(finalArr));
-    // console.log("group by arr" + JSON.stringify(cases));
-  }
+      } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length > 0) {
+        //console.log("t>1 s0");
+        for (let i in this.territoriesArr) {
+          let territoryItem = this.territoriesArr[i];
+          let territoryFilterarr = this.caseData.filter(item => {
+            console.log("territoryItem" + territoryItem);
+            return item.territory == territoryItem;
+          });
+          for (let i = 0; i < territoryFilterarr.length; i++) {
+            finalArr.push(territoryFilterarr[i]);
+          }
+          //finalArr.push(territoryFilterarr);
+          //finalArr = territoryFilterarr;
+        }
+        if(this.datesData.length>0){
+          // call API for dates 
+          console.log("in the if of dates check")
+          this.getCaseDataYearly(this.datesData).then(response=>{
 
-  /**
+          });
+        }else{
+          console.log("in the else of dates check:")
+        }
+
+
+      } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length == 0) {
+        console.log("t0 s0");
+        let cases = this.makeChartData(this.caseData);
+        let chartArr = this.makeChartArr(cases)
+        this.drawChart(chartArr);
+        return;
+      }
+      else {
+        //console.log("t>0 s>0");
+        for (let i in this.territoriesArr) {
+          let territoryItem = this.territoriesArr[i];
+          let territoryFilterarr = this.caseData.filter(item => {
+            return item.territory.toLowerCase() == territoryItem.toLowerCase();
+          });
+          //console.log("territoryFilterarr" + JSON.stringify(territoryFilterarr));
+          //finalArr = territoryFilterarr;
+          for (let j in this.workFlowStatusArr) {
+            let workflowItem = this.workFlowStatusArr[j];
+            let workflowFilterarr = territoryFilterarr.filter(item => {
+              return (item.status.toLowerCase() == workflowItem.toLowerCase() || item.status_order.toLowerCase() == workflowItem.toLowerCase());
+            });
+            for (let i = 0; i < workflowFilterarr.length; i++) {
+              finalArr.push(workflowFilterarr[i]);
+            }
+            //console.log("workflowFilterarr" + JSON.stringify(workflowFilterarr));
+            //finalArr = workflowFilterarr;
+          }
+        }
+      }
+      let cases = this.makeChartData(finalArr);
+      let chartArr = this.makeChartArr(cases)
+      this.drawChart(chartArr);
+      // console.log("chartArr"+JSON.stringify(chartArr));
+      // console.log("final arr" + JSON.stringify(finalArr));
+      // console.log("group by arr" + JSON.stringify(cases));
+    }
+
+     /**
    * Array reduce function
    * @param accumulator-array item summed value
    * @param num -current array item
@@ -385,24 +375,23 @@ export class SmartclientCaseByStatusComponent implements OnInit {
     return finalArr;
   }
 
-
-  /**
+    /**
    * Common method to create google chart array structure.
    * @param cases -Case data.
    */
   public makeChartArr(cases) {
     let array = [];
-    let text='Median Days';
-    array.push(['Status', 'No. Of Contracts', { role: "annotation" }, { role: "style" }]);
+    array.push(['Status', 'No. of Contracts', { role: "annotation" }, { role: "style" }]);
     // ARRAY OF OBJECTS
     for (let i in cases) {
       //console.log(i);
       // Create new array above and push every object in
-      array.push([cases[i].status+"  "+cases[i].status_percent, parseInt(cases[i].contractscount), "Median Days - "+parseInt(cases[i].mediandays),'0B91E2']);
+      array.push([cases[i].status,  parseInt(cases[i].contractscount),"Median Days - "+parseInt(cases[i].mediandays), '0B91E2']);
     }
     return array;
   }
 
+  
   /**
    * Use to remove array item from array
    * @param array -array of elements
@@ -414,10 +403,12 @@ export class SmartclientCaseByStatusComponent implements OnInit {
     return array;
   }
 
+
+
   ngOnInit() {
     this.barChartData = {
       chartType: 'BarChart',
-      dataTable: ['hey','hi'],
+      dataTable: ['hey ','hi'],
       options: {
         title: '',
         titleTextStyle: {
@@ -436,7 +427,9 @@ export class SmartclientCaseByStatusComponent implements OnInit {
           textStyle: { color: '#444444' }
         },
         series: {
-          0: { color: '0B91E2' }
+          0: { color: '0B91E2' },
+          1: { color: '57A9EA'}
+
         },
         tooltip: { isHtml: false }
       }
@@ -466,16 +459,19 @@ export class SmartclientCaseByStatusComponent implements OnInit {
       }, error => {
         console.log("error getWorkflowStatus " + error);
       });
-      
+       
         this.sideViewDropDowns.showArrivalType = true;
         this.sideViewDropDowns.arrivalTypeData = ['SAOF','CPQ','Q2SC','Other'];
         this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
-        this.sideViewDropDowns.compHeading=appheading.graph1;
-
       
-   
-  }
 
-}
+        // Usage
+        //this.makeDate(new Date(2018, 0, 30, 11, 30), new Date(2018, 2, 2, 23, 59, 59)); 
+
+        
+        this.sideViewDropDowns.compHeading=appheading.graph5;
+  }
+  
+ }
 
 
