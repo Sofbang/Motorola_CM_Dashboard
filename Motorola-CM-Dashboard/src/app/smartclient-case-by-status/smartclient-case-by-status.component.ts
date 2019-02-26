@@ -78,11 +78,11 @@ export class SmartclientCaseByStatusComponent implements OnInit {
             
           }
           this.Total = arr.reduce(this.sum);
-          console.log("the contractscount are as under:"+JSON.stringify(arr));
-          console.log("the total cases are :"+JSON.stringify(this.Total));
+          // console.log("the contractscount are as under:"+JSON.stringify(arr));
+          // console.log("the total cases are :"+JSON.stringify(this.Total));
           this.caseData = data;
           cases=this.calculatePerc(cases);
-          console.log("contracts cases with percentages:" + JSON.stringify(cases));
+          //console.log("contracts cases with percentages:" + JSON.stringify(cases));
           //console.log("contracts" + cases)
         }, err => console.error(err),
           // the third argument is a function which runs on completion
