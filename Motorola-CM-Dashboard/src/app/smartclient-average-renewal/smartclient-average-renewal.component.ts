@@ -468,7 +468,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
         // Usage
         //this.makeDate(new Date(2018, 0, 30, 11, 30), new Date(2018, 2, 2, 23, 59, 59)); 
 
-        
+         this.sideViewDropDowns.showYearDD=true; 
         this.sideViewDropDowns.compHeading=appheading.graph5;
   }
   

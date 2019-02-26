@@ -11,9 +11,8 @@ export class SideViewDropDowns {
     public territoryData: Array<any> = [];
     public arrivalTypeData: Array<any> = [];
     public contractTimeData: Array<any> = [];
-    public compHeading:string='';
-    public fromDate:string='';
-    public toDate:string='';
+    public compHeading: string = '';
+    public showYearDD: boolean = false;
 
 
 }

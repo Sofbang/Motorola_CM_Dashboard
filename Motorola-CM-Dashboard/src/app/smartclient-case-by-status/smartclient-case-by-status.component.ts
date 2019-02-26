@@ -468,6 +468,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
       });
       
         this.sideViewDropDowns.showArrivalType = true;
+        this.sideViewDropDowns.showYearDD=false;
         this.sideViewDropDowns.arrivalTypeData = ['SAOF','CPQ','Q2SC','Other'];
         this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
         this.sideViewDropDowns.compHeading=appheading.graph1;

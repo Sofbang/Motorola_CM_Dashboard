@@ -54,7 +54,7 @@
       (onDeSelectAll)="onDeSelectAll($event,'contractTime')">
     </ng-multiselect-dropdown>
   </div>
-  <form class="form-inline" >
+  <form class="form-inline" style="display: inline-block;" *ngIf="sideViewDDObj.showYearDD">
       <div class="form-group">
            <label style="color:black;font-family: Verdana, Geneva, Tahoma, sans-serif;text-align: left;" for="from">From:</label>
              <select class="form-control" id="from" (change)="onChangeFrom($event.target.value)">

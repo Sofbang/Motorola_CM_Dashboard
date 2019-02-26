@@ -6,13 +6,17 @@ const app = express();
 //for app logging
 const logger = require('./app_configuration/logger');
 const { Pool } = require('pg')
-const connectionString = 'postgresql://sofbang_admin:Sofbang2019@sofbanginstance.cxbsn39rr5kp.us-east-2.rds.amazonaws.com/contract_dash';
+//const connectionString = 'postgresql://sofbang_admin:Sofbang2019@sofbanginstance.cxbsn39rr5kp.us-east-2.rds.amazonaws.com/contract_dash';
+const connectionString = 'postgresql://admin_user:Motorola@2019@dss-subm-postgresql-uat2.ci9ygz3u43cw.us-east-1.rds.amazonaws.com:5432/contract_dash';
 //create postgre sql connection pool
 const pool = new Pool({
   connectionString: connectionString
 })
 //pass pool object to db_operations
 require('./app_configuration/db_operations')(pool);
+// Parsers
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }));
 //our rest services
 const lookupebs = require('./rest_services/ebs');
 const lookupsc = require('./rest_services/smartclient');
@@ -39,9 +43,7 @@ function errorHandler(err, req, res) {
   res.status(err.status || 500);
   res.send({ message: err.message })
 }
-// Parsers
-app.use(bodyParser.json({ limit: '50mb' }));
-app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }));
+
 
 // Angular DIST output folder
 app.use(express.static(path.join(__dirname, 'dist')));
