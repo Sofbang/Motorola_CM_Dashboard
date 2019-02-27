@@ -14,7 +14,7 @@
 
 <button id="openSCModal1" #openSCModal [hidden]="true" data-toggle="modal" data-target="#smartClientARModal">Open
     Modal</button>
-<div class="chart-div">
+<div class="chart-div col-md-offset-2">
   <google-chart #cchartnew [data]="barChartData" (chartSelect)='selectBar($event)'></google-chart>
 </div>
 <!-- modal -->

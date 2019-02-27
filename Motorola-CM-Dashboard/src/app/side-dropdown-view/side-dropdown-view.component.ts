@@ -9,7 +9,7 @@ import { HostListener } from "@angular/core";
   templateUrl: './side-dropdown-view.component.html',
   styleUrls: ['./side-dropdown-view.component.css']
 })
-export class SideDropdownViewComponent implements OnInit {
+export class SideDropdownViewComponent implements OnInit { 
   public sideViewDDObj = new SideViewDropDowns();
   public dropdownSettings = {};
   public selectedFrom: any;

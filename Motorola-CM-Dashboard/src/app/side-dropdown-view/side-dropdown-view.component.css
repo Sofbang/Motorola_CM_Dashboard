@@ -54,3 +54,10 @@ color: #FFFF;
   /* .col-lg-12 {
     width: 88%;
   } */
+
+  .form-control{
+    position: relative;
+    width: 100%;
+    font-size: inherit;
+    font-family: inherit;
+  }

@@ -427,7 +427,8 @@ export class SmartclientCaseByStatusComponent implements OnInit {
           bold: true,    // true or false
           italic: false
         },
-        width: 800, height: 500, legend: { position: 'bottom', textStyle: { color: '#444444' } },
+        chartArea:{left:150,top:10,width:'80%'},
+         legend: { position: 'bottom', textStyle: { color: '#444444' } },
         backgroundColor: '#FFFFFF',
         hAxis: {
           textStyle: { color: '#444444' }
