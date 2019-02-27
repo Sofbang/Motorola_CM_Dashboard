@@ -1,0 +1,136 @@
+<div class="chart-div">
+  <button id="openSCModal" #openSCModal [hidden]="true" data-toggle="modal" data-target="#smartClientModal">Open Modal</button>
+      <google-chart #cchart [data]="ebscolumnChartData" (chartSelect)='selectBar($event)'></google-chart>
+</div>
+<!-- modal -->
+<div id="smartClientModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="col-lg-6">
+          <button type="button" class="btn btn-primary btn-lg" data-dismiss="modal">Back</button>
+       
+        </div>
+        <div class="col-lg-6">
+          <span class="fontCss"><b >{{data}}</b></span>
+        </div>
+               
+      </div>
+      <div class="modal-body" style="padding:4px;">
+        <table class="table  table-hover fixedHeadTable table-striped">
+          <thead>
+            <tr>
+              <th>Customer </th>
+              <th>Status</th>
+              <th>Owner</th>
+              <th>Open Date</th>
+              <th>NSS Aging</th>
+              <th>Start Date</th>
+            </tr>
+          </thead>
+          <!-- outer for each  -->
+          <tbody class="SCModlTbody" style="height: auto !important;min-height:52vh;">
+            <tr>
+              <td>John</td>
+              <td>Doe</td>
+              <td>john@example.com</td>
+              <td>05/03/2019</td>
+              <td> </td>
+              <td>05/03/2019</td>
+            </tr>
+            <tr>
+              <td>Mary</td>
+              <td>Moe</td>
+              <td>mary@example.com</td>
+              <td>05/03/2019</td>
+              <td> </td>
+              <td>05/03/2019</td>
+            </tr>
+            <tr>
+              <td>July</td>
+              <td>Dooley</td>
+              <td>july@example.com</td>
+              <td>05/03/2019</td>
+              <td> </td>
+              <td>05/03/2019</td>
+            </tr>
+            <tr>
+              <td>July</td>
+              <td>Dooley</td>
+              <td>july@example.com</td>
+              <td>05/03/2019</td>
+              <td> </td>
+              <td>05/03/2019</td>
+            </tr>
+            <tr>
+              <td>July</td>
+              <td>Dooley</td>
+              <td>july@example.com</td>
+              <td>05/03/2019</td>
+              <td> </td>
+              <td>05/03/2019</td>
+            </tr>
+            <tr>
+              <td>July</td>
+              <td>Dooley</td>
+              <td>july@example.com</td>
+              <td>05/03/2019</td>
+              <td> </td>
+              <td>05/03/2019</td>
+            </tr>
+            <tr>
+              <td>July</td>
+              <td>Dooley</td>
+              <td>july@example.com</td>
+              <td>05/03/2019</td>
+              <td> </td>
+              <td>05/03/2019</td>
+            </tr>
+            <tr>
+              <td>July</td>
+              <td>Dooley</td>
+              <td>july@example.com</td>
+              <td>05/03/2019</td>
+              <td> </td>
+              <td>05/03/2019</td>
+            </tr>
+            <tr>
+              <td>July</td>
+              <td>Dooley</td>
+              <td>july@example.com</td>
+              <td>05/03/2019</td>
+              <td> </td>
+              <td>05/03/2019</td>
+            </tr>
+            <tr>
+              <td>July</td>
+              <td>Dooley</td>
+              <td>july@example.com</td>
+              <td>05/03/2019</td>
+              <td> </td>
+              <td>05/03/2019</td>
+            </tr>
+            <tr>
+              <td>July</td>
+              <td>Dooley</td>
+              <td>july@example.com</td>
+              <td>05/03/2019</td>
+              <td> </td>
+              <td>05/03/2019</td>
+            </tr>
+            <tr>
+              <td>July</td>
+              <td>Dooley</td>
+              <td>july@example.com</td>
+              <td>05/03/2019</td>
+              <td> </td>
+              <td>05/03/2019</td>
+            </tr>
+          </tbody>
+          <!-- outer for each  -->
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
