@@ -40,9 +40,17 @@
   <div class="dropdown">
     <label for="options">Arrival Type</label>
     <ng-multiselect-dropdown [placeholder]="'Arrival Type'" [data]="sideViewDDObj.arrivalTypeData"
-      [settings]="dropdownSettings" (onSelect)="onItemSelect($event,'arrivalType')"
+      [settings]="dropdownSettings" (onSelect)="onItemSelect($event,'arrivaltype')"
       (onSelectAll)="onSelectAll($event,'arrivalType')" (onDeSelect)="onItemDeSelect($event,'arrivalType')"
       (onDeSelectAll)="onDeSelectAll($event,'arrivalType')">
+    </ng-multiselect-dropdown>
+  </div>
+  <div class="dropdown" *ngIf="sideViewDDObj.showCaseTime">
+    <label for="options">Case Time</label>
+    <ng-multiselect-dropdown [placeholder]="'Case Time'" [data]="sideViewDDObj.caseTimeData"
+      [settings]="dropdownSettingsCaseTime" (onSelect)="onItemSelect($event,'casetime')"
+      (onSelectAll)="onSelectAll($event,'casetime')" (onDeSelect)="onItemDeSelect($event,'casetime')"
+      (onDeSelectAll)="onDeSelectAll($event,'casetime')">
     </ng-multiselect-dropdown>
   </div>
   <div class="dropdown" *ngIf="sideViewDDObj.showContractTime">
