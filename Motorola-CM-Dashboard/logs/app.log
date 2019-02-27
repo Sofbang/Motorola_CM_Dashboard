@@ -27,3 +27,15 @@ SyntaxError: Unexpected token export
     at Module.require (module.js:596:17)
     at require (internal/module.js:11:18)
     at Object.<anonymous> (D:\Projects\Github\Motorola_CM_Dashboard\Motorola-CM-Dashboard\rest_services\lookup.js:4:16)
+2019-02-27T12:17:52.330Z [Info] error: uncaughtException: listen EADDRINUSE: address already in use :::4000
+Error: listen EADDRINUSE: address already in use :::4000
+    at Server.setupListenHandle [as _listen2] (net.js:1290:14)
+    at listenInCluster (net.js:1338:12)
+    at Server.listen (net.js:1425:7)
+    at Object.<anonymous> (C:\Users\khush\OneDrive\Documents\Motorola_CM_Dashboard\Motorola-CM-Dashboard\app.js:71:8)
+    at Module._compile (internal/modules/cjs/loader.js:689:30)
+    at Object.Module._extensions..js (internal/modules/cjs/loader.js:700:10)
+    at Module.load (internal/modules/cjs/loader.js:599:32)
+    at tryModuleLoad (internal/modules/cjs/loader.js:538:12)
+    at Function.Module._load (internal/modules/cjs/loader.js:530:3)
+    at Function.Module.runMain (internal/modules/cjs/loader.js:742:12)

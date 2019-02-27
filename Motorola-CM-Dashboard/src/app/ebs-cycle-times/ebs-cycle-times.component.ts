@@ -151,7 +151,7 @@ export class EbsCycleTimesComponent implements OnInit {
           italic: false
         },
         chartArea:{left:35,top:20,width:'50%'},
-        legend: { position: 'bottom', textStyle: { color: '#444444' } },
+        legend: { position: 'right',alignment:'center', textStyle: { color: '#444444' } },
         backgroundColor: '#FFFFFF',
         hAxis: {
           textStyle: { color: '#444444' }

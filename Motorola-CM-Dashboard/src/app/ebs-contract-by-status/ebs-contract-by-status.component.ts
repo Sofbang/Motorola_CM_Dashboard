@@ -162,7 +162,9 @@ export class EbsContractByStatusComponent implements OnInit {
         },
         width: 800, height: 500, 
         chartArea:{left:180,top:20,width:'50%'},
-        legend: { position: 'bottom', textStyle: { color: '#444444' } },
+        
+        bar: {groupWidth: "75%"},
+        legend: { position: 'right',alignment:'center', textStyle: { color: '#444444' } },
         backgroundColor: '#FFFFFF',
         hAxis: {
           textStyle: { color: '#444444' }
@@ -373,7 +375,7 @@ export class EbsContractByStatusComponent implements OnInit {
           italic: false,
         },
         
-        legend: { position: 'bottom', textStyle: { color: '#444444' } },
+        legend: { position: 'right',alignment:'center', textStyle: { color: '#444444' } },
         chartArea:{left:10,top:0,width:"100%",height:"100%"},
         backgroundColor: '#FFFFFF',
         hAxis: {
