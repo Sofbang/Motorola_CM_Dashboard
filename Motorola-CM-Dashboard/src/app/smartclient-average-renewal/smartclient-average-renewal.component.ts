@@ -306,10 +306,18 @@ export class SmartclientAverageRenewalComponent implements OnInit {
         if(this.datesData.length>0){
           // call API for dates 
           console.log("in the if of dates check")
-          this.getCaseDataYearly(this.datesData).then(response=>{
-            console.log("the res of dates are :"+JSON.stringify(response));
-            // let datesar = response;
+          this.getCaseDataYearly(this.datesData).then((res:any)=>{
+            console.log("the res of dates are :"+JSON.stringify(res));
+
+           // tried out yet
+            // this.dateFilteredDataResults = res;
+            // console.log("the dates filtered data is:"+JSON.stringify(this.dateFilteredDataResults));
+            // this.makeChartArr(res);
+            // this.drawChart(res);
+            // let datesar = res;
             // this.makeChartArr(datesar);
+          }, error => {
+            console.log("error getCaseData " + error);
           });
         }
         let cases = this.makeChartData(this.caseData);
@@ -388,6 +396,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
    * @param cases -Case data.
    */
   public makeChartArr(cases) {
+    // console.log("the data is :"+JSON.stringify(cases));
     let array = [];
     array.push(['Status', 'No. of Contracts', { role: "annotation" }, { role: "style" }]);
     // ARRAY OF OBJECTS
@@ -396,7 +405,9 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       // Create new array above and push every object in
       array.push([cases[i].status,  parseInt(cases[i].contractscount),"Median Days - "+parseInt(cases[i].mediandays), '0B91E2']);
     }
+    // console.log("the array is :", array);
     return array;
+    
   }
 
   

@@ -54,6 +54,20 @@
       (onDeSelectAll)="onDeSelectAll($event,'contractTime')">
     </ng-multiselect-dropdown>
   </div>
+  <!-- <div class="dropdown" *ngIf="sideViewDDObj.showContractTime">
+    <label for="options">From
+          </label>
+    <ng-multiselect-dropdown [placeholder]="'From Date'" [data]="fianldates"
+      [settings]="dropdownSettings" (onSelect)="onChangeFrom($event.target.value)">
+    </ng-multiselect-dropdown>
+  </div>
+  <div class="dropdown" *ngIf="sideViewDDObj.showContractTime">
+    <label for="options">To
+          </label>
+    <ng-multiselect-dropdown [placeholder]="'To Date '" [data]="toYear"
+      [settings]="dropdownSettings" (onSelect)="onChangeTo($event.target.value)">
+    </ng-multiselect-dropdown>
+  </div> -->
   <form class="form-inline" style="display: inline-block;" *ngIf="sideViewDDObj.showYearDD">
       <div class="form-group">
            <label style="color:black;font-family: Verdana, Geneva, Tahoma, sans-serif;text-align: left;" for="from">From:</label>
