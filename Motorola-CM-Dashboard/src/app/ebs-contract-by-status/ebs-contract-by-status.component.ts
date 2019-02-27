@@ -372,8 +372,7 @@ export class EbsContractByStatusComponent implements OnInit {
           bold: true,
           italic: false,
         },
-        width: 800,
-        height: 500,
+        
         legend: { position: 'bottom', textStyle: { color: '#444444' } },
         chartArea:{left:10,top:0,width:"100%",height:"100%"},
         backgroundColor: '#FFFFFF',
