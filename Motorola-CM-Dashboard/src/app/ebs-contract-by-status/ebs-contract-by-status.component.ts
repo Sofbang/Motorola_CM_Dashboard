@@ -26,7 +26,7 @@ export class EbsContractByStatusComponent implements OnInit {
   // public dropdownSettings = {};
   // public sideViewDropDowns = new SideViewDropDowns();
   public territoriesArr: any = [];
-  public data:any;
+  public data: any;
   public workFlowStatusArr: any = [];
   public sideViewDropDowns = new SideViewDropDowns();
   @ViewChild('openSCModal') openScModel: ElementRef;
@@ -47,13 +47,13 @@ export class EbsContractByStatusComponent implements OnInit {
           this.onDeSelectAll(incomingData, from);
         }
       });
-      this._dataHandlerService.setDataForMainLayout(true);
+    this._dataHandlerService.setDataForMainLayout(true);
   }
 
   public selectBar(event: ChartSelectEvent) {
-    console.log("in the selectBar"+JSON.stringify(event.selectedRowValues[0]));
+    console.log("in the selectBar" + JSON.stringify(event.selectedRowValues[0]));
     this.data = event.selectedRowValues[0];
-    console.log("the data is:",this.data);
+    console.log("the data is:", this.data);
     this.openScModel.nativeElement.click();
     $('.modal .modal-dialog').css('width', $(window).width() * 0.95);//fixed
     $('.modal .modal-body').css('height', $(window).height() * 0.85);//fixed
@@ -62,7 +62,7 @@ export class EbsContractByStatusComponent implements OnInit {
     $('tbody.SCModlTbody').css('overflow-x', 'hidden');
     // $('tbody.SCModlTbody').css('display', 'block');
     $('tbody.SCModlTbody').css('width', '100%');
-     
+
   }
 
   /**
@@ -338,7 +338,7 @@ export class EbsContractByStatusComponent implements OnInit {
     for (let i in cases) {
       //console.log(i);
       // Create new array above and push every object in
-      array.push([cases[i].status, parseInt(cases[i].contractscount),"Median Days  "+parseInt(cases[i].mediandays), '0B91E2']);
+      array.push([cases[i].status, parseInt(cases[i].contractscount), "Median Days  " + parseInt(cases[i].mediandays), '0B91E2']);
     }
     // console.log("the final cases are as under:" + JSON.stringify(array));
     return array;
@@ -360,7 +360,7 @@ export class EbsContractByStatusComponent implements OnInit {
   ngOnInit() {
     this.ebscolumnChartData = {
       chartType: 'BarChart',
-      dataTable: ['hey','hi'],
+      dataTable: ['hey', 'hi'],
       options: {
         title: '',
         titleTextStyle: {
@@ -368,9 +368,12 @@ export class EbsContractByStatusComponent implements OnInit {
           fontName: 'Verdana',
           fontSize: 18,
           bold: true,
-          italic: false
+          italic: false,
         },
-        width: 800, height: 500, legend: { position: 'bottom', textStyle: { color: '#444444' } },
+        width: 800,
+        height: 500,
+        legend: { position: 'bottom', textStyle: { color: '#444444' } },
+        chartArea:{left:10,top:0,width:"100%",height:"100%"},
         backgroundColor: '#FFFFFF',
         hAxis: {
           textStyle: { color: '#444444' }
@@ -411,15 +414,9 @@ export class EbsContractByStatusComponent implements OnInit {
       }, error => {
         console.log("error getWorkflowStatus " + error);
       });
-      
-
-
-      this.sideViewDropDowns.compHeading=appheading.graph2;
-
-
+    this.sideViewDropDowns.showYearDD = false;
+    this.sideViewDropDowns.compHeading = appheading.graph2;
   }
-
-
 }
 
 

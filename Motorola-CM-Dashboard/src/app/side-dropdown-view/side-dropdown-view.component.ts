@@ -16,6 +16,7 @@ export class SideDropdownViewComponent implements OnInit {
   public fianldates = [];
   public toYear = [];
   public n: number;
+  public dropdownSettingsCaseTime={};
   screenHeight: any;
   screenWidth: any;
   constructor(private _dataHandlerService: DataHandlerService) {
@@ -191,7 +192,7 @@ export class SideDropdownViewComponent implements OnInit {
   //   })
   // }
 
-
+  
   ngOnInit() {
     //dropdown settings
     this.dropdownSettings = {
@@ -204,9 +205,15 @@ export class SideDropdownViewComponent implements OnInit {
       allowSearchFilter: true,
       dir: 'asc'
     };
+    this.dropdownSettingsCaseTime = {
+      singleSelection: true,
+      idField: 'item_id',
+      textField: 'item_text',
+      itemsShowLimit: 1,
+     dir: 'asc'
+    };
 
     this.makeDate();
-
     //$('.side-view-dropDowns').css('height', this.screenHeight);//to make side dropdown view to screen height
   }
 

@@ -32,13 +32,14 @@ export class SmartclientAverageRenewalComponent implements OnInit {
   public data: any;
   public final = [];
   public sideViewDropDowns = new SideViewDropDowns();
+  public restUrlFilterYr: string = 'sc_case_status_med_yr';
   @ViewChild('openSCModal') openScModel: ElementRef;
   @ViewChild('FromTo') FromTo;
 
   constructor(private _smartclientService: SmartclientService, private _dataHandlerService: DataHandlerService) {
     this._dataHandlerService.dataFromSideView
       .subscribe(res => {
-        console.log("suc smartclient avg-ren" + JSON.stringify(res));
+        //console.log("suc smartclient avg-ren" + JSON.stringify(res));
 
         let incomingData = res.data, event = res.event.toLowerCase(), from = res.from;
         if (event == 'onitemselect') {
@@ -59,12 +60,12 @@ export class SmartclientAverageRenewalComponent implements OnInit {
   }
 
   public selectBar(event: ChartSelectEvent) {
-    console.log("in the selectBar" + JSON.stringify(event.selectedRowValues[0]));
+    //console.log("in the selectBar" + JSON.stringify(event.selectedRowValues[0]));
     this.data = event.selectedRowValues[0];
-    console.log("the data is:", this.data);
+    //console.log("the data is:", this.data);
     this.openScModel.nativeElement.click();
     $('.modal .modal-dialog').css('width', $(window).width() * 0.95);//fixed
-    $('.modal .modal-body').css('height', $(window).height() * 0.85);//fixed
+    $('.modal .modal-body').css('height', $(window).height() * 0.79);//fixed
     $('tbody.SCModlTbody').css('max-height', $(window).height() * 0.69);
     $('tbody.SCModlTbody').css('overflow-y', 'scroll');
     $('tbody.SCModlTbody').css('overflow-x', 'hidden');
@@ -96,21 +97,37 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       reject(error);
     })
   }
-
-  public getCaseDataYearly(dates) {
+  public getCaseDataAvg() {
+    return new Promise((resolve, reject) => {
+      let cases;
+      this._smartclientService.getSCCasesAvg().
+        subscribe(data => {
+          cases = this.makeChartDataAvg(data);
+          this.caseData = data;
+          //console.log("contracts" + cases)
+        }, err => console.error(err),
+          // the third argument is a function which runs on completion
+          () => {
+            resolve(this.makeChartArr(cases));
+          }
+        )
+    }).catch((error) => {
+      console.log('errorin getting data :', error);
+      reject(error);
+    })
+  }
+  public getCaseDataYearly(dates, uri) {
     return new Promise((resolve, reject) => {
       let dates = { 'from': this.datesData[0], 'to': this.datesData[1] };
-      this._smartclientService.getScDateFilteredReults(dates)
+      this._smartclientService.getScDateFilteredReults(dates, uri)
         .subscribe(data => {
+          //console.log("data------"+JSON.stringify(data));
           // let datesdata = data;	
           resolve(data);
-
-        }, err => {
-          console.log(err);
+        }, error => {
+          console.log('error in getCaseDataYearly: ', error);
+          reject(error);
         })
-    }).catch((error) => {
-      console.log('error in getCaseDataYearly: ', error);
-      reject(error);
     })
 
   }
@@ -212,16 +229,44 @@ export class SmartclientAverageRenewalComponent implements OnInit {
     };
   }
 
+  public fromMedOrAvg = 'median';
   // ng multiselect events implemented by Vishal Sehgal 12/2/2019
   onItemSelect(item, from) {
     if (from == 'territory') {
-      this.territoriesArr.push(item)
+      this.territoriesArr.push(item);
+      this.filterChartData();
     } else if (from == 'workflow') {
       this.workFlowStatusArr.push(item);
+      this.filterChartData();
+    } else if (from == 'casetime') {
+      if (item.item_text == 'Median') {
+        this.restUrlFilterYr = 'sc_case_status_med_yr';
+        this.fromMedOrAvg = 'median';
+        //console.log("casetime selected Median" + this.restUrlFilterYr);
+        this.getCaseData()
+          .then((res: any) => {
+            this.drawChart(res);
+            // this.filterChartData();
+          }, error => {
+            console.log("error getCaseData " + error);
+          });
+      } else if (item.item_text == 'Average') {
+        this.restUrlFilterYr = 'sc_case_status_avg_yr';
+        this.fromMedOrAvg = 'average';
+        //console.log("casetime selected Averaage" + this.restUrlFilterYr);
+        this.getCaseDataAvg()
+          .then((res: any) => {
+            this.drawChart(res);
+            //this.filterChartData();
+          }, error => {
+            console.log("error getCaseDataAvg " + error);
+          });
+      }
     }
+    // this.filterChartData();
     // console.log("territory" + JSON.stringify(this.territoriesArr));
     // console.log("workflow" + JSON.stringify(this.workFlowStatusArr));
-    this.filterChartData();
+
   }
 
   onItemDeSelect(item, from) {
@@ -249,11 +294,11 @@ export class SmartclientAverageRenewalComponent implements OnInit {
   }
 
   onToYearChange(item) {
-    console.log("the item is:", item);
+    //  console.log("the item is:", item);
     this.datesData = [];
     this.datesData.push(item.firstDay);
     this.datesData.push(item.lastDay);
-    console.log("the dates data is:" + JSON.stringify(this.datesData));
+    //console.log("the dates data is:" + JSON.stringify(this.datesData));
     this.filterChartData();
   }
 
@@ -283,10 +328,10 @@ export class SmartclientAverageRenewalComponent implements OnInit {
 
       if (this.datesData.length > 0) {
         // call API for dates 
-        console.log("in the if of dates check")
-        this.getCaseDataYearly(this.datesData)
+        //console.log("in the if of dates check")
+        this.getCaseDataYearly(this.datesData, this.restUrlFilterYr)
           .then((res: any) => {
-            console.log("the res of dates are :" + JSON.stringify(res));
+            //console.log("the res of dates are :" + JSON.stringify(res));
             this.caseData = res;
             for (let j in this.workFlowStatusArr) {
               let workflowItem = this.workFlowStatusArr[j];
@@ -297,7 +342,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
                 finalArr.push(workflowFilterarr[i]);
               }
             }
-            let cases = this.makeChartData(finalArr);
+            let cases = this.fromMedOrAvg == 'median' ? this.makeChartData(finalArr) : this.makeChartDataAvg(finalArr);
             let chartArr = this.makeChartArr(cases)
             this.drawChart(chartArr);
           }, error => {
@@ -313,7 +358,8 @@ export class SmartclientAverageRenewalComponent implements OnInit {
             finalArr.push(workflowFilterarr[i]);
           }
         }
-        let cases = this.makeChartData(finalArr);
+        // let cases = this.makeChartData(finalArr);
+        let cases = this.fromMedOrAvg == 'median' ? this.makeChartData(finalArr) : this.makeChartDataAvg(finalArr);
         let chartArr = this.makeChartArr(cases)
         this.drawChart(chartArr);
         // let cases = this.makeChartData(this.caseData);
@@ -339,7 +385,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       //   console.log("in the else of dates check:")
       // }
       if (this.datesData.length > 0) {
-        this.getCaseDataYearly(this.datesData)
+        this.getCaseDataYearly(this.datesData, this.restUrlFilterYr)
           .then((res: any) => {
             //console.log("the res of dates are :" + JSON.stringify(res));
             this.caseData = res;
@@ -355,7 +401,8 @@ export class SmartclientAverageRenewalComponent implements OnInit {
               //finalArr.push(territoryFilterarr);
               //finalArr = territoryFilterarr;
             }
-            let cases = this.makeChartData(finalArr);
+            // let cases = this.makeChartData(finalArr);
+            let cases = this.fromMedOrAvg == 'median' ? this.makeChartData(finalArr) : this.makeChartDataAvg(finalArr);
             let chartArr = this.makeChartArr(cases)
             this.drawChart(chartArr);
           }, error => {
@@ -374,7 +421,8 @@ export class SmartclientAverageRenewalComponent implements OnInit {
           //finalArr.push(territoryFilterarr);
           //finalArr = territoryFilterarr;
         }
-        let cases = this.makeChartData(finalArr);
+        // let cases = this.makeChartData(finalArr);
+        let cases = this.fromMedOrAvg == 'median' ? this.makeChartData(finalArr) : this.makeChartDataAvg(finalArr);
         let chartArr = this.makeChartArr(cases)
         this.drawChart(chartArr);
       }
@@ -385,18 +433,20 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       if (this.datesData.length > 0) {
         // call API for dates 
         console.log("in the if of dates check")
-        this.getCaseDataYearly(this.datesData)
+        this.getCaseDataYearly(this.datesData, this.restUrlFilterYr)
           .then((res: any) => {
-            console.log("the res of dates are :" + JSON.stringify(res));
+            //console.log("the res of dates are :" + JSON.stringify(res));
             this.caseData = res;
-            let cases = this.makeChartData(this.caseData);
+            // let cases = this.makeChartData(this.caseData);
+            let cases = this.fromMedOrAvg == 'median' ? this.makeChartData(this.caseData) : this.makeChartDataAvg(this.caseData);
             let chartArr = this.makeChartArr(cases)
             this.drawChart(chartArr);
           }, error => {
             console.log("error getCaseData " + error);
           });
       } else {
-        let cases = this.makeChartData(this.caseData);
+        // let cases = this.makeChartData(this.caseData);
+        let cases = this.fromMedOrAvg == 'median' ? this.makeChartData(this.caseData) : this.makeChartDataAvg(this.caseData);
         let chartArr = this.makeChartArr(cases)
         this.drawChart(chartArr);
       }
@@ -424,7 +474,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       //   }
       // }
       if (this.datesData.length > 0) {
-        this.getCaseDataYearly(this.datesData)
+        this.getCaseDataYearly(this.datesData, this.restUrlFilterYr)
           .then((res: any) => {
             //console.log("the res of dates are :" + JSON.stringify(res));
             for (let i in this.territoriesArr) {
@@ -446,7 +496,8 @@ export class SmartclientAverageRenewalComponent implements OnInit {
                 //finalArr = workflowFilterarr;
               }
             }
-            let cases = this.makeChartData(finalArr);
+            // let cases = this.makeChartData(finalArr);
+            let cases = this.fromMedOrAvg == 'median' ? this.makeChartData(finalArr) : this.makeChartDataAvg(finalArr);
             let chartArr = this.makeChartArr(cases)
             this.drawChart(chartArr);
           }, error => {
@@ -472,11 +523,11 @@ export class SmartclientAverageRenewalComponent implements OnInit {
             //finalArr = workflowFilterarr;
           }
         }
-        let cases = this.makeChartData(finalArr);
+        // let cases = this.makeChartData(finalArr);
+        let cases = this.fromMedOrAvg == 'median' ? this.makeChartData(finalArr) : this.makeChartDataAvg(finalArr);
         let chartArr = this.makeChartArr(cases)
         this.drawChart(chartArr);
       }
-
 
     }
     // let cases = this.makeChartData(finalArr);
@@ -524,20 +575,54 @@ export class SmartclientAverageRenewalComponent implements OnInit {
   }
 
   /**
+     * This method make chart data by doing groupby them as we are getting whole data from service.
+     * @param data-ungrouped data it has data like open many rows of data,inprog many rows of data 
+     */
+  public makeChartDataAvg(data) {
+    let tempArr = [];
+    let finalArr = [];
+    tempArr.push(this._dataHandlerService.groupBySameKeyValues(data, 'status_order'));
+    //this.caseDataGrpBy=tempArr;//using in filter data
+    for (let k in tempArr[0]) {
+      let elmData = tempArr[0][k]
+      let averageDays = [], contractsCount = [], json = {}, statusName;
+      //console.log("--hello"+JSON.stringify(tempArr[k]));
+      for (let i = 0; i < elmData.length; i++) {
+        //console.log("--hello1"+JSON.stringify(tempArr[k][i]));
+        let elem = elmData[i];
+        averageDays.push(parseInt(elem.averagedays));
+        contractsCount.push(parseInt(elem.contractperstatus));
+        statusName = elem.status_order == 'OTHER' ? 'Other' : elmData[0].status
+      }
+      //console.log("makeChartDataAvg "+statusName+"contractsCount "+contractsCount);
+      json = { status: statusName, averagedays: averageDays.reduce(this.sum), contractscount: contractsCount.reduce(this.sum) };
+      finalArr.push(json);
+    }
+    //console.log("makeChartDataAvg" + JSON.stringify(finalArr));
+    return finalArr;
+  }
+
+  /**
  * Common method to create google chart array structure.
  * @param cases -Case data.
  */
   public makeChartArr(cases) {
-    // console.log("the data is :"+JSON.stringify(cases));
+    console.log("the data is :" + JSON.stringify(cases.length));
     let array = [];
     array.push(['Status', 'No. of Contracts', { role: "annotation" }, { role: "style" }]);
+    if (cases.length == 0) {
+      array.push([0, 0, 0, 0]);
+      return array;
+    }
+    // let array = [];
+    // array.push(['Status', 'No. of Contracts', { role: "annotation" }, { role: "style" }]);
     // ARRAY OF OBJECTS
     for (let i in cases) {
       //console.log(i);
       // Create new array above and push every object in
-      array.push([cases[i].status, parseInt(cases[i].contractscount), "Median Days - " + parseInt(cases[i].mediandays), '0B91E2']);
+      array.push([cases[i].status, parseInt(cases[i].contractscount), this.fromMedOrAvg == 'median' ? "Median Days - " + parseInt(cases[i].mediandays) : "Average Days - " + parseInt(cases[i].averagedays), '0B91E2']);
     }
-    // console.log("the array is :", array);
+    //console.log("the array is :", array);
     return array;
 
   }
@@ -611,15 +696,15 @@ export class SmartclientAverageRenewalComponent implements OnInit {
         console.log("error getWorkflowStatus " + error);
       });
 
+    let caseTimeData = [{ 'item_id': 1, 'item_text': 'Median' },
+    { 'item_id': 2, 'item_text': 'Average' }]
+
     this.sideViewDropDowns.showArrivalType = true;
     this.sideViewDropDowns.arrivalTypeData = ['SAOF', 'CPQ', 'Q2SC', 'Other'];
     this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
-
-
-    // Usage
-    //this.makeDate(new Date(2018, 0, 30, 11, 30), new Date(2018, 2, 2, 23, 59, 59)); 
-
     this.sideViewDropDowns.showYearDD = true;
+    this.sideViewDropDowns.showCaseTime = true;
+    this.sideViewDropDowns.caseTimeData = caseTimeData;
     this.sideViewDropDowns.compHeading = appheading.graph5;
   }
 
