@@ -350,7 +350,7 @@ export class EbsCycleTimesComponent implements OnInit {
   ngOnInit() {
     this.ebscolumnChartData = {
       chartType: 'ColumnChart',
-      dataTable: [['Month','Number Of Cases','Median Days'],['Jan',32,32],['Feb',55,55],['Mar',45,45],['Apr',38,38],['May',30,30],['Jun',56,56],['Total',42.6,42.6]],
+      dataTable: [['Month','Median Days'],['Jan',32],['Feb',55],['Mar',45],['Apr',38],['May',30],['Jun',56],['Total',42.6]],
       options: {
         title: '',
         titleTextStyle: {
