@@ -150,8 +150,7 @@ export class EbsCycleTimesComponent implements OnInit {
           bold: true,
           italic: false
         },
-        width: 800, height: 500,        
-        chartArea:{left:180,top:20,width:'50%'},
+        chartArea:{left:35,top:20,width:'50%'},
         legend: { position: 'bottom', textStyle: { color: '#444444' } },
         backgroundColor: '#FFFFFF',
         hAxis: {
@@ -362,7 +361,7 @@ export class EbsCycleTimesComponent implements OnInit {
           bold: true,
           italic: false
         },
-        chartArea:{left:180,top:20,width:'80%'},
+        chartArea:{left:35,top:20,width:'80%'},
         legend: { position: 'bottom', textStyle: { color: '#444444' } },
         backgroundColor: '#FFFFFF',
         hAxis: {
