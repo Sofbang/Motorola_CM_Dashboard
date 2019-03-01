@@ -5,7 +5,7 @@ import { EbsCycleTimesRoutingModule } from './ebs-cycle-times-routing';
 import { Ng2GoogleChartsModule } from 'ng2-google-charts';
 import { EbsService } from '../services/lookup/ebs.service';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
-
+import {ExcelServiceService} from '../services/convert_to_excel/excel-service.service'
 
 @NgModule({
   declarations: [EbsCycleTimesComponent],
@@ -16,6 +16,6 @@ import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
     NgMultiSelectDropDownModule.forRoot()
 
   ],
-  providers:[EbsService]
+  providers:[EbsService,ExcelServiceService]
 })
 export class EbsCycleTimesModule { }

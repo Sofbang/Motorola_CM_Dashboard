@@ -407,9 +407,6 @@ export class EbsCycleTimesComponent implements OnInit {
       this.sideViewDropDowns.showArrivalType=true;
       this.sideViewDropDowns.showContractTime=true;
       this.sideViewDropDowns.showYearDD=true;
-      
-
-
       this.sideViewDropDowns.compHeading=appheading.garph4;
   }
 
