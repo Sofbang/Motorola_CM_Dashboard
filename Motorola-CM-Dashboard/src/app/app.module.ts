@@ -4,6 +4,8 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { MainLayoutModule } from './main-layout/main-layout.module';
 import { HttpModule } from '@angular/http';
+// import { ScNewCasesComponent } from './sc-new-cases/sc-new-cases.component';
+// import { EbsCycleTimesComponent } from './ebs-cycle-times/ebs-cycle-times.component';
 //import { AppSidebarComponent } from './app-sidebar/app-sidebar.component';//imp to import to run services
 // import { DashboardComponent } from './dashboard/dashboard.component';
 //import { MainLayoutComponent } from './main-layout/main-layout.component';
@@ -12,7 +14,9 @@ import { HttpModule } from '@angular/http';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    // ScNewCasesComponent,
+    // EbsCycleTimesComponent
     //AppSidebarComponent
   ],
   imports: [
