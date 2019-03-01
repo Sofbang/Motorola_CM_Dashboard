@@ -10,10 +10,13 @@
       <div class="modal-header">
         <div class="col-lg-6">
           <button type="button" class="btn btn-primary btn-lg" data-dismiss="modal">Back</button>
-       
+          <span class="fontCss pull-right"><b >Status - {{data}} </b></span>
+
         </div>
         <div class="col-lg-6">
-          <span class="fontCss"><b >{{data}}</b></span>
+          <span class="fontCss pull-left"><b>Contracts Number - {{newModelCounts}} </b></span>
+          <button class="pull-right btn btn-sucess btn-sm" title="Export To Excel" type="button" (click)="exportToExcel()"><i class="fas fa-file-export "></i></button>
+
         </div>
                
       </div>
@@ -26,7 +29,7 @@
               <th>Owner</th>
               <th>Open Date</th>
               <th>NSS Aging</th>
-              <th>Start Date</th>
+              <th>Contract start date </th>
             </tr>
           </thead>
           <!-- outer for each  -->

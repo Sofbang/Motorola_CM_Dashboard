@@ -20,6 +20,7 @@ import { appheading } from '../enums/enum';
 })
 export class SmartclientAverageRenewalComponent implements OnInit {
   public barChartData: any;
+  public Total:any;
   public territoriesArr: any = [];
   public workFlowStatusArr: any = [];
   public caseData = [];
@@ -31,6 +32,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
   public selectedFrom = {};
   public data: any;
   public final = [];
+  public newModelCounts:any;
   public sideViewDropDowns = new SideViewDropDowns();
   public restUrlFilterYr: string = 'sc_case_status_med_yr';
   @ViewChild('openSCModal') openScModel: ElementRef;
@@ -60,12 +62,13 @@ export class SmartclientAverageRenewalComponent implements OnInit {
   }
 
   public selectBar(event: ChartSelectEvent) {
-    //console.log("in the selectBar" + JSON.stringify(event.selectedRowValues[0]));
+    console.log("in the selectBar" + JSON.stringify(event));
+    this.newModelCounts = event.selectedRowValues[2];
     this.data = event.selectedRowValues[0];
-    //console.log("the data is:", this.data);
+    console.log("the data is:", this.data);
     this.openScModel.nativeElement.click();
     $('.modal .modal-dialog').css('width', $(window).width() * 0.95);//fixed
-    $('.modal .modal-body').css('height', $(window).height() * 0.79);//fixed
+    $('.modal .modal-body').css('height', $(window).height() * 0.77);//fixed
     $('tbody.SCModlTbody').css('max-height', $(window).height() * 0.69);
     $('tbody.SCModlTbody').css('overflow-y', 'scroll');
     $('tbody.SCModlTbody').css('overflow-x', 'hidden');
@@ -73,6 +76,28 @@ export class SmartclientAverageRenewalComponent implements OnInit {
     $('tbody.SCModlTbody').css('width', '100%');
 
   }
+
+  public calculatePerc(cases){
+    for(let i in cases){
+
+      console.log("the cases are as under:"+JSON.stringify(cases));
+      let calcPer=((cases[i].contractscount/this.Total)*100).toFixed(2)
+      cases[i]['status_percent']=calcPer+'%';
+      //console.log("the values are :"+JSON.stringify(value));
+
+    }
+    //console.log("after the for loop in the calcPerc method:"+JSON.stringify(value));
+    return cases;
+  }
+
+  public SUM(accumulator, num) {
+    return accumulator + num;
+  }
+
+ public exportToExcel(){
+   console.log("in the export to excel function");
+ }
+
 
 
   /**
@@ -84,8 +109,15 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       this._smartclientService.getSCCases().
         subscribe(data => {
           cases = this.makeChartData(data);
+          console.log("contracts" + JSON.stringify(cases));
+          let arr = [];
+          for(let i in cases){
+            arr.push(cases[i].contractscount)
+          }
+          this.Total = arr.reduce(this.SUM);
+          console.log("the total contracts are as under:"+JSON.stringify(this.Total)); 
           this.caseData = data;
-          //console.log("contracts" + cases)
+          cases=this.calculatePerc(cases);
         }, err => console.error(err),
           // the third argument is a function which runs on completion
           () => {
@@ -103,6 +135,14 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       this._smartclientService.getSCCasesAvg().
         subscribe(data => {
           cases = this.makeChartDataAvg(data);
+          let arr = [];
+          for(let i in cases){
+            arr.push(cases[i].contractscount)
+          }
+          this.Total = arr.reduce(this.SUM);
+          console.log("the total contracts are as under:"+JSON.stringify(this.Total)); 
+          this.caseData = data;
+          cases=this.calculatePerc(cases);
           this.caseData = data;
           //console.log("contracts" + cases)
         }, err => console.error(err),
@@ -213,8 +253,8 @@ export class SmartclientAverageRenewalComponent implements OnInit {
           italic: false
         },
         width: 800, height: 500,        
-        chartArea:{left:180,top:20, width:'50%'},
-        legend: { position: 'right',alignment:'center', textStyle: { color: '#444444' } },
+        chartArea:{left:180,top:20,width:'50%'},
+        legend: { position: 'bottom', textStyle: { color: '#444444' } },
         backgroundColor: '#FFFFFF',
         hAxis: {
           textStyle: { color: '#444444' }
@@ -258,6 +298,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
         //console.log("casetime selected Averaage" + this.restUrlFilterYr);
         this.getCaseDataAvg()
           .then((res: any) => {
+
             this.drawChart(res);
             //this.filterChartData();
           }, error => {
@@ -345,7 +386,8 @@ export class SmartclientAverageRenewalComponent implements OnInit {
               }
             }
             let cases = this.fromMedOrAvg == 'median' ? this.makeChartData(finalArr) : this.makeChartDataAvg(finalArr);
-            let chartArr = this.makeChartArr(cases)
+            cases = this.calculatePerc(cases);
+            let chartArr = this.makeChartArr(cases);
             this.drawChart(chartArr);
           }, error => {
             console.log("error getCaseData " + error);
@@ -361,7 +403,12 @@ export class SmartclientAverageRenewalComponent implements OnInit {
           }
         }
         // let cases = this.makeChartData(finalArr);
+       // console.log("the final arr is:"+JSON.stringify(finalArr));
+        ////finalArr = this.calculatePerc(finalArr);
+        console.log("the data is :"+JSON.stringify(finalArr));
         let cases = this.fromMedOrAvg == 'median' ? this.makeChartData(finalArr) : this.makeChartDataAvg(finalArr);
+        cases = this.calculatePerc(cases);
+        console.log("the cases are :"+JSON.stringify(cases));
         let chartArr = this.makeChartArr(cases)
         this.drawChart(chartArr);
         // let cases = this.makeChartData(this.caseData);
@@ -405,6 +452,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
             }
             // let cases = this.makeChartData(finalArr);
             let cases = this.fromMedOrAvg == 'median' ? this.makeChartData(finalArr) : this.makeChartDataAvg(finalArr);
+            cases = this.calculatePerc(cases);
             let chartArr = this.makeChartArr(cases)
             this.drawChart(chartArr);
           }, error => {
@@ -425,6 +473,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
         }
         // let cases = this.makeChartData(finalArr);
         let cases = this.fromMedOrAvg == 'median' ? this.makeChartData(finalArr) : this.makeChartDataAvg(finalArr);
+        cases = this.calculatePerc(cases);
         let chartArr = this.makeChartArr(cases)
         this.drawChart(chartArr);
       }
@@ -441,6 +490,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
             this.caseData = res;
             // let cases = this.makeChartData(this.caseData);
             let cases = this.fromMedOrAvg == 'median' ? this.makeChartData(this.caseData) : this.makeChartDataAvg(this.caseData);
+            cases = this.calculatePerc(cases);
             let chartArr = this.makeChartArr(cases)
             this.drawChart(chartArr);
           }, error => {
@@ -449,6 +499,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       } else {
         // let cases = this.makeChartData(this.caseData);
         let cases = this.fromMedOrAvg == 'median' ? this.makeChartData(this.caseData) : this.makeChartDataAvg(this.caseData);
+        cases = this.calculatePerc(cases);
         let chartArr = this.makeChartArr(cases)
         this.drawChart(chartArr);
       }
@@ -500,6 +551,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
             }
             // let cases = this.makeChartData(finalArr);
             let cases = this.fromMedOrAvg == 'median' ? this.makeChartData(finalArr) : this.makeChartDataAvg(finalArr);
+            cases = this.calculatePerc(cases);
             let chartArr = this.makeChartArr(cases)
             this.drawChart(chartArr);
           }, error => {
@@ -527,6 +579,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
         }
         // let cases = this.makeChartData(finalArr);
         let cases = this.fromMedOrAvg == 'median' ? this.makeChartData(finalArr) : this.makeChartDataAvg(finalArr);
+        cases = this.calculatePerc(cases);
         let chartArr = this.makeChartArr(cases)
         this.drawChart(chartArr);
       }
@@ -611,7 +664,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
   public makeChartArr(cases) {
     console.log("the data is :" + JSON.stringify(cases.length));
     let array = [];
-    array.push(['Status', 'No. of Contracts', { role: "annotation" }, { role: "style" }]);
+    array.push(['Status', this.fromMedOrAvg == 'median'? 'No. of Median Days':'No. Of Average Days', { role: "annotation" }, { role: "style" }]);
     if (cases.length == 0) {
       array.push([0, 0, 0, 0]);
       return array;
@@ -622,7 +675,9 @@ export class SmartclientAverageRenewalComponent implements OnInit {
     for (let i in cases) {
       //console.log(i);
       // Create new array above and push every object in
-      array.push([cases[i].status, parseInt(cases[i].contractscount), this.fromMedOrAvg == 'median' ? "Median Days - " + parseInt(cases[i].mediandays) : "Average Days - " + parseInt(cases[i].averagedays), '0B91E2']);
+      //array.push([cases[i].status+"  "+cases[i].status_percent,  this.fromMedOrAvg == 'median' ? "Median Days - " + parseInt(cases[i].mediandays) : "Average Days - " + parseInt(cases[i].averagedays),parseInt(cases[i].contractscount), '0B91E2']);
+      array.push([cases[i].status+"  "+cases[i].status_percent,  this.fromMedOrAvg == 'median' ? parseInt(cases[i].mediandays) :parseInt(cases[i].averagedays),parseInt(cases[i].contractscount), '0B91E2']);
+
     }
     //console.log("the array is :", array);
     return array;

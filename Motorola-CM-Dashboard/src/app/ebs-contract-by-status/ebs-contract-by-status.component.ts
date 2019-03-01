@@ -27,7 +27,10 @@ export class EbsContractByStatusComponent implements OnInit {
   // public sideViewDropDowns = new SideViewDropDowns();
   public territoriesArr: any = [];
   public data: any;
+  public newModelCounts:any;
   public workFlowStatusArr: any = [];
+  public Total:any;
+
   public sideViewDropDowns = new SideViewDropDowns();
   @ViewChild('openSCModal') openScModel: ElementRef;
 
@@ -50,19 +53,41 @@ export class EbsContractByStatusComponent implements OnInit {
     this._dataHandlerService.setDataForMainLayout(true);
   }
 
+  public exportToExcel(){
+    console.log("in the export to excel function");
+  }
+  
   public selectBar(event: ChartSelectEvent) {
     console.log("in the selectBar" + JSON.stringify(event.selectedRowValues[0]));
+    this.newModelCounts = event.selectedRowValues[1]
     this.data = event.selectedRowValues[0];
     console.log("the data is:", this.data);
     this.openScModel.nativeElement.click();
     $('.modal .modal-dialog').css('width', $(window).width() * 0.95);//fixed
-    $('.modal .modal-body').css('height', $(window).height() * 0.85);//fixed
+    $('.modal .modal-body').css('height', $(window).height() * 0.77);//fixed
     $('tbody.SCModlTbody').css('max-height', $(window).height() * 0.69);
     $('tbody.SCModlTbody').css('overflow-y', 'scroll');
     $('tbody.SCModlTbody').css('overflow-x', 'hidden');
     // $('tbody.SCModlTbody').css('display', 'block');
     $('tbody.SCModlTbody').css('width', '100%');
 
+  }
+
+  public calculatePerc(cases){
+    for(let i in cases){
+
+      console.log("the cases are as under:"+JSON.stringify(cases));
+      let calcPer=((cases[i].contractscount/this.Total)*100).toFixed(2)
+      cases[i]['status_percent']=calcPer+'%';
+      //console.log("the values are :"+JSON.stringify(value));
+
+    }
+    //console.log("after the for loop in the calcPerc method:"+JSON.stringify(value));
+    return cases;
+  }
+
+  public SUM(accumulator, num) {
+    return accumulator + num;
   }
 
   /**
@@ -75,7 +100,17 @@ export class EbsContractByStatusComponent implements OnInit {
       this._ebsService.getEBSContractState().subscribe(data => {
         this.contractsData = data;
         contractData = this.makeChartData(data);
-        //console.log("contracts" + this.contracts)
+        console.log("contracts" + JSON.stringify(contractData));
+        let arr = [];
+        for(let i in contractData){
+
+          console.log("in the for to calculate total:"+i)
+          arr.push(contractData[i].contractscount)
+
+        }
+        this.Total = arr.reduce(this.SUM);
+        contractData=this.calculatePerc(contractData);
+        console.log("the total is :"+JSON.stringify(this.Total));
       }, err => console.error(err),
         // the third argument is a function which runs on completion
         () => {
@@ -162,9 +197,7 @@ export class EbsContractByStatusComponent implements OnInit {
         },
         width: 800, height: 500, 
         chartArea:{left:180,top:20,width:'50%'},
-        
-        bar: {groupWidth: "75%"},
-        legend: { position: 'right',alignment:'center', textStyle: { color: '#444444' } },
+        legend: { position: 'bottom', textStyle: { color: '#444444' } },
         backgroundColor: '#FFFFFF',
         hAxis: {
           textStyle: { color: '#444444' }
@@ -258,7 +291,11 @@ export class EbsContractByStatusComponent implements OnInit {
       }
     } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length == 0) {
       //console.log("t0 s0");
+      // let casesnew = this.makeChartData(this.contractsData);
+      // console.log("the cases are "+JSON.stringify(casesnew));
+      // this.calculatePerc(casesnew);
       let cases = this.makeChartData(this.contractsData);
+      this.calculatePerc(cases);
       let chartArr = this.makeChartArr(cases)
       this.drawchart(chartArr);
       return;
@@ -286,7 +323,8 @@ export class EbsContractByStatusComponent implements OnInit {
       }
     }
     let cases = this.makeChartData(finalArr);
-    let chartArr = this.makeChartArr(cases)
+    cases = this.calculatePerc(cases);
+    let chartArr = this.makeChartArr(cases);
     this.drawchart(chartArr);
     // console.log("chartArr" + JSON.stringify(chartArr));
     // console.log("final arr" + JSON.stringify(finalArr));
@@ -342,7 +380,7 @@ export class EbsContractByStatusComponent implements OnInit {
     for (let i in cases) {
       //console.log(i);
       // Create new array above and push every object in
-      array.push([cases[i].status, parseInt(cases[i].contractscount), "Median Days  " + parseInt(cases[i].mediandays), '0B91E2']);
+      array.push([cases[i].status+"  "+cases[i].status_percent, parseInt(cases[i].contractscount), "Median Days  " + parseInt(cases[i].mediandays), '0B91E2']);
     }
     // console.log("the final cases are as under:" + JSON.stringify(array));
     return array;
@@ -375,7 +413,7 @@ export class EbsContractByStatusComponent implements OnInit {
           italic: false,
         },
         
-        legend: { position: 'right',alignment:'center', textStyle: { color: '#444444' } },
+        legend: { position: 'bottom', textStyle: { color: '#444444' } },
         chartArea:{left:10,top:0,width:"100%",height:"100%"},
         backgroundColor: '#FFFFFF',
         hAxis: {

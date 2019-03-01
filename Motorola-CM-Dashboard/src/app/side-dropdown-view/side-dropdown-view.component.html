@@ -49,8 +49,7 @@
       <label for="options">Case Time</label>
       <ng-multiselect-dropdown [placeholder]="'Case Time'" [data]="sideViewDDObj.caseTimeData"
         [settings]="dropdownSettingsCaseTime" (onSelect)="onItemSelect($event,'casetime')"
-        (onSelectAll)="onSelectAll($event,'casetime')" (onDeSelect)="onItemDeSelect($event,'casetime')"
-        (onDeSelectAll)="onDeSelectAll($event,'casetime')">
+        [(ngModel)]='selectedItemsCaseTime'>
       </ng-multiselect-dropdown>
     </div>
   <div class="dropdown" *ngIf="sideViewDDObj.showContractTime">
@@ -77,20 +76,20 @@
     </ng-multiselect-dropdown>
   </div> -->
 
-  <div class="dropdown" *ngIf="sideViewDDObj.showYearDD">
+  <div class="dropdown hello-me" *ngIf="sideViewDDObj.showYearDD">
       <label for="options" id="fromLabel">From
             </label>
             <select class="form-control" id="from" (change)="onChangeFrom($event.target.value)">
-                <option >Select </option>
+                <option >Select !</option>
                 <option *ngFor="let datesFormed of fianldates" >{{datesFormed}}</option>
  
                 </select>
     </div>
-    <div class="dropdown" *ngIf="sideViewDDObj.showYearDD">
+    <div class="dropdown hello-men" *ngIf="sideViewDDObj.showYearDD">
         <label for="options" id="toLabel">To
               </label>
               <select class="form-control" id="to" (change)="onChangeTo($event.target.value)">
-                  <option >Select </option>
+                  <option >Select !</option>
                  <option *ngFor="let dates of toYear" >{{dates}}</option>
                </select>
       </div>

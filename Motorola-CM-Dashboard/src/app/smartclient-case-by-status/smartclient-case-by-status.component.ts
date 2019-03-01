@@ -22,6 +22,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
   public workFlowStatusArr: any = [];
   public caseData = [];
   public Total:any;
+  public newModelCounts:any;
 
   public data:any;
   public sideViewDropDowns = new SideViewDropDowns();
@@ -45,14 +46,20 @@ export class SmartclientCaseByStatusComponent implements OnInit {
       this._dataHandlerService.setDataForMainLayout(true);
   }
 
+  public exportToExcel(){
+    console.log("in the export to excel function");
+  }
+
+  
 
   public selectBar(event: ChartSelectEvent) {
-    console.log("in the selectBar"+JSON.stringify(event.selectedRowValues[0]));
-    this.data = event.selectedRowValues[0];
-    console.log("the data is:",this.data);
+    //console.log("in the selectBar"+JSON.stringify(e));
+    this.newModelCounts = event.selectedRowValues[1];
+    this.data = event.selectedRowValues[0]; 
+    //console.log("the data is:",this.data);
     this.openScModel.nativeElement.click();
     $('.modal .modal-dialog').css('width', $(window).width() * 0.95);//fixed
-    $('.modal .modal-body').css('height', $(window).height() * 0.85);//fixed
+    $('.modal .modal-body').css('height', $(window).height() * 0.77);//fixed
     $('tbody.SCModlTbody').css('max-height', $(window).height() * 0.69);
     $('tbody.SCModlTbody').css('overflow-y', 'scroll');
     $('tbody.SCModlTbody').css('overflow-x', 'hidden');
@@ -221,8 +228,8 @@ export class SmartclientCaseByStatusComponent implements OnInit {
           italic: false
         },
         width: 1200, height: 500,
-        chartArea:{left:250,top:20,width:'50%'},
-        legend: { position: 'right',alignment:'center', textStyle: { color: '#444444' } },
+        chartArea:{left:200,top:20,width:'50%'},
+        legend: { position: 'bottom',alignment:'center', textStyle: { color: '#444444' } },
         backgroundColor: '#FFFFFF',
         hAxis: {
           textStyle: { color: '#444444' }
@@ -395,7 +402,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
   public makeChartArr(cases) {
     let array = [];
     let text='Median Days';
-    array.push(['Status', 'No. Of Contracts', { role: "annotation" }, { role: "style" }]);
+    array.push(['Status', 'No. Of Cases', { role: "annotation" }, { role: "style" }]);
     // ARRAY OF OBJECTS
     for (let i in cases) {
       //console.log(i);
@@ -429,8 +436,9 @@ export class SmartclientCaseByStatusComponent implements OnInit {
           bold: true,    // true or false
           italic: false
         },
-        chartArea:{left:150,top:10,width:'80%'},
-         legend: { position: 'bottom', textStyle: { color: '#444444' } },
+        width: 1200, height: 500,
+        chartArea:{left:200,top:20,width:'50%'},
+        legend: { position: 'bottom',alignment:'center', textStyle: { color: '#444444' } },
         backgroundColor: '#FFFFFF',
         hAxis: {
           textStyle: { color: '#444444' }

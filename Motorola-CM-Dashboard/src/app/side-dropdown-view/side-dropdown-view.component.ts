@@ -15,6 +15,9 @@ export class SideDropdownViewComponent implements OnInit {
   public selectedFrom: any;
   public fianldates = [];
   public toYear = [];
+  public selectedItemsCaseTime = [
+    {'item_id':1,'item_text':'Median'},
+  ];
   public n: number;
   public dropdownSettingsCaseTime={};
   screenHeight: any;

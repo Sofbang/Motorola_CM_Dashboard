@@ -7,7 +7,7 @@ import { ViewChild, ElementRef } from '@angular/core';
 import * as $ from 'jquery';
 import { ChartSelectEvent } from 'ng2-google-charts';
 import { appheading } from '../enums/enum';
-
+import { ExcelServiceService } from '../services/convert_to_excel/excel-service.service';
 
 @Component({
   selector: 'app-ebs-cycle-times',
@@ -20,11 +20,12 @@ export class EbsCycleTimesComponent implements OnInit {
   public territories: any;
   public territoriesArr: any = [];
   public data:any;
+  public newModelCounts:any;
   public workFlowStatusArr: any = [];
   public sideViewDropDowns = new SideViewDropDowns();
   @ViewChild('openSCModal') openScModel: ElementRef;
 
-  constructor(private _ebsService: EbsService, private _dataHandlerService: DataHandlerService) {
+  constructor(private _ebsService: EbsService, private _dataHandlerService: DataHandlerService, private _excelService:ExcelServiceService) {
     this._dataHandlerService.dataFromSideView
       .subscribe(res => {
         //console.log("sub ebs" + JSON.stringify(res));
@@ -45,11 +46,12 @@ export class EbsCycleTimesComponent implements OnInit {
 
    public selectBar(event: ChartSelectEvent) {
     console.log("in the selectBar"+JSON.stringify(event.selectedRowValues[0]));
+    this.newModelCounts = event.selectedRowValues[1]
     this.data = event.selectedRowValues[0];
     console.log("the data is:",this.data);
     this.openScModel.nativeElement.click();
     $('.modal .modal-dialog').css('width', $(window).width() * 0.95);//fixed
-    $('.modal .modal-body').css('height', $(window).height() * 0.85);//fixed
+    $('.modal .modal-body').css('height', $(window).height() * 0.77);//fixed
     $('tbody.SCModlTbody').css('max-height', $(window).height() * 0.69);
     $('tbody.SCModlTbody').css('overflow-y', 'scroll');
     $('tbody.SCModlTbody').css('overflow-x', 'hidden');
@@ -57,6 +59,42 @@ export class EbsCycleTimesComponent implements OnInit {
     $('tbody.SCModlTbody').css('width', '100%');
      
   }
+
+  public exportToExcel(){
+    let data: any = [{
+
+      eid: 'e101',
+
+      ename: 'ravi',
+
+      esal: 1000
+
+    },
+
+    {
+
+      eid: 'e102',
+
+      ename: 'ram',
+
+      esal: 2000
+
+    },
+
+    {
+
+      eid: 'e103',
+
+      ename: 'rajesh',
+
+      esal: 3000
+
+    }];
+
+    this._excelService.exportAsExcelFile(data, 'sample_excel');
+
+  }
+
 
 
   public getContractData() {
@@ -150,8 +188,9 @@ export class EbsCycleTimesComponent implements OnInit {
           bold: true,
           italic: false
         },
-        chartArea:{left:35,top:20,width:'50%'},
-        legend: { position: 'right',alignment:'center', textStyle: { color: '#444444' } },
+        width: 1150, height: 500,
+        chartArea:{left:150,top:20,width:'50%'},
+        legend: { position: 'bottom',alignment:'center', textStyle: { color: '#444444' } },
         backgroundColor: '#FFFFFF',
         hAxis: {
           textStyle: { color: '#444444' }
@@ -348,6 +387,7 @@ export class EbsCycleTimesComponent implements OnInit {
 
     
 
+
   ngOnInit() {
     this.ebscolumnChartData = {
       chartType: 'ColumnChart',
@@ -361,8 +401,9 @@ export class EbsCycleTimesComponent implements OnInit {
           bold: true,
           italic: false
         },
-        chartArea:{left:35,top:20,width:'80%'},
-        legend: { position: 'bottom', textStyle: { color: '#444444' } },
+        width: 1150, height: 500,
+        chartArea:{left:150,top:20,width:'50%'},
+        legend: { position: 'bottom',alignment:'center', textStyle: { color: '#444444' } },
         backgroundColor: '#FFFFFF',
         hAxis: {
           textStyle: { color: '#444444' }
@@ -407,6 +448,9 @@ export class EbsCycleTimesComponent implements OnInit {
       this.sideViewDropDowns.showArrivalType=true;
       this.sideViewDropDowns.showContractTime=true;
       this.sideViewDropDowns.showYearDD=true;
+      
+
+
       this.sideViewDropDowns.compHeading=appheading.garph4;
   }
 
