@@ -364,11 +364,19 @@ export class EbsCycleTimesComponent implements OnInit {
       //console.log("the make chart data is :" + JSON.stringify(cases));
       let array = [];
       array.push(['Status', 'No. of Cases', { role: "annotation" }, { role: "style" }]);
+      let barColor=null;
+
       // ARRAY OF OBJECTS
       for (let i in cases) {
+        let index=parseInt(i);
+      if(index % 2 == 0){
+        barColor='#4A90E2';
+      }else{
+        barColor='#93C0F6';
+      }
         //console.log(i);
         // Create new array above and push every object in
-        array.push([cases[i].status,parseInt(cases[i].contractscount),parseInt(cases[i].mediandays), '0B91E2']);
+        array.push([cases[i].status,parseInt(cases[i].contractscount),parseInt(cases[i].mediandays), barColor]);
       }
       // console.log("the final cases are as under:" + JSON.stringify(array));
       return array;

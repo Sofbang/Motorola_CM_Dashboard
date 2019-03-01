@@ -92,7 +92,8 @@ export class ScNewCasesComponent implements OnInit {
           textStyle: { color: '#444444' }
         },
         series: {
-          0: { color: '0B91E2' }
+          0: { color: '0B91E2' },
+          1: { color: '#FFFFFF' }
         },
         tooltip: { isHtml: false }
       }

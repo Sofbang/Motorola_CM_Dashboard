@@ -672,11 +672,19 @@ export class SmartclientAverageRenewalComponent implements OnInit {
     // let array = [];
     // array.push(['Status', 'No. of Contracts', { role: "annotation" }, { role: "style" }]);
     // ARRAY OF OBJECTS
+    let barColor=null;
+
     for (let i in cases) {
+      let index=parseInt(i);
+      if(index % 2 == 0){
+        barColor='#4A90E2';
+      }else{
+        barColor='#93C0F6';
+      }
       //console.log(i);
       // Create new array above and push every object in
       //array.push([cases[i].status+"  "+cases[i].status_percent,  this.fromMedOrAvg == 'median' ? "Median Days - " + parseInt(cases[i].mediandays) : "Average Days - " + parseInt(cases[i].averagedays),parseInt(cases[i].contractscount), '0B91E2']);
-      array.push([cases[i].status+"  "+cases[i].status_percent,  this.fromMedOrAvg == 'median' ? parseInt(cases[i].mediandays) :parseInt(cases[i].averagedays),parseInt(cases[i].contractscount), '0B91E2']);
+      array.push([cases[i].status+"  "+cases[i].status_percent,  this.fromMedOrAvg == 'median' ? parseInt(cases[i].mediandays) :parseInt(cases[i].averagedays),parseInt(cases[i].contractscount), barColor]);
 
     }
     //console.log("the array is :", array);

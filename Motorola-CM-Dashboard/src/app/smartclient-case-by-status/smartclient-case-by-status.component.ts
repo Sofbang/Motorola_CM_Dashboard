@@ -404,10 +404,18 @@ export class SmartclientCaseByStatusComponent implements OnInit {
     let text='Median Days';
     array.push(['Status', 'No. Of Cases', { role: "annotation" }, { role: "style" }]);
     // ARRAY OF OBJECTS
+    let barColor=null;
+
     for (let i in cases) {
+      let index=parseInt(i);
+      if(index % 2 == 0){
+        barColor='#4A90E2';
+      }else{
+        barColor='#93C0F6';
+      }
       //console.log(i);
       // Create new array above and push every object in
-      array.push([cases[i].status+"  "+cases[i].status_percent, parseInt(cases[i].contractscount), "Median Days - "+parseInt(cases[i].mediandays),'0B91E2']);
+      array.push([cases[i].status+"  "+cases[i].status_percent, parseInt(cases[i].contractscount), "Median Days - "+parseInt(cases[i].mediandays),barColor]);
     }
     return array;
   }
