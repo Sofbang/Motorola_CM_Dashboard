@@ -7,6 +7,7 @@ import { ViewChild, ElementRef } from '@angular/core';
 import * as $ from 'jquery';
 import { ChartSelectEvent } from 'ng2-google-charts';
 import { appheading } from '../enums/enum';
+import { ChartErrorEvent } from 'ng2-google-charts';
 
 
 @Component({
@@ -18,6 +19,7 @@ export class ScNewCasesComponent implements OnInit {
   public columnChart: any;
   public newModelCounts:any;
   public data:any;
+  public res=[['Month','Number_Of_New_Cases '],['',0],['',0],['',0],['',0],['',0],['',0]];
   public sideViewDropDowns = new SideViewDropDowns();
   @ViewChild('openSCModal') openScModel: ElementRef;
 
@@ -58,6 +60,16 @@ export class ScNewCasesComponent implements OnInit {
 
   }
 
+  // public checkZero(event: ChartErrorEvent) {
+   
+    // your logic
+    // console.log("the event is:"+JSON.stringify(event.message='hi i am here'));
+    // var re = this.res.filter(items => {
+    //   return items.Number_Of_New_Cases >=0 
+    // })
+  // }
+
+
   public NSSAging(){
    let arr = [2,3]
    alert("the array is:[2,3]");
@@ -66,12 +78,27 @@ export class ScNewCasesComponent implements OnInit {
    alert("the calculated NSS Aging is:"+calc);
   }
 
+  public checkZeroVals(){
+    // if (emptyData.getNumberOfRows() === 0) {
+    //   emptyData.addRows([
+    //     ['', 0, null, 'No Data Copy']
+    //   ]);
+    // }
+    console.log("iniside the check method:")
+    if(this.columnChart.dataTable){
+      console.log("in the if of checkMethod:")
+      this.res.push(['', 0, null, 'No Data Copy']);
+      console.log("the res is:"+JSON.stringify(this.res))
+    }
+
+  }
    
 
   ngOnInit() {
     this.columnChart = {
       chartType: 'ColumnChart',
-      dataTable: [['Month','Number Of New Cases '],['Jan',0],['Feb',0],['Mar',2],['Apr',8],['May',20],['Jun',56]],
+      dataTable: this.res,
+      
       options: {
         title: '',
         titleTextStyle: {
@@ -80,6 +107,12 @@ export class ScNewCasesComponent implements OnInit {
           fontSize: 18, // 12, 18 whatever you want (don't specify px)
           bold: true,    // true or false
           italic: false
+        },
+        annotations: {
+          stem: {
+            color: 'transparent',
+            length: 120
+          }
         },
         width: 1200, height: 500,
         chartArea:{left:100,top:30,width:'50%'},
@@ -102,8 +135,10 @@ export class ScNewCasesComponent implements OnInit {
     this.sideViewDropDowns.showArrivalType=true;
     this.sideViewDropDowns.showYearDD=true;
     this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
-  
+    console.log("the res array is:"+JSON.stringify(this.res));
     this.sideViewDropDowns.compHeading=appheading.graph3;
+    this.checkZeroVals();
+
 
   }
 

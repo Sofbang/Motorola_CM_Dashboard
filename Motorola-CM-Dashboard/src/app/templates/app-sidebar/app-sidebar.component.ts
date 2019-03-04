@@ -11,8 +11,8 @@ export class AppSidebarComponent implements OnInit {
 
   sidebarElmClk(id) {
     this.elmClkCount++;
-    $('.slimScrollDiv').css('height', '90rem');
-    $('.slimScrollDiv').css('max-height', '100rem');
+    // $('.slimScrollDiv').css('height', '90rem');
+    // $('.slimScrollDiv').css('max-height', '100rem');
     $('.page-sidebar-menu').css('height', '90rem');
     $('.page-sidebar-menu').css('max-height', '100rem');
     //close

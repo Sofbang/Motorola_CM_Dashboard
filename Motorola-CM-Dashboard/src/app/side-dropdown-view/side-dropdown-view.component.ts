@@ -18,6 +18,15 @@ export class SideDropdownViewComponent implements OnInit {
   public selectedItemsCaseTime = [
     {'item_id':1,'item_text':'Median'},
   ];
+  // public selectedItemsTerritory = [
+  //   {'item_id':1,'item_text':'Median'},
+  // ];
+  // public selectedItemsWorkflowStatus = [
+  //   {'item_id':1,'item_text':'Median'},
+  // ];
+  // public selectedItemsArrivalType = [
+  //   {'item_id':1,'item_text':'Median'},
+  // ];
   public n: number;
   public dropdownSettingsCaseTime={};
   screenHeight: any;

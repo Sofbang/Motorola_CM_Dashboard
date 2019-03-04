@@ -89,7 +89,48 @@ export class EbsCycleTimesComponent implements OnInit {
 
       esal: 3000
 
-    }];
+    },
+    { eid: 'e103',
+
+    ename: 'rajesh',
+
+    esal: 3000,
+
+    essl:2323},
+
+    { eid: 'e103',
+
+    ename: 'rajesh',
+
+    esal: 3000,
+  
+    essl:233,
+    
+    vvv:2222},
+    
+    { eid: 'e103',
+
+    ename: 'rajesh',
+
+    esal: 3000,
+
+    essl:234,
+    
+    vvv:2223,
+    
+    ghgh:'ioii'},
+    
+    { eid: 'e103',
+
+    ename: 'rajesh',
+
+    esal: 3000,
+     
+    essl:234,
+    
+    vvv:2223,
+    
+    hghgh:'uyuy'}];
 
     this._excelService.exportAsExcelFile(data, 'sample_excel');
 

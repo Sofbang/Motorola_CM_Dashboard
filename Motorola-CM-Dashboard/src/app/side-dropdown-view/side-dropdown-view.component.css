@@ -129,3 +129,8 @@ color: #FFFF;
     color: #005CB9;
 
     }
+.page-heading {
+  font-weight: 600;
+  color:#454545;
+  margin-left: 19px;  
+}

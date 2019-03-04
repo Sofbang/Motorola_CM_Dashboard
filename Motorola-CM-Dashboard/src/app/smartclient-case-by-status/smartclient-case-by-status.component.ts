@@ -246,8 +246,11 @@ export class SmartclientCaseByStatusComponent implements OnInit {
   }
   // ng multiselect events implemented by Vishal Sehgal 12/2/2019
   onItemSelect(item, from) {
+    console.log("the item returned is :"+JSON.stringify(item));
     if (from == 'territory') {
+      console.log("inside the if of territory check:"+JSON.stringify(item));
       this.territoriesArr.push(item)
+      console.log("the terr is:"+JSON.stringify(this.territoriesArr));
     } else if (from == 'workflow') {
       this.workFlowStatusArr.push(item);
     }
@@ -292,6 +295,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
    */
   public filterChartData() {
     let finalArr = [];
+    console.log("the finalarr:"+JSON.stringify(finalArr));
     //console.log("case data" + JSON.stringify(this.caseData));
     if (this.territoriesArr.length == 0 && this.workFlowStatusArr.length > 0) {
       //console.log("t0 s>0");
@@ -323,12 +327,13 @@ export class SmartclientCaseByStatusComponent implements OnInit {
     } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length == 0) {
       console.log("t0 s0");
       let cases = this.makeChartData(this.caseData);
+      cases = this.calculatePerc(cases);
       let chartArr = this.makeChartArr(cases)
       this.drawChart(chartArr);
       return;
     }
     else {
-      //console.log("t>0 s>0");
+      console.log("t>0 s>0");
       for (let i in this.territoriesArr) {
         let territoryItem = this.territoriesArr[i];
         let territoryFilterarr = this.caseData.filter(item => {
@@ -350,9 +355,16 @@ export class SmartclientCaseByStatusComponent implements OnInit {
       }
     }
     let cases = this.makeChartData(finalArr);
+    if(finalArr.length==0){
+      console.log("inside the if on length if zero:")
+       cases.push(['No Data Available',0,0]);
+       console.log("the cases are as under:"+JSON.stringify(cases))
+    }
+    console.log("the caeses before binding are :"+JSON.stringify(cases));
     cases = this.calculatePerc(cases);
     let chartArr = this.makeChartArr(cases)
     this.drawChart(chartArr);
+    // finalArr=[];
     // console.log("chartArr"+JSON.stringify(chartArr));
     // console.log("final arr" + JSON.stringify(finalArr));
     // console.log("group by arr" + JSON.stringify(cases));
