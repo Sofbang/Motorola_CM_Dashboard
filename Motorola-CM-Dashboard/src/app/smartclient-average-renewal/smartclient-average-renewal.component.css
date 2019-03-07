@@ -2,7 +2,13 @@
 /* .row{
     float:right;
 } */
-#chart{
+/* #chart{
     margin-top: 0px !important;
     text-align: center;
+} */
+.show-msg{
+   
+    position: absolute;
+    top: 104px;
+    left: 490px;
 }

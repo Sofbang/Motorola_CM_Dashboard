@@ -1,14 +1,9 @@
-<!-- <div class="row">
-    <button id="openSCModal" #openSCModal [hidden]="true" data-toggle="modal" data-target="#smartClientModal">Open Modal</button>
-    <h3 style="color:#FFFF;margin-left: 30px;font-weight: 400;">R12 - Contracts by Status  </h3>
-    
-    <div class="col-lg-12 col-md-12  col-sm-12">
-        <google-chart #cchart [data]="ebscolumnChartData" (chartSelect)='selectBar($event)'></google-chart>
-    </div>
-</div> -->
 <div class="chart-div col-md-offset-2">
     <button id="openSCModal" #openSCModal [hidden]="true" data-toggle="modal" data-target="#smartClientModal">Open Modal</button>
         <google-chart #cchart [data]="ebscolumnChartData" (chartSelect)='selectBar($event)'></google-chart>
+</div>
+<div class="show-msg"  *ngIf="this.checkDataEBS">
+  <h3>No Data Available</h3>
 </div>
 <!-- modal -->
 <div id="smartClientModal" class="modal fade" role="dialog">

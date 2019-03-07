@@ -7,7 +7,8 @@ import { ViewChild, ElementRef } from '@angular/core';
 import * as $ from 'jquery';
 import { ChartSelectEvent } from 'ng2-google-charts';
 import { appheading } from '../enums/enum';
-import { ChartErrorEvent } from 'ng2-google-charts';
+import { ChartReadyEvent } from 'ng2-google-charts';
+// import {moment} from 'moment';
 
 
 @Component({
@@ -19,7 +20,8 @@ export class ScNewCasesComponent implements OnInit {
   public columnChart: any;
   public newModelCounts:any;
   public data:any;
-  public res=[['Month','Number_Of_New_Cases '],['',0],['',0],['',0],['',0],['',0],['',0]];
+  public res;
+  public checkDataSCNC: Boolean = false;
   public sideViewDropDowns = new SideViewDropDowns();
   @ViewChild('openSCModal') openScModel: ElementRef;
 
@@ -45,11 +47,14 @@ export class ScNewCasesComponent implements OnInit {
    }
 
    public selectBar(event: ChartSelectEvent) {
+    this.openScModel.nativeElement.click();
+
     console.log("in the selectBar" + JSON.stringify(event.selectedRowValues[0]));
+    if(event.message=='select'){
+
     this.newModelCounts = event.selectedRowValues[1];
     this.data = event.selectedRowValues[0];
     console.log("the data is:", this.data);
-    this.openScModel.nativeElement.click();
     $('.modal .modal-dialog').css('width', $(window).width() * 0.95);//fixed
     $('.modal .modal-body').css('height', $(window).height() * 0.77);//fixed
     $('tbody.SCModlTbody').css('max-height', $(window).height() * 0.69);
@@ -57,48 +62,21 @@ export class ScNewCasesComponent implements OnInit {
     $('tbody.SCModlTbody').css('overflow-x', 'hidden');
     // $('tbody.SCModlTbody').css('display', 'block');
     $('tbody.SCModlTbody').css('width', '100%');
-
-  }
-
-  // public checkZero(event: ChartErrorEvent) {
-   
-    // your logic
-    // console.log("the event is:"+JSON.stringify(event.message='hi i am here'));
-    // var re = this.res.filter(items => {
-    //   return items.Number_Of_New_Cases >=0 
-    // })
-  // }
-
-
-  public NSSAging(){
-   let arr = [2,3]
-   alert("the array is:[2,3]");
-   let calc = arr[1]-arr[0];
-   console.log("the diff is :"+JSON.stringify(calc));
-   alert("the calculated NSS Aging is:"+calc);
-  }
-
-  public checkZeroVals(){
-    // if (emptyData.getNumberOfRows() === 0) {
-    //   emptyData.addRows([
-    //     ['', 0, null, 'No Data Copy']
-    //   ]);
-    // }
-    console.log("iniside the check method:")
-    if(this.columnChart.dataTable){
-      console.log("in the if of checkMethod:")
-      this.res.push(['', 0, null, 'No Data Copy']);
-      console.log("the res is:"+JSON.stringify(this.res))
     }
+  }
+
+  public ready(event: ChartReadyEvent) {
+    // your logic
+    console.log("the event returns:"+JSON.stringify(event));
 
   }
-   
 
-  ngOnInit() {
+
+
+  public drawChart(data) {
     this.columnChart = {
       chartType: 'ColumnChart',
-      dataTable: this.res,
-      
+      dataTable: data,
       options: {
         title: '',
         titleTextStyle: {
@@ -107,12 +85,6 @@ export class ScNewCasesComponent implements OnInit {
           fontSize: 18, // 12, 18 whatever you want (don't specify px)
           bold: true,    // true or false
           italic: false
-        },
-        annotations: {
-          stem: {
-            color: 'transparent',
-            length: 120
-          }
         },
         width: 1200, height: 500,
         chartArea:{left:100,top:30,width:'50%'},
@@ -131,13 +103,52 @@ export class ScNewCasesComponent implements OnInit {
         tooltip: { isHtml: false }
       }
     };
+  }
+
+
+
+
+  public NSSAging(){
+   let arr = [2,3];
+   arr.push(arr[1]-arr[0]);
+   alert("the array is:[2,3]");
+   console.log("the diff is :"+JSON.stringify(arr));
+   alert("the calculated NSS Aging is:"+arr);
+   // NSS Aging main logic function
+  //  let arrnew = [];
+  //  for(let i in Response){
+  //     arrnew.push(['NSS_Aging':[moment(Response[i].ClosingDate).format('YYYY-MM_DD')]-[moment(Response[i].StartDate).format('YYYY-MM_DD')]);
+  //  }
+   console.log("the final arrnew is:")
+  }
+
+   
+
+  ngOnInit() {
+
+    let res=[['Months','No. Of Cases'],['Jan',0],['Feb',0],['Mar',2],['Apr',8],['May',20],['Jun',56]];
+     this.drawChart(res);
+    if (res.length == 0) {
+
+      res = [['Months', 'No. Of Cases'], ['', 0], ['', 0], ['', 0]];
+      this.drawChart(res);
+      this.checkDataSCNC = true;
+
+      
+    } else if (res.length > 0) {
+      // alert("there is no data to bind to chart");
+      this.drawChart(res);
+      this.checkDataSCNC = false;
+
+    } else {
+      this.checkDataSCNC = true;
+    }
     this.sideViewDropDowns.showTerritory = true;
     this.sideViewDropDowns.showArrivalType=true;
     this.sideViewDropDowns.showYearDD=true;
     this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
     console.log("the res array is:"+JSON.stringify(this.res));
     this.sideViewDropDowns.compHeading=appheading.graph3;
-    this.checkZeroVals();
 
 
   }

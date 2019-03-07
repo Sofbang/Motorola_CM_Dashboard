@@ -23,6 +23,7 @@ export class EbsCycleTimesComponent implements OnInit {
   public newModelCounts:any;
   public workFlowStatusArr: any = [];
   public sideViewDropDowns = new SideViewDropDowns();
+  public checkData:Boolean=false;
   @ViewChild('openSCModal') openScModel: ElementRef;
 
   constructor(private _ebsService: EbsService, private _dataHandlerService: DataHandlerService, private _excelService:ExcelServiceService) {
@@ -45,11 +46,14 @@ export class EbsCycleTimesComponent implements OnInit {
    }
 
    public selectBar(event: ChartSelectEvent) {
+    this.openScModel.nativeElement.click();
+
     console.log("in the selectBar"+JSON.stringify(event.selectedRowValues[0]));
+    if(event.message=='select'){
+
     this.newModelCounts = event.selectedRowValues[1]
     this.data = event.selectedRowValues[0];
     console.log("the data is:",this.data);
-    this.openScModel.nativeElement.click();
     $('.modal .modal-dialog').css('width', $(window).width() * 0.95);//fixed
     $('.modal .modal-body').css('height', $(window).height() * 0.77);//fixed
     $('tbody.SCModlTbody').css('max-height', $(window).height() * 0.69);
@@ -57,7 +61,7 @@ export class EbsCycleTimesComponent implements OnInit {
     $('tbody.SCModlTbody').css('overflow-x', 'hidden');
     // $('tbody.SCModlTbody').css('display', 'block');
     $('tbody.SCModlTbody').css('width', '100%');
-     
+    }
   }
 
   public exportToExcel(){
@@ -402,11 +406,21 @@ export class EbsCycleTimesComponent implements OnInit {
      * @param cases -Case data.
      */
     public makeChartArr(cases) {
+      cases=[];
       //console.log("the make chart data is :" + JSON.stringify(cases));
       let array = [];
       array.push(['Status', 'No. of Cases', { role: "annotation" }, { role: "style" }]);
       let barColor=null;
-
+      if(cases.length==0){
+        this.drawchart(cases);
+        this.checkData = true;
+        array.push(['', 0, '', '']);
+      }else if(cases.length > 0){
+        this.drawchart(cases);
+        this.checkData = false;
+      }else {
+        this.checkData = true;
+      }
       // ARRAY OF OBJECTS
       for (let i in cases) {
         let index=parseInt(i);
@@ -438,34 +452,37 @@ export class EbsCycleTimesComponent implements OnInit {
 
 
   ngOnInit() {
-    this.ebscolumnChartData = {
-      chartType: 'ColumnChart',
-      dataTable: [['Month','Median Days'],['Jan',32],['Feb',55],['Mar',45],['Apr',38],['May',30],['Jun',56],['Total',42.6]],
-      options: {
-        title: '',
-        titleTextStyle: {
-          color: '#FFFFFF',
-          fontName: 'Verdana',
-          fontSize: 18,
-          bold: true,
-          italic: false
-        },
-        width: 1150, height: 500,
-        chartArea:{left:150,top:20,width:'50%'},
-        legend: { position: 'bottom',alignment:'center', textStyle: { color: '#444444' } },
-        backgroundColor: '#FFFFFF',
-        hAxis: {
-          textStyle: { color: '#444444' }
-        },
-        vAxis: {
-          textStyle: { color: '#444444' }
-        },
-        series: {
-          0: { color: '0B91E2' }
-        },
-        tooltip: { isHtml: false, type: 'string' }
-      }
-    };
+
+     let res=[['Month','Median Days'],['Jan',32],['Feb',55],['Mar',45],['Apr',38],['May',30],['Jun',56],['Total',42.6]];
+     if (res.length > 0) {
+      this.drawchart(res);
+      this.checkData = false;
+    } else if (res.length == 0) {
+      // alert("there is no data to bind to chart");
+      res = [['Month', 'Median Days'], ['', 0], ['', 0], ['', 0]];
+      this.drawchart(res);
+      this.checkData = true;
+
+    } else {
+      this.checkData = true;
+    }
+
+
+     this.drawchart(res);
+    //  this.checkData = false;
+
+
+
+    // if(this.ebscolumnChartData.dataTable.length>0){
+    //   console.log("inside the if of check for no data"+JSON.stringify(this.ebscolumnChartData.dataTable));
+    //   this.checkData = false;
+ 
+    // }else{
+    //   console.log("inside the else of no data");
+    //   this.checkData = true;
+
+    // }
+
 
     // this.getContractData()
     //   .then((res: any) => {
@@ -476,6 +493,13 @@ export class EbsCycleTimesComponent implements OnInit {
 
     this.getebsTerritoriesData()
       .then((res: any) => {
+        // if(res.length>=0){
+        //   this.checkData = false;
+        // }else{
+        //   alert("there is no data to bind to chart")
+        //   this.checkData = true;
+
+        // }
         //this.drawChart(res);
         this.sideViewDropDowns.showTerritory = true;
         this.sideViewDropDowns.territoryData = res;
@@ -497,7 +521,8 @@ export class EbsCycleTimesComponent implements OnInit {
       this.sideViewDropDowns.showArrivalType=true;
       this.sideViewDropDowns.showContractTime=true;
       this.sideViewDropDowns.showYearDD=true;
-      
+      this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
+
 
 
       this.sideViewDropDowns.compHeading=appheading.garph4;

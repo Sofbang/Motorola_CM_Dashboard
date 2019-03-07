@@ -1,21 +1,10 @@
-<!-- Dahsboard Chart for Smart Client implemented by Vishal Sehgal as on 11/2/2019 -->
-<!-- <div class="row" >
-    <div class="col-lg-8 col-md-8 col-sm-8">
-
-  <button id="openSCModal" #openSCModal [hidden]="true" data-toggle="modal" data-target="#smartClientModal">Open Modal</button>
-  </div>
-
-          
-
- <div class="col-lg-12 col-md-12 col-sm-12 pull-left" id="chart">
-    <google-chart #cchartnew [data]="barChartData" (chartSelect)='selectBar($event)'></google-chart>
-  </div>
-</div> -->
-
 <button id="openSCModal1" #openSCModal [hidden]="true" data-toggle="modal" data-target="#smartClientARModal">Open
     Modal</button>
 <div class="chart-div col-md-offset-2">
   <google-chart #cchartnew [data]="barChartData" (chartSelect)='selectBar($event)'></google-chart>
+</div>
+<div class="show-msg"  *ngIf="this.checkDataSC">
+  <h3>No Data Available</h3>
 </div>
 <!-- modal -->
 <div id="smartClientARModal" class="modal fade" role="dialog">

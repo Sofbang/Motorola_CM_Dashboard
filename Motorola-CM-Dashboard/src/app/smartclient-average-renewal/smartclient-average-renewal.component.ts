@@ -33,6 +33,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
   public data: any;
   public final = [];
   public newModelCounts:any;
+  public checkDataSC:any=false;
   public sideViewDropDowns = new SideViewDropDowns();
   public restUrlFilterYr: string = 'sc_case_status_med_yr';
   @ViewChild('openSCModal') openScModel: ElementRef;
@@ -62,11 +63,17 @@ export class SmartclientAverageRenewalComponent implements OnInit {
   }
 
   public selectBar(event: ChartSelectEvent) {
+
+    this.openScModel.nativeElement.click();
+
+
     console.log("in the selectBar" + JSON.stringify(event));
+    if(event.message=='select'){
+
+
     this.newModelCounts = event.selectedRowValues[2];
     this.data = event.selectedRowValues[0];
     console.log("the data is:", this.data);
-    this.openScModel.nativeElement.click();
     $('.modal .modal-dialog').css('width', $(window).width() * 0.95);//fixed
     $('.modal .modal-body').css('height', $(window).height() * 0.77);//fixed
     $('tbody.SCModlTbody').css('max-height', $(window).height() * 0.69);
@@ -74,7 +81,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
     $('tbody.SCModlTbody').css('overflow-x', 'hidden');
     // $('tbody.SCModlTbody').css('display', 'block');
     $('tbody.SCModlTbody').css('width', '100%');
-
+    }
   }
 
   public calculatePerc(cases){
@@ -663,23 +670,28 @@ export class SmartclientAverageRenewalComponent implements OnInit {
  */
   public makeChartArr(cases) {
     console.log("the data is :" + JSON.stringify(cases.length));
+    // cases=[];
     let array = [];
     array.push(['Status', this.fromMedOrAvg == 'median'? 'No. of Median Days':'No. Of Average Days', { role: "annotation" }, { role: "style" }]);
-    if (cases.length == 0) {
-      array.push([0, 0, 0, 0]);
-      return array;
-    }
-    // let array = [];
-    // array.push(['Status', 'No. of Contracts', { role: "annotation" }, { role: "style" }]);
-    // ARRAY OF OBJECTS
-    let barColor=null;
-
+    if (cases.length > 0) {
+      this.drawChart(cases);
+      this.checkDataSC= false;
+      let barColor=null;
+    // console.log("the color new array for cases are as under:"+JSON.stringify(cases));
     for (let i in cases) {
-      let index=parseInt(i);
-      if(index % 2 == 0){
+      // let index=parseInt(i);
+      if(cases[i].status=='Insufficient Data'){
         barColor='#4A90E2';
-      }else{
+      }else if(cases[i].status =='InProg Awt 3PS'){
         barColor='#93C0F6';
+      }else if(cases[i].status =='InProg Awt SSC'){
+        barColor='#4A90E2';
+      }else if(cases[i].status =='InProg Awt Credit'){
+        barColor='#618CF7';
+      }else if(cases[i].status == 'InProg Awt Resource'){
+        barColor='#164985';
+      }else{
+        barColor='#3274C2';
       }
       //console.log(i);
       // Create new array above and push every object in
@@ -689,6 +701,20 @@ export class SmartclientAverageRenewalComponent implements OnInit {
     }
     //console.log("the array is :", array);
     return array;
+
+    }else if (cases.length == 0){
+      this.drawChart(cases);
+      this.checkDataSC = true;
+      array.push(['', 0,'','']);
+      return array;
+    }else {
+
+      this.checkDataSC = true;  
+    }
+    // let array = [];
+    // array.push(['Status', 'No. of Contracts', { role: "annotation" }, { role: "style" }]);
+    // ARRAY OF OBJECTS
+    
 
   }
 
@@ -707,41 +733,26 @@ export class SmartclientAverageRenewalComponent implements OnInit {
 
 
   ngOnInit() {
-    this.barChartData = {
-      chartType: 'BarChart',
-      dataTable: ['hey ', 'hi'],
-      options: {
-        title: '',
-        titleTextStyle: {
-          color: '#FFFFFF',    // any HTML string color ('red', '#cc00cc')
-          fontName: 'Verdana', // i.e. 'Times New Roman'
-          fontSize: 18, // 12, 18 whatever you want (don't specify px)
-          bold: true,    // true or false
-          italic: false
-        },
-        chartArea:{left:180,top:20,width:'80%'}, legend: { position: 'bottom', textStyle: { color: '#444444' } },
-        backgroundColor: '#FFFFFF',
-        hAxis: {
-          textStyle: { color: '#444444' }
-        },
-        vAxis: {
-          textStyle: { color: '#444444' }
-        },
-        series: {
-          0: { color: '0B91E2' },
-          1: { color: '57A9EA' }
-
-        },
-        tooltip: { isHtml: false }
-      }
-    };
-
     this.getCaseData()
       .then((res: any) => {
+        if(res.length>0){
+          this.drawChart(res);
+          // this.checkData = false;
+        }else if(res.length==0){
+          // alert("there is no data to bind to chart");
+          res = [['Status','Cases'],['No Status',0],['No Status',0],['No Status',0]];
+          this.drawChart(res);
+          // this.checkData = true;
+
+        }else{
+          // this.checkData = true;
+       }
+
         this.drawChart(res);
       }, error => {
         console.log("error getCaseData " + error);
       });
+
     this.getTerritories()
       .then((res: any) => {
         //this.drawChart(res);
@@ -765,11 +776,12 @@ export class SmartclientAverageRenewalComponent implements OnInit {
     { 'item_id': 2, 'item_text': 'Average' }]
 
     this.sideViewDropDowns.showArrivalType = true;
-    this.sideViewDropDowns.arrivalTypeData = ['SAOF', 'CPQ', 'Q2SC', 'Other'];
-    this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
+    // this.sideViewDropDowns.arrivalTypeData = ['SAOF', 'CPQ', 'Q2SC', 'Other'];
     this.sideViewDropDowns.showYearDD = true;
     this.sideViewDropDowns.showCaseTime = true;
     this.sideViewDropDowns.caseTimeData = caseTimeData;
+    this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
+
     this.sideViewDropDowns.compHeading = appheading.graph5;
   }
 

@@ -19,6 +19,7 @@ export class EbsContractByStatusComponent implements OnInit {
   // public selectedTerritories: any = 'all';
   public ebscolumnChartData: any;
   public territories: any;
+  public checkDataEBS:any=false;
   // public caseStatusTerritories: any;
   // public dropdownListTerritory = [];
   // public dropdownListCaseStatusTerritory = [];
@@ -58,11 +59,14 @@ export class EbsContractByStatusComponent implements OnInit {
   }
   
   public selectBar(event: ChartSelectEvent) {
+    this.openScModel.nativeElement.click();
+
     console.log("in the selectBar" + JSON.stringify(event.selectedRowValues[0]));
+    if(event.message=='select'){
+
     this.newModelCounts = event.selectedRowValues[1]
     this.data = event.selectedRowValues[0];
     console.log("the data is:", this.data);
-    this.openScModel.nativeElement.click();
     $('.modal .modal-dialog').css('width', $(window).width() * 0.95);//fixed
     $('.modal .modal-body').css('height', $(window).height() * 0.77);//fixed
     $('tbody.SCModlTbody').css('max-height', $(window).height() * 0.69);
@@ -70,7 +74,7 @@ export class EbsContractByStatusComponent implements OnInit {
     $('tbody.SCModlTbody').css('overflow-x', 'hidden');
     // $('tbody.SCModlTbody').css('display', 'block');
     $('tbody.SCModlTbody').css('width', '100%');
-
+    }
   }
 
   public calculatePerc(cases){
@@ -237,6 +241,7 @@ export class EbsContractByStatusComponent implements OnInit {
   }
 
   onSelectAll(item, from) {
+    console.log("the selectAll is:"+JSON.stringify(item)+JSON.stringify(from));
     if (from == 'territory') {
       this.territoriesArr = [];
       this.territoriesArr = item
@@ -297,6 +302,14 @@ export class EbsContractByStatusComponent implements OnInit {
       let cases = this.makeChartData(this.contractsData);
       this.calculatePerc(cases);
       let chartArr = this.makeChartArr(cases)
+      // if(chartArr.length>0){
+      //   this.checkDataEBS = false;
+  
+      // }else{
+      //   alert("no data to be bind to  graph");
+      //   this.checkDataEBS = true;
+
+      // }
       this.drawchart(chartArr);
       return;
     }
@@ -325,6 +338,14 @@ export class EbsContractByStatusComponent implements OnInit {
     let cases = this.makeChartData(finalArr);
     cases = this.calculatePerc(cases);
     let chartArr = this.makeChartArr(cases);
+    // if(chartArr.length>0){
+    //   this.checkDataEBS = false;
+
+    // }else{
+    //   alert("no data to be bind to  graph");
+    //   this.checkDataEBS = true;
+
+    // }
     this.drawchart(chartArr);
     // console.log("chartArr" + JSON.stringify(chartArr));
     // console.log("final arr" + JSON.stringify(finalArr));
@@ -373,25 +394,40 @@ export class EbsContractByStatusComponent implements OnInit {
    * @param cases -Case data.
    */
   public makeChartArr(cases) {
+    // cases=[];
     //console.log("the make chart data is :" + JSON.stringify(cases));
     let array = [];
     array.push(['Status', 'No. of Contracts', { role: "annotation" }, { role: "style" }]);
     let barColor=null;
-    // ARRAY OF OBJECTS
-    for (let i in cases) {
-      let index=parseInt(i);
-      if(index % 2 == 0){
-        barColor='#4A90E2';
-      }else{
-        barColor='#93C0F6';
+    if(cases.length > 0){
+      this.drawchart(cases);
+      this.checkDataEBS = false;
+
+      for (let i in cases) {
+        let index=parseInt(i);
+        if(index % 2 == 0){
+          barColor='#4A90E2';
+        }else{
+          barColor='#93C0F6';
+        }
+        console.log("i--"+barColor)
+        //console.log(i);
+        // Create new array above and push every object in
+        array.push([cases[i].status+"  "+cases[i].status_percent, parseInt(cases[i].contractscount), "Median Days  " + parseInt(cases[i].mediandays),barColor]);
       }
-      console.log("i--"+barColor)
-      //console.log(i);
-      // Create new array above and push every object in
-      array.push([cases[i].status+"  "+cases[i].status_percent, parseInt(cases[i].contractscount), "Median Days  " + parseInt(cases[i].mediandays),barColor]);
-    }
-    // console.log("the final cases are as under:" + JSON.stringify(array));
-    return array;
+      // console.log("the final cases are as under:" + JSON.stringify(array));
+  
+      return array;
+
+      }else if(cases.length == 0){
+        this.drawchart(cases);
+        this.checkDataEBS = true;
+        array.push(['', 0,'','']);
+        return array;
+      }else {
+        this.checkDataEBS = true;
+      }
+   
   }
 
   /**
@@ -408,44 +444,29 @@ export class EbsContractByStatusComponent implements OnInit {
 
 
   ngOnInit() {
-    this.ebscolumnChartData = {
-      chartType: 'BarChart',
-      dataTable: ['hey', 'hi'],
-      options: {
-        title: '',
-        titleTextStyle: {
-          color: '#FFFFFF',
-          fontName: 'Verdana',
-          fontSize: 18,
-          bold: true,
-          italic: false,
-        },
-        
-        legend: { position: 'bottom', textStyle: { color: '#444444' } },
-        chartArea:{left:10,top:0,width:"100%",height:"100%"},
-        backgroundColor: '#FFFFFF',
-        hAxis: {
-          textStyle: { color: '#444444' }
-        },
-        vAxis: {
-          textStyle: { color: '#444444' }
-        },
-        series: {
-          0: { color: '0B91E2' }
-        },
-        tooltip: { isHtml: false, type: 'string' }
-      }
-    };
-
     this.getContractData()
       .then((res: any) => {
-        this.drawchart(res);
+        if(res.length>0){
+          this.drawchart(res);
+          // this.checkDataEBS = false;
+        }else if(res.length==0){
+          // alert("there is no data to bind to chart");
+          res = [['Status','Cases'],['No Status',0],['No Status',0],['No Status',0]];
+          this.drawchart(res);
+          // this.checkDataEBS = true;
+
+        }else{
+          // this.checkDataEBS = true;
+       }
+
+        // this.drawchart(res);
       }, error => {
         console.log("error getCaseData " + error);
       });
 
     this.getebsTerritoriesData()
       .then((res: any) => {
+        console.log("the res is:"+JSON.stringify(res));
         //this.drawChart(res);
         this.sideViewDropDowns.showTerritory = true;
         this.sideViewDropDowns.territoryData = res;
@@ -465,6 +486,7 @@ export class EbsContractByStatusComponent implements OnInit {
       });
     this.sideViewDropDowns.showYearDD = false;
     this.sideViewDropDowns.compHeading = appheading.graph2;
+    this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
   }
 }
 

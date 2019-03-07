@@ -21,10 +21,10 @@ export class SmartclientCaseByStatusComponent implements OnInit {
   public territoriesArr: any = [];
   public workFlowStatusArr: any = [];
   public caseData = [];
-  public Total:any;
-  public newModelCounts:any;
-
-  public data:any;
+  public Total: any;
+  public newModelCounts = [];
+  public checkDataSCS: any = false;
+  public data = [];
   public sideViewDropDowns = new SideViewDropDowns();
   @ViewChild('openSCModal') openScModel: ElementRef;
   constructor(private _smartclientService: SmartclientService, private _dataHandlerService: DataHandlerService) {
@@ -43,29 +43,40 @@ export class SmartclientCaseByStatusComponent implements OnInit {
           this.onDeSelectAll(incomingData, from);
         }
       });
-      this._dataHandlerService.setDataForMainLayout(true);
+    this._dataHandlerService.setDataForMainLayout(true);
   }
 
-  public exportToExcel(){
+  public exportToExcel() {
     console.log("in the export to excel function");
   }
 
-  
 
-  public selectBar(event: ChartSelectEvent) {
-    //console.log("in the selectBar"+JSON.stringify(e));
-    this.newModelCounts = event.selectedRowValues[1];
-    this.data = event.selectedRowValues[0]; 
-    //console.log("the data is:",this.data);
+
+  public selectBarScCaseByStatus(event: ChartSelectEvent) {
+
     this.openScModel.nativeElement.click();
-    $('.modal .modal-dialog').css('width', $(window).width() * 0.95);//fixed
-    $('.modal .modal-body').css('height', $(window).height() * 0.77);//fixed
-    $('tbody.SCModlTbody').css('max-height', $(window).height() * 0.69);
-    $('tbody.SCModlTbody').css('overflow-y', 'scroll');
-    $('tbody.SCModlTbody').css('overflow-x', 'hidden');
-    // $('tbody.SCModlTbody').css('display', 'block');
-    $('tbody.SCModlTbody').css('width', '100%');
-     
+
+    console.log("event.." + JSON.stringify(event));
+    if (event.message == 'select') {
+
+
+
+      //console.log("in the selectBar"+JSON.stringify(e));
+      this.newModelCounts = event.selectedRowValues[1];
+      console.log("the selectBar is:" + JSON.stringify(this.newModelCounts));
+      this.data = event.selectedRowValues[0];
+      console.log("the second time cases are:" + JSON.stringify(event));
+      //console.log("the data is:",this.data);
+      $('.modal .modal-dialog').css('width', $(window).width() * 0.95);//fixed
+      $('.modal .modal-body').css('height', $(window).height() * 0.77);//fixed
+      $('tbody.SCModlTbody').css('max-height', $(window).height() * 0.69);
+      $('tbody.SCModlTbody').css('overflow-y', 'scroll');
+      $('tbody.SCModlTbody').css('overflow-x', 'hidden');
+      // $('tbody.SCModlTbody').css('display', 'block');
+      $('tbody.SCModlTbody').css('width', '100%');
+
+
+    }
   }
 
   /**
@@ -78,17 +89,17 @@ export class SmartclientCaseByStatusComponent implements OnInit {
       this._smartclientService.getSCCases().
         subscribe(data => {
           cases = this.makeChartData(data);
-          console.log("the cases data is :"+JSON.stringify(cases));
-          let arr=[];
-          for(let i in cases){
+          console.log("the cases data is :" + JSON.stringify(cases));
+          let arr = [];
+          for (let i in cases) {
             arr.push(cases[i].contractscount);
-            
+
           }
           this.Total = arr.reduce(this.sum);
           // console.log("the contractscount are as under:"+JSON.stringify(arr));
           // console.log("the total cases are :"+JSON.stringify(this.Total));
           this.caseData = data;
-          cases=this.calculatePerc(cases);
+          cases = this.calculatePerc(cases);
           //console.log("contracts cases with percentages:" + JSON.stringify(cases));
           //console.log("contracts" + cases)
         }, err => console.error(err),
@@ -103,16 +114,17 @@ export class SmartclientCaseByStatusComponent implements OnInit {
     })
   }
 
-  public calculatePerc(cases){
-    for(let i in cases){
+  public calculatePerc(cases) {
 
-      console.log("the cases are as under:"+JSON.stringify(cases));
-      let calcPer=((cases[i].contractscount/this.Total)*100).toFixed(2)
-      cases[i]['status_percent']=calcPer+'%';
+    for (let i in cases) {
+
+      console.log("the cases are as under:" + JSON.stringify(cases));
+      let calcPer = ((cases[i].contractscount / this.Total) * 100).toFixed(2)
+      cases[i]['status_percent'] = calcPer + '%';
       //console.log("the values are :"+JSON.stringify(value));
 
     }
-    //console.log("after the for loop in the calcPerc method:"+JSON.stringify(value));
+    console.log("after the for loop in the calcPerc method:" + JSON.stringify(cases));
     return cases;
   }
 
@@ -228,8 +240,8 @@ export class SmartclientCaseByStatusComponent implements OnInit {
           italic: false
         },
         width: 1200, height: 500,
-        chartArea:{left:200,top:20,width:'50%'},
-        legend: { position: 'bottom',alignment:'center', textStyle: { color: '#444444' } },
+        chartArea: { left: 150, top: 20, width: '50%' },
+        legend: { position: 'bottom', alignment: 'center', textStyle: { color: '#444444' } },
         backgroundColor: '#FFFFFF',
         hAxis: {
           textStyle: { color: '#444444' }
@@ -246,11 +258,11 @@ export class SmartclientCaseByStatusComponent implements OnInit {
   }
   // ng multiselect events implemented by Vishal Sehgal 12/2/2019
   onItemSelect(item, from) {
-    console.log("the item returned is :"+JSON.stringify(item));
+    console.log("the item returned is :" + JSON.stringify(item));
     if (from == 'territory') {
-      console.log("inside the if of territory check:"+JSON.stringify(item));
+      console.log("inside the if of territory check:" + JSON.stringify(item));
       this.territoriesArr.push(item)
-      console.log("the terr is:"+JSON.stringify(this.territoriesArr));
+      console.log("the terr is:" + JSON.stringify(this.territoriesArr));
     } else if (from == 'workflow') {
       this.workFlowStatusArr.push(item);
     }
@@ -295,7 +307,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
    */
   public filterChartData() {
     let finalArr = [];
-    console.log("the finalarr:"+JSON.stringify(finalArr));
+    console.log("the finalarr:" + JSON.stringify(finalArr));
     //console.log("case data" + JSON.stringify(this.caseData));
     if (this.territoriesArr.length == 0 && this.workFlowStatusArr.length > 0) {
       //console.log("t0 s>0");
@@ -328,7 +340,15 @@ export class SmartclientCaseByStatusComponent implements OnInit {
       console.log("t0 s0");
       let cases = this.makeChartData(this.caseData);
       cases = this.calculatePerc(cases);
-      let chartArr = this.makeChartArr(cases)
+      let chartArr = this.makeChartArr(cases);
+      // if(chartArr.length>0){
+      //   this.checkDataSCS = false;
+  
+      // }else{
+      //   alert("no data to be bind to  graph");
+      //   this.checkDataSCS = true;
+  
+      // }
       this.drawChart(chartArr);
       return;
     }
@@ -355,14 +375,19 @@ export class SmartclientCaseByStatusComponent implements OnInit {
       }
     }
     let cases = this.makeChartData(finalArr);
-    if(finalArr.length==0){
-      console.log("inside the if on length if zero:")
-       cases.push(['No Data Available',0,0]);
-       console.log("the cases are as under:"+JSON.stringify(cases))
-    }
-    console.log("the caeses before binding are :"+JSON.stringify(cases));
+    console.log("the cases data before the finalArr is:" + JSON.stringify(cases));
+    // console.log("the caeses before binding are :"+JSON.stringify(cases));
     cases = this.calculatePerc(cases);
-    let chartArr = this.makeChartArr(cases)
+
+    let chartArr = this.makeChartArr(cases);
+    // if(chartArr.length>0){
+    //   this.checkDataSCS = false;
+
+    // }else{
+    //   alert("no data to be bind to  graph");
+    //   this.checkDataSCS = true;
+
+    // }
     this.drawChart(chartArr);
     // finalArr=[];
     // console.log("chartArr"+JSON.stringify(chartArr));
@@ -412,24 +437,50 @@ export class SmartclientCaseByStatusComponent implements OnInit {
    * @param cases -Case data.
    */
   public makeChartArr(cases) {
+    // cases=[];
     let array = [];
-    let text='Median Days';
     array.push(['Status', 'No. Of Cases', { role: "annotation" }, { role: "style" }]);
-    // ARRAY OF OBJECTS
-    let barColor=null;
+    if (cases.length > 0) {
+      this.drawChart(cases);
+      this.checkDataSCS = false;
 
-    for (let i in cases) {
-      let index=parseInt(i);
-      if(index % 2 == 0){
-        barColor='#4A90E2';
-      }else{
-        barColor='#93C0F6';
+      let barColor = null;
+
+      for (let i in cases) {
+        let index = parseInt(i);
+        if(cases[i].status=='Insufficient Data'){
+          barColor='#4A90E2';
+        }else if(cases[i].status =='InProg Awt 3PS'){
+          barColor='#93C0F6';
+        }else if(cases[i].status =='InProg Awt SSC'){
+          barColor='#4A90E2';
+        }else if(cases[i].status =='InProg Awt Credit'){
+          barColor='#618CF7';
+        }else if(cases[i].status == 'InProg Awt Resource'){
+          barColor='#164985';
+        }else{
+          barColor='#3274C2';
+        }
+        //console.log(i);
+        // Create new array above and push every object in
+        array.push([cases[i].status + "  " + cases[i].status_percent, parseInt(cases[i].contractscount), "Median Days - " + parseInt(cases[i].mediandays), barColor]);
       }
-      //console.log(i);
-      // Create new array above and push every object in
-      array.push([cases[i].status+"  "+cases[i].status_percent, parseInt(cases[i].contractscount), "Median Days - "+parseInt(cases[i].mediandays),barColor]);
+      return array;
+
+    } else if (cases.length == 0) {
+      //cases = [['Status','Cases'],['No_Status',0]];
+      this.drawChart(cases);
+      this.checkDataSCS = true;
+      array.push(['', 0,'','']);
+      return array;
+
+    } else {
+
+      this.checkDataSCS = true;
     }
-    return array;
+
+    // array.push(['Status', 'No. Of Cases', { role: "annotation" }, { role: "style" }]);
+    // ARRAY OF OBJECTS
   }
 
   /**
@@ -444,44 +495,29 @@ export class SmartclientCaseByStatusComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.barChartData = {
-      chartType: 'BarChart',
-      dataTable: ['hey','hi'],
-      options: {
-        title: '',
-        titleTextStyle: {
-          color: '#FFFFFF',    // any HTML string color ('red', '#cc00cc')
-          fontName: 'Verdana', // i.e. 'Times New Roman'
-          fontSize: 18, // 12, 18 whatever you want (don't specify px)
-          bold: true,    // true or false
-          italic: false
-        },
-        width: 1200, height: 500,
-        chartArea:{left:200,top:20,width:'50%'},
-        legend: { position: 'bottom',alignment:'center', textStyle: { color: '#444444' } },
-        backgroundColor: '#FFFFFF',
-        hAxis: {
-          textStyle: { color: '#444444' }
-        },
-        vAxis: {
-          textStyle: { color: '#444444' }
-        },
-        series: {
-          0: { color: '0B91E2' }
-        },
-        tooltip: { isHtml: false }
-      }
-    };
-
     this.getCaseData()
       .then((res: any) => {
-        this.drawChart(res);
+        if (res.length > 0) {
+          this.drawChart(res);
+          // this.checkDataSCS = false;
+        } else if (res.length == 0) {
+          // alert("there is no data to bind to chart");
+          res = [['Status', 'Cases'], ['No Status', 0], ['No Status', 0], ['No Status', 0]];
+          this.drawChart(res);
+          // this.checkDataSCS = true;
+
+        } else {
+          // this.checkDataSCS = true;
+        }
+
+        // this.drawChart(res);
       }, error => {
         console.log("error getCaseData " + error);
       });
+
     this.getTerritories()
       .then((res: any) => {
-        //this.drawChart(res);
+        // this.drawChart(res);
         this.sideViewDropDowns.showTerritory = true;
         this.sideViewDropDowns.territoryData = res;
         this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
@@ -497,15 +533,15 @@ export class SmartclientCaseByStatusComponent implements OnInit {
       }, error => {
         console.log("error getWorkflowStatus " + error);
       });
-      
-        this.sideViewDropDowns.showArrivalType = true;
-        this.sideViewDropDowns.showYearDD=false;
-        this.sideViewDropDowns.arrivalTypeData = ['SAOF','CPQ','Q2SC','Other'];
-        this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
-        this.sideViewDropDowns.compHeading=appheading.graph1;
 
-      
-   
+    this.sideViewDropDowns.showArrivalType = true;
+    this.sideViewDropDowns.showYearDD = false;
+    // this.sideViewDropDowns.arrivalTypeData = ['SAOF','CPQ','Q2SC','Other'];
+    this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
+    this.sideViewDropDowns.compHeading = appheading.graph1;
+
+
+
   }
 
 }

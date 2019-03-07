@@ -34,8 +34,9 @@ export class SideDropdownViewComponent implements OnInit {
   constructor(private _dataHandlerService: DataHandlerService) {
     this._dataHandlerService.sideViewDropDownData
       .subscribe(res => {
+        this.sideViewDDObj=new SideViewDropDowns();
         this.sideViewDDObj = res;
-        //console.log("subscribe inside sideview" + JSON.stringify(this.sideViewDDObj));
+        console.log("subscribe inside sideview" + JSON.stringify(this.sideViewDDObj));
       });
     this.getScreenSize();
   }
@@ -104,7 +105,8 @@ export class SideDropdownViewComponent implements OnInit {
   }
 
   public makeDateFormat(arr) {
-
+    
+    // this.fianldates=[];
     // console.log("inside the makeDateFormat Method:" + JSON.stringify(arr));
     for (let i in arr) {
       // console.log("in the for loop", +i)
@@ -116,8 +118,10 @@ export class SideDropdownViewComponent implements OnInit {
 
 
     }
+    
+    // this.makeDate();
     // console.log("the final one is :" + JSON.stringify(this.fianldates));
-
+    // this.fianldates=[];
 
   }
 
@@ -140,12 +144,13 @@ export class SideDropdownViewComponent implements OnInit {
     }
     //  console.log("the final to year is:"+JSON.stringify(this.toYear));
 
-
+    //  this.makeDate();
 
 
 
 
   }
+
 
   public onChangeTo(filterVal: any) {
     // console.log("hey hi "+filterVal);
@@ -181,10 +186,10 @@ export class SideDropdownViewComponent implements OnInit {
     this._dataHandlerService.setDataFromSideView(jsonObj);
     //this.getDateFilteredResults(FirstDay,LastDay);
 
-
-
   }
 
+
+  
   // public getDateFilteredResults(startDate, endDate){
   //   return new Promise((resolve,reject) => {
   //     let dateFilteredData;
@@ -207,6 +212,7 @@ export class SideDropdownViewComponent implements OnInit {
   
   ngOnInit() {
     //dropdown settings
+    // this.fianldates=[];
     this.dropdownSettings = {
       singleSelection: false,
       idField: 'item_id',
@@ -228,6 +234,7 @@ export class SideDropdownViewComponent implements OnInit {
     this.makeDate();
     //$('.side-view-dropDowns').css('height', this.screenHeight);//to make side dropdown view to screen height
   }
+    
 
 
 }

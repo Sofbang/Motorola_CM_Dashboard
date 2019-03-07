@@ -2,6 +2,9 @@
   <button id="openSCModal" #openSCModal [hidden]="true" data-toggle="modal" data-target="#smartClientModal">Open Modal</button>
       <google-chart #cchart [data]="ebscolumnChartData" (chartSelect)='selectBar($event)'></google-chart>
 </div>
+<div class="show-msg"  *ngIf="this.checkData">
+  <h3>No Data Available</h3>
+</div>
 <!-- modal -->
 <div id="smartClientModal" class="modal fade" role="dialog">
   <div class="modal-dialog">
