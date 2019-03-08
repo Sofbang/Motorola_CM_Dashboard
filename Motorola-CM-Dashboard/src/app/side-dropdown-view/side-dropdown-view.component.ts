@@ -15,9 +15,11 @@ export class SideDropdownViewComponent implements OnInit {
   public selectedFrom: any;
   public fianldates = [];
   public toYear = [];
+
   public selectedItemsCaseTime = [
     {'item_id':1,'item_text':'Median'},
   ];
+
   // public selectedItemsTerritory = [
   //   {'item_id':1,'item_text':'Median'},
   // ];
@@ -27,6 +29,7 @@ export class SideDropdownViewComponent implements OnInit {
   // public selectedItemsArrivalType = [
   //   {'item_id':1,'item_text':'Median'},
   // ];
+
   public n: number;
   public dropdownSettingsCaseTime={};
   screenHeight: any;
@@ -47,6 +50,7 @@ export class SideDropdownViewComponent implements OnInit {
     this.screenWidth = window.innerWidth;
     $('.side-view-dropDowns').css('height', this.screenHeight);//to make side dropdown view to screen height
   }
+
   onItemSelect(item, dropDownName) {
     let jsonObj = { 'event': 'onItemSelect', 'from': dropDownName, 'data': item }
     this._dataHandlerService.setDataFromSideView(jsonObj);
@@ -62,13 +66,13 @@ export class SideDropdownViewComponent implements OnInit {
     this._dataHandlerService.setDataFromSideView(jsonObj);
 
   }
+
   onDeSelectAll(items, dropDownName) {
     let jsonObj = { 'event': 'onDeSelectAll', 'from': dropDownName, 'data': items }
     this._dataHandlerService.setDataFromSideView(jsonObj);
   }
 
   public makeDate() {
-
     var startDate = '2017-01-01';
     var endDate = '2018-12-01';
     var starting = new Date(startDate);

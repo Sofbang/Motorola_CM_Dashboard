@@ -762,6 +762,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       }, error => {
         console.log("error getTerritories " + error);
       });
+
     this.getWorkflowStatus()
       .then((res: any) => {
         //this.drawChart(res);
@@ -771,9 +772,10 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       }, error => {
         console.log("error getWorkflowStatus " + error);
       });
-
+    
     let caseTimeData = [{ 'item_id': 1, 'item_text': 'Median' },
     { 'item_id': 2, 'item_text': 'Average' }]
+    
 
     this.sideViewDropDowns.showArrivalType = true;
     // this.sideViewDropDowns.arrivalTypeData = ['SAOF', 'CPQ', 'Q2SC', 'Other'];
@@ -783,6 +785,8 @@ export class SmartclientAverageRenewalComponent implements OnInit {
     this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
 
     this.sideViewDropDowns.compHeading = appheading.graph5;
+
+    
   }
 
 }
