@@ -4,6 +4,9 @@ import { DataHandlerService } from '../services/data-handler/data-handler.servic
 import * as $ from 'jquery';
 import * as moment from 'moment';
 import { HostListener } from "@angular/core";
+import { NgForm } from '@angular/forms';
+import { ViewChild, ElementRef } from '@angular/core';
+
 @Component({
   selector: 'app-side-dropdown-view',
   templateUrl: './side-dropdown-view.component.html',
@@ -16,9 +19,12 @@ export class SideDropdownViewComponent implements OnInit {
   public fianldates = [];
   public toYear = [];
 
+
   public selectedItemsCaseTime = [
     {'item_id':1,'item_text':'Median'},
   ];
+  @ViewChild ('ngFormDate') ngFormDate:NgForm;
+
 
   // public selectedItemsTerritory = [
   //   {'item_id':1,'item_text':'Median'},
@@ -40,6 +46,7 @@ export class SideDropdownViewComponent implements OnInit {
         this.sideViewDDObj=new SideViewDropDowns();
         this.sideViewDDObj = res;
         console.log("subscribe inside sideview" + JSON.stringify(this.sideViewDDObj));
+        this.ngFormDate.reset();
       });
     this.getScreenSize();
   }
@@ -236,6 +243,7 @@ export class SideDropdownViewComponent implements OnInit {
     };
 
     this.makeDate();
+    
     //$('.side-view-dropDowns').css('height', this.screenHeight);//to make side dropdown view to screen height
   }
     

@@ -752,7 +752,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       }, error => {
         console.log("error getCaseData " + error);
       });
-
+  
     this.getTerritories()
       .then((res: any) => {
         //this.drawChart(res);
@@ -786,7 +786,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
 
     this.sideViewDropDowns.compHeading = appheading.graph5;
 
-    
+
   }
 
 }

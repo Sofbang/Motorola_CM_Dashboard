@@ -63,23 +63,24 @@
   </div>
  
 
-  <div class="dropdown hello-me" *ngIf="sideViewDDObj.showYearDD">
-      <label for="options" id="fromLabel">From
+    <form #ngFormDate="ngForm" class="inline">
+        <div class="dropdown hello-me" *ngIf="sideViewDDObj.showYearDD">
+         <label for="options" id="fromLabel">From
             </label>
-            <select class="form-control" id="from" (change)="onChangeFrom($event.target.value)">
-                <option >Select !</option>
+            <select class="form-control" id="from" name="from" [(ngModel)]="from" (change)="onChangeFrom($event.target.value)">
+                <option [value]="null">Select !</option>
                 <option *ngFor="let datesFormed of fianldates" >{{datesFormed}}</option>
  
                 </select>
-    </div>
-    <div class="dropdown hello-men" *ngIf="sideViewDDObj.showYearDD">
+        </div>
+       <div class="dropdown hello-men" *ngIf="sideViewDDObj.showYearDD">
         <label for="options" id="toLabel">To
               </label>
-              <select class="form-control" id="to" (change)="onChangeTo($event.target.value)">
-                  <option >Select !</option>
+              <select class="form-control" id="to" name="to" [(ngModel)]="to" (change)="onChangeTo($event.target.value)">
+                  <option [value]="null">Select !</option>
                  <option *ngFor="let dates of toYear" >{{dates}}</option>
                </select>
-      </div>
-
+        </div>
+     </form>
 
 </div>
