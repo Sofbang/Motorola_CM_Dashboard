@@ -8,6 +8,9 @@ import * as $ from 'jquery';
 import { ChartSelectEvent } from 'ng2-google-charts';
 import { appheading } from '../enums/enum';
 import { ChartReadyEvent } from 'ng2-google-charts';
+import * as moment from 'moment';
+import { sep } from 'path';
+import { Title } from '@angular/platform-browser';
 // import {moment} from 'moment';
 
 
@@ -18,30 +21,54 @@ import { ChartReadyEvent } from 'ng2-google-charts';
 })
 export class ScNewCasesComponent implements OnInit {
   public columnChart: any;
+  public casesData: any = [];
+  public selectedFrom: any;
+  public territoriesArr: any = [];
+  public datesData=[];
   public newModelCounts:any;
+  public newCasesData: any = [];
+  public casesSrvcData=[];
   public data:any;
   public res;
   public checkDataSCNC: Boolean = false;
   public sideViewDropDowns = new SideViewDropDowns();
+  public jancount=0;
+  public febcount=0;
+  public marcount=0;
+  public aprcount=0;
+  public maycount=0;
+  public juncount=0;
+  public julcount=0;
+  public augcount=0;
+  public sepcount=0;
+  public octcount=0;
+  public novcount=0;
+  public deccount=0;
+  public arrr=[];
+  public firstDay:any;
+  public lastDay:any;
+
   @ViewChild('openSCModal') openScModel: ElementRef;
 
 
   constructor(private _smartclientService: SmartclientService, private _dataHandlerService:DataHandlerService) {
-    // this._dataHandlerService.dataFromSideView
-    //   .subscribe(res => {
-    //     //console.log("sub ebs" + JSON.stringify(res));
-    //     let incomingData = res.data, event = res.event.toLowerCase(), from = res.from;
-    //     if (event == 'onitemselect') {
-    //       this.onItemSelect(incomingData, from)
-    //     } else if (event == 'onitemdeselect') {
-    //       this.onItemDeSelect(incomingData, from)
-    //     } else if (event == 'onselectall') {
-    //       this.onSelectAll(incomingData, from);
-    //     }
-    //     else if (event == 'ondeselectall') {
-    //       this.onDeSelectAll(incomingData, from);
-    //     }
-    //   });
+    this._dataHandlerService.dataFromSideView
+      .subscribe(res => {
+        //console.log("sub ebs" + JSON.stringify(res));
+        let incomingData = res.data, event = res.event.toLowerCase(), from = res.from;
+        if (event == 'onitemselect') {
+          this.onItemSelect(incomingData, from)
+        } else if (event == 'onitemdeselect') {
+          this.onItemDeSelect(incomingData, from)
+        } else if (event == 'onselectall') {
+          this.onSelectAll(incomingData, from);
+        }
+        else if (event == 'ondeselectall') {
+          this.onDeSelectAll(incomingData, from);
+        }else if (event == 'onchangeto') {
+          this.onToYearChange(incomingData);
+        }
+      });
       this._dataHandlerService.setDataForMainLayout(true);
 
    }
@@ -49,29 +76,272 @@ export class ScNewCasesComponent implements OnInit {
    public selectBar(event: ChartSelectEvent) {
     this.openScModel.nativeElement.click();
 
-    console.log("in the selectBar" + JSON.stringify(event.selectedRowValues[0]));
+    // console.log("in the selectBar" + JSON.stringify(event.selectedRowValues[0]));
     if(event.message=='select'){
 
     this.newModelCounts = event.selectedRowValues[1];
     this.data = event.selectedRowValues[0];
-    console.log("the data is:", this.data);
     $('.modal .modal-dialog').css('width', $(window).width() * 0.95);//fixed
     $('.modal .modal-body').css('height', $(window).height() * 0.77);//fixed
     $('tbody.SCModlTbody').css('max-height', $(window).height() * 0.69);
     $('tbody.SCModlTbody').css('overflow-y', 'scroll');
     $('tbody.SCModlTbody').css('overflow-x', 'hidden');
-    // $('tbody.SCModlTbody').css('display', 'block');
     $('tbody.SCModlTbody').css('width', '100%');
     }
   }
 
   public ready(event: ChartReadyEvent) {
-    // your logic
-    console.log("the event returns:"+JSON.stringify(event));
+   
 
   }
 
+  public getSCNewCases(){
+    return new Promise((resolve, reject) => {
+          this._smartclientService.getScNewCases().subscribe(data => {
+            this.newCasesData = this.makeCount(data);  
+            this.casesSrvcData=data;
+       }, err => console.error(err),
+            () => {
+              resolve(this.newCasesData);
+            }
+          )
+        }).catch((error) => {
+          reject(error);
+        })
 
+  }
+
+  public makeCount(data){
+    this.arrr=[];
+    this.jancount=0;
+    this.febcount=0;
+    this.marcount=0;
+    this.aprcount=0;
+    this.maycount=0;
+    this.juncount=0;
+    this.julcount=0;
+    this.augcount=0;
+    this.sepcount=0;
+    this.octcount=0;
+    this.novcount=0;
+    this.deccount=0;
+    console.log("the data is:"+JSON.stringify(data));
+    console.log("the array is:"+JSON.stringify(this.arrr))
+       for(let j in data){
+        console.log("1")
+        if(moment(data[j].case_creation_date).format('MMM')=='Jan'){
+          console.log("2")
+          
+          this.jancount=this.jancount+1;
+        }else if(moment(data[j].case_creation_date).format('MMM')=='Feb'){
+          console.log("3")
+          
+          this.febcount=this.febcount+1;
+        }else if(moment(data[j].case_creation_date).format('MMM')=='Mar'){
+          console.log("4")
+         
+          this.marcount=this.marcount+1;
+        }else if(moment(data[j].case_creation_date).format('MMM')=='Apr'){
+          console.log("5")
+      
+          this.aprcount=this.aprcount+1;
+        }else if(moment(data[j].case_creation_date).format('MMM')=='May'){
+          console.log("6")
+        
+          this.maycount=this.maycount+1;
+        }else if(moment(data[j].case_creation_date).format('MMM')=='Jun'){
+          console.log("7")
+         
+          this.juncount=this.juncount+1;
+        }else if(moment(data[j].case_creation_date).format('MMM')=='Jul'){
+          console.log("8")
+          
+          this.julcount=this.julcount+1;
+        }else if(moment(data[j].case_creation_date).format('MMM')=='Aug'){
+          console.log("9")
+          
+          this.augcount=this.augcount+1;
+        }else if(moment(data[j].case_creation_date).format('MMM')=='Sep'){
+          console.log("10")
+          
+          this.sepcount=this.sepcount+1;
+        }else if(moment(data[j].case_creation_date).format('MMM')=='Oct'){
+          console.log("11")
+          
+          this.octcount=this.octcount+1;
+        }else if(moment(data[j].case_creation_date).format('MMM')=='Nov'){
+          console.log("12")
+          
+          this.novcount=this.novcount+1;
+        }else if(moment(data[j].case_creation_date).format('MMM')=='Dec'){
+          console.log("13");
+          
+          this.deccount=this.deccount+1;
+        }else{
+          alert("there is no such condition successful");
+        }
+    }
+    console.log(this.jancount,this.febcount,this.marcount,this.aprcount,this.maycount,this.juncount,this.julcount,this.augcount,this.sepcount,this.octcount,this.novcount,this.deccount);
+    this.arrr.push(this.jancount,this.febcount,this.marcount,this.aprcount,this.maycount,this.juncount,this.julcount,this.augcount,this.sepcount,this.octcount,this.novcount,this.deccount);
+    console.log("the data to be returned is:"+JSON.stringify(this.arrr));
+    return this.arrr;
+    // this.arrr=[];
+  }
+
+  public getTerritories() {
+    return new Promise((resolve, reject) => {
+      let territories;
+      this._smartclientService.getScTerritories()
+        .subscribe(data => {
+          territories = data;
+          //console.log("territories" + territories)
+        }, err => console.error(err),
+          // the third argument is a function which runs on completion
+          () => {
+            let array = [];
+            let count = 0;
+            let otherTerritory;
+            for (let i in territories) {
+              if (territories[i].territory == 'OTHER') {
+                //console.log("The other territory " + territories[i].territory)
+                // otherTerritory = territories[i].territory
+                otherTerritory = { 'item_id': territories[i].territory, 'item_text': territories[i].territory };
+              } else {
+                array.push({ 'item_id': territories[i].territory, 'item_text': territories[i].territory });
+              }
+            }
+            //array.push({ 'item_id': territories[i].territory, 'item_text': territories[i].territory });
+            array.push(otherTerritory);
+            resolve(array);
+          }
+        )
+    }).catch((error) => {
+      // console.log('errorin getting data :', error);
+      reject(error);
+
+    })
+  }
+
+
+   /**
+     * Array reduce function
+     * @param accumulator-array item summed value
+     * @param num -current array item
+     */
+    public sum(accumulator, num) {
+      return accumulator + num;
+    }
+
+    public makeChartData(data){
+      console.log("the data rec is :"+JSON.stringify(data));
+      let array =[['Months','Cases Counts'],['Jan',data[0]],['Feb',data[1]],['Mar',data[2]],['Apr',data[3]],['May',data[4]],['Jun',data[5]],['Jul',data[6]],['Aug',data[7]],['Sep',data[8]],['Oct',data[9]],['Nov',data[10]],['Dec',data[11]]];
+      this.drawChart(array);
+    }
+
+
+    public filterChartData() {
+      let finalArr = [];
+      if (this.territoriesArr.length == 0) {
+        console.log("inside the check no. 1");
+          if (this.datesData.length > 0) {
+          var result = this.casesSrvcData.filter(items=>{
+           return moment(items.case_creation_date).format('YYYY-MM-DD') >= this.firstDay &&   moment(items.case_creation_date).format('YYYY-MM-DD') <= this.lastDay;
+          })
+          console.log("the result after dates are filtered are as under:"+JSON.stringify(result));
+          console.log("the length of filter are as under:"+JSON.stringify(result.length));
+          result = this.makeCount(result);
+          // console.log("the result returned is as under:"+JSON.stringify(result));
+          // console.log("the result is as under:"+JSON.stringify(result.length));
+          this.makeChartData(result);
+        
+      }else {
+        // console.log("inside the check no. 4");
+
+        // console.log("else part");
+      
+      }
+    }else if(this.territoriesArr.length >= 0){
+
+      console.log("inside the check no. 5 ");
+      console.log("the values returned by terr array is:"+JSON.stringify(this.territoriesArr));
+      console.log("the values of Dates are as follows: the first day is"+JSON.stringify(this.firstDay)+"the last day is"+JSON.stringify(this.lastDay));
+      
+      // for (let j in this.territoriesArr) {
+      //   let workflowItem = this.territoriesArr[j];
+      //   let terrfilter = this.casesSrvcData.filter(item => {
+      //     return item.territory == this.territoriesArr
+      //   });
+      //   for (let i = 0; i < terrfilter.length; i++) {
+      //     finalArr.push(terrfilter[i]);
+      //   }
+      // }
+      var terrfilter = this.casesSrvcData.filter(items => {
+        console.log("in the territories array filter")
+        return items.territory==this.territoriesArr
+      })
+      console.log("the filtered results length is:"+JSON.stringify(terrfilter.length));
+      console.log("the filtered results from territory filter is:"+JSON.stringify(terrfilter));
+      terrfilter = this.makeCount(terrfilter);
+      console.log("the resultant array to be bind to the graph length is:"+JSON.stringify(terrfilter.length));
+      console.log("the resultant array to be bind to the graph is:"+JSON.stringify(terrfilter));
+      this.makeChartData(terrfilter);
+      
+    }
+      
+      // let cases = this.makeChartData(finalArr);
+      // cases = this.calculatePerc(cases);
+      // let chartArr = this.makeChartArr(cases);
+      // if(chartArr.length>0){
+      //   this.checkDataEBS = false;
+  
+      // }else{
+      //   alert("no data to be bind to  graph");
+      //   this.checkDataEBS = true;
+  
+      // }
+      // this.drawChart(chartArr);
+      // console.log("chartArr" + JSON.stringify(chartArr));
+      // console.log("final arr" + JSON.stringify(finalArr));
+      // console.log("group by arr" + JSON.stringify(cases));
+    }
+  
+    public onChangeTo(filterVal: any) {
+      // console.log("hey hi "+filterVal);
+      // console.log("the values is "+this.selectedFrom);
+      var v = filterVal.split(' ');
+      // console.log("the v is:"+v);
+      var newone = v[0] + ' 1, '
+      var newtwo = v[1];
+      var newthree = newone + newtwo;
+      // console.log("the three is :"+newthree);
+      var newModDate = new Date(newthree);
+      // console.log("",v.push(this.selectedFrom));
+      var tb = this.selectedFrom.split(' ');
+      var one = tb[0] + ' 1, ';
+      var two = tb[1];
+      var three = one + two;
+      // console.log("the three is :"+three);
+      var modDate = new Date(three);
+      var FirstDay = new Date(modDate.getFullYear(), modDate.getMonth(), 1).toLocaleDateString();
+      var LastDay = new Date(newModDate.getFullYear(), newModDate.getMonth() + 1, 0).toLocaleDateString();
+  
+  
+      var fd = moment(FirstDay).format('YYYY-MM-DD');
+      var ld = moment(LastDay).format('YYYY-MM-DD');
+      // console.log("the first one is:"+fd);
+      // console.log("the last is:"+ld);
+      // console.log("the d is :",d)
+      // console.log("the moment is:",temp);
+  
+      //console.log("the first day is:",FirstDay);
+      //console.log("last :",LastDay);
+      let jsonObj = { 'event': 'onChangeTo', 'from': 'yeardropdown', 'data': { 'firstDay': fd, 'lastDay': ld } }
+      this._dataHandlerService.setDataFromSideView(jsonObj);
+      //this.getDateFilteredResults(FirstDay,LastDay);
+  
+    }
+
+    
 
   public drawChart(data) {
     this.columnChart = {
@@ -81,7 +351,7 @@ export class ScNewCasesComponent implements OnInit {
         title: '',
         titleTextStyle: {
           color: '#FFFFFF',    // any HTML string color ('red', '#cc00cc')
-          fontName: 'Verdana', // i.e. 'Times New Roman'
+          fontName: 'Arial', // i.e. 'Times New Roman'
           fontSize: 18, // 12, 18 whatever you want (don't specify px)
           bold: true,    // true or false
           italic: false
@@ -91,10 +361,14 @@ export class ScNewCasesComponent implements OnInit {
         legend: { position: 'bottom',alignment:'center', textStyle: { color: '#444444' } },
         backgroundColor: '#FFFFFF',
         hAxis: {
-          textStyle: { color: '#444444' }
+          textStyle: { color: '#444444' },
+         
         },
         vAxis: {
-          textStyle: { color: '#444444' }
+          textStyle: { color: '#444444' },
+          title:'Number Of New Cases/Renewals',
+          slantedText: true,  
+          slantedTextAngle: 90 
         },
         series: {
           0: { color: '0B91E2' },
@@ -105,51 +379,142 @@ export class ScNewCasesComponent implements OnInit {
     };
   }
 
+  // ng multiselect events implemented by Vishal Sehgal 12/2/2019
+    onItemSelect(item, from) {
+      if (from == 'territory') {
+        this.territoriesArr.push(item);
+        this.filterChartData();
+      } 
+      // else if (from == 'workflow') {
+      //   this.workFlowStatusArr.push(item);
+      //   this.filterChartData();
+      // } 
+      // this.filterChartData();
+      // console.log("territory" + JSON.stringify(this.territoriesArr));
+      // console.log("workflow" + JSON.stringify(this.workFlowStatusArr));
+      // console.log("the added array is:"+JSON.stringify(this.territoriesArr));
+      // this.drawChart(this.territoriesArr);
+
+    }
+  
+    onItemDeSelect(item, from) {
+      if (from == 'territory') {
+        this.territoriesArr = this.removeElementArr(this.territoriesArr, item);
+        this.filterChartData();
+      }
+      // else if (from == 'workflow') {
+      //   this.workFlowStatusArr = this.removeElementArr(this.workFlowStatusArr, item);;
+      // }
+      // console.log("territory" + JSON.stringify(this.territoriesArr));
+      // console.log("workflow" + JSON.stringify(this.workFlowStatusArr));
+      console.log("the added array is:"+JSON.stringify(this.territoriesArr));
+      // this.drawChart(this.territoriesArr);
+    }
+  
+    onSelectAll(item, from) {
+      if (from == 'territory') {
+        this.territoriesArr = [];
+        this.territoriesArr = item
+        this.filterChartData();
+      } 
+      // else if (from == '') {
+      //   this.workFlowStatusArr = [];
+      //   this.workFlowStatusArr = item;
+      // }
+      // console.log("territory" + JSON.stringify(this.territoriesArr));
+      // console.log("workflow" + JSON.stringify(this.workFlowStatusArr));
+      // console.log("the added array is:"+JSON.stringify(this.territoriesArr));
+      // this.drawChart(this.territoriesArr);
+    }
+  
+    onToYearChange(item) {
+      this.firstDay=item.firstDay;
+      this.lastDay=item.lastDay;
+      console.log("the item rec is:"+JSON.stringify(this.firstDay));
+      console.log("the last one is:"+JSON.stringify(this.lastDay));
+      this.datesData.push(item.firstDay);
+      this.datesData.push(item.lastDay);
+      this.filterChartData();
+      // console.log("the added array is:"+JSON.stringify( this.datesData));
+      
+    }
+  
+    onDeSelectAll(item, from) {
+      this.territoriesArr = [];
+      // this.workFlowStatusArr = [];
+      // console.log("onDeSelectAll" + JSON.stringify(item));
+      this.filterChartData();
+      // console.log("the added array is:"+JSON.stringify(this.territoriesArr));
+      // this.drawChart(this.territoriesArr);
+    }
+
+    
+      /**
+   * Use to remove array item from array
+   * @param array -array of elements
+   * @param itemToRemove -Item to be removed like T1,T2,Open
+   */
+  public removeElementArr(array, itemToRemove) {
+    var index = array.indexOf(itemToRemove);
+    if (index !== -1) array.splice(index, 1);
+    return array;
+  }
 
 
 
-  public NSSAging(){
+ public NSSAging(){
    let arr = [2,3];
    arr.push(arr[1]-arr[0]);
    alert("the array is:[2,3]");
-   console.log("the diff is :"+JSON.stringify(arr));
+  //  console.log("the diff is :"+JSON.stringify(arr));
    alert("the calculated NSS Aging is:"+arr);
    // NSS Aging main logic function
   //  let arrnew = [];
   //  for(let i in Response){
   //     arrnew.push(['NSS_Aging':[moment(Response[i].ClosingDate).format('YYYY-MM_DD')]-[moment(Response[i].StartDate).format('YYYY-MM_DD')]);
   //  }
-   console.log("the final arrnew is:")
+  //  console.log("the final arrnew is:")
   }
 
-   
-
   ngOnInit() {
+    this.getSCNewCases()
+    .then((res:any) => {
+      // console.log("the data returned by promise is :"+JSON.stringify(res));
+      if (res.length == 0) {
+        res = [['Months', 'No. Of Cases'], ['', ], ['', 0], ['', 0]];
+        this.drawChart(res);
+        this.checkDataSCNC = true;
+     } else if (res.length > 0) {
+        // alert("there is no data to bind to chart");
+        res=[['Months','Cases Counts'],['Jan',this.arrr[0]],['Feb',this.arrr[1]],['Mar',this.arrr[2]],['Apr',this.arrr[3]],['May',this.arrr[4]],['Jun',this.arrr[5]],['Jul',this.arrr[6]],['Aug',this.arrr[7]],['Sep',this.arrr[8]],['Oct',this.arrr[9]],['Nov',this.arrr[10]],['Dec',this.arrr[11]]];
+        this.drawChart(res);
+        this.checkDataSCNC = false;
+     } else {
+        this.checkDataSCNC = true;
+      }
 
-    let res=[['Months','No. Of Cases'],['Jan',0],['Feb',0],['Mar',2],['Apr',8],['May',20],['Jun',56]];
-     this.drawChart(res);
-    if (res.length == 0) {
+    }, error => {
+        // console.log("error getCaseData " + error);
+    });
 
-      res = [['Months', 'No. Of Cases'], ['', 0], ['', 0], ['', 0]];
-      this.drawChart(res);
-      this.checkDataSCNC = true;
 
-      
-    } else if (res.length > 0) {
-      // alert("there is no data to bind to chart");
-      this.drawChart(res);
-      this.checkDataSCNC = false;
+    this.getTerritories()
+      .then((res: any) => {
+        //this.drawChart(res);
+        this.sideViewDropDowns.showTerritory = true;
+        this.sideViewDropDowns.territoryData = res;
+        this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
+      }, error => {
+        // console.log("error getTerritories " + error);
+      });
 
-    } else {
-      this.checkDataSCNC = true;
-    }
     this.sideViewDropDowns.showTerritory = true;
     this.sideViewDropDowns.showArrivalType=true;
     this.sideViewDropDowns.showYearDD=true;
     this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
-    console.log("the res array is:"+JSON.stringify(this.res));
     this.sideViewDropDowns.compHeading=appheading.graph3;
-
+    
+   
 
   }
 

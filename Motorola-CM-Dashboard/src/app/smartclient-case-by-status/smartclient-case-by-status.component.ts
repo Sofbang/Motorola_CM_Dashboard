@@ -234,7 +234,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
         title: '',
         titleTextStyle: {
           color: '#FFFFFF',    // any HTML string color ('red', '#cc00cc')
-          fontName: 'Verdana', // i.e. 'Times New Roman'
+          fontName: 'Arial', // i.e. 'Times New Roman'
           fontSize: 18, // 12, 18 whatever you want (don't specify px)
           bold: true,    // true or false
           italic: false
@@ -247,10 +247,13 @@ export class SmartclientCaseByStatusComponent implements OnInit {
           textStyle: { color: '#444444' }
         },
         vAxis: {
-          textStyle: { color: '#444444' }
+          textStyle: { color: '#444444' },
+          title:'Smart Client Status',
+          slantedText: true,  
+          slantedTextAngle: 90 
         },
         series: {
-          0: { color: '0B91E2' }
+          0: { color: '#93C0F6' }
         },
         tooltip: { isHtml: false }
       }
@@ -448,17 +451,19 @@ export class SmartclientCaseByStatusComponent implements OnInit {
 
       for (let i in cases) {
         let index = parseInt(i);
-        if(cases[i].status=='Insufficient Data'){
-          barColor='#4A90E2';
-        }else if(cases[i].status =='InProg Awt 3PS'){
+        if(cases[i].status=='Insufficient Data' || cases[i].status =='InProg Awt 3PS' ||  cases[i].status =='InProg Awt SSC' || cases[i].status =='InProg Awt Credit' || cases[i].status == 'InProg Awt Resource'){
           barColor='#93C0F6';
-        }else if(cases[i].status =='InProg Awt SSC'){
-          barColor='#4A90E2';
-        }else if(cases[i].status =='InProg Awt Credit'){
-          barColor='#618CF7';
-        }else if(cases[i].status == 'InProg Awt Resource'){
-          barColor='#164985';
-        }else{
+        // }else if(cases[i].status =='InProg Awt 3PS'){
+        //   barColor='#93C0F6';
+        // }else if(cases[i].status =='InProg Awt SSC'){
+        //   barColor='#4A90E2';
+        // }else if(cases[i].status =='InProg Awt Credit'){
+        //   barColor='#618CF7';
+        // }else if(cases[i].status == 'InProg Awt Resource'){
+        //   barColor='#164985';
+        // }
+        }
+        else{
           barColor='#3274C2';
         }
         //console.log(i);

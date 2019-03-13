@@ -34,6 +34,12 @@ export class EbsService {
       .map(result => this.result = result.json().data);
   }
 
+
+  // New REST SERVICES FOR EBS CYCLE TIMES (to be Used)
+  getEBSCycleTimes(){
+    return this.http.get('api/ebs_cycle_times')
+    .map(result => this.result = result.json().data);
+  }
   
 
 }

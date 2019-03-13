@@ -194,7 +194,7 @@ export class EbsContractByStatusComponent implements OnInit {
         title: '',
         titleTextStyle: {
           color: '#FFFFFF',
-          fontName: 'Verdana',
+          fontName: 'Arial',
           fontSize: 18,
           bold: true,
           italic: false
@@ -208,7 +208,10 @@ export class EbsContractByStatusComponent implements OnInit {
           textStyle: { color: '#444444' }
         },
         vAxis: {
-          textStyle: { color: '#444444' }
+          textStyle: { color: '#444444' },
+          title:'R12 Status',
+          slantedText: true,  
+          slantedTextAngle: 90 
         },
         series: {
           0: { color: '0B91E2' }
@@ -242,15 +245,15 @@ export class EbsContractByStatusComponent implements OnInit {
   }
 
   onSelectAll(item, from) {
-    console.log("the selectAll is:"+JSON.stringify(item)+JSON.stringify(from));
-    if (from == 'territory') {
-      this.territoriesArr = [];
-      this.territoriesArr = item
-    } else if (from == 'workflow') {
-      this.workFlowStatusArr = [];
-      this.workFlowStatusArr = item;
-    }
-    this.filterChartData();
+    // console.log("the selectAll is:"+JSON.stringify(item)+JSON.stringify(from));
+    // if (from == 'territory') {
+    //   this.territoriesArr = [];
+    //   this.territoriesArr = item
+    // } else if (from == 'workflow') {
+    //   this.workFlowStatusArr = [];
+    //   this.workFlowStatusArr = item;
+    // }
+    // this.filterChartData();
     // console.log("territory" + JSON.stringify(this.territoriesArr));
     // console.log("workflow" + JSON.stringify(this.workFlowStatusArr));
   }

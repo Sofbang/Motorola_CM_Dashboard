@@ -68,7 +68,7 @@
          <label for="options" id="fromLabel">From
             </label>
             <select class="form-control" id="from" name="from" [(ngModel)]="from" (change)="onChangeFrom($event.target.value)">
-                <option [value]="null">Select !</option>
+                <option [value]="null">Select </option>
                 <option *ngFor="let datesFormed of fianldates" >{{datesFormed}}</option>
  
                 </select>
@@ -77,7 +77,7 @@
         <label for="options" id="toLabel">To
               </label>
               <select class="form-control" id="to" name="to" [(ngModel)]="to" (change)="onChangeTo($event.target.value)">
-                  <option [value]="null">Select !</option>
+                  <option [value]="null">Select </option>
                  <option *ngFor="let dates of toYear" >{{dates}}</option>
                </select>
         </div>

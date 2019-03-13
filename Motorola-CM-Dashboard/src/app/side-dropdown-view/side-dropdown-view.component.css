@@ -74,7 +74,7 @@ color: #FFFF;
     appearance:none;
     position:relative;
     background:transparent;
-    padding:9px;
+    padding:7px;
     border:1px solid #adadad;
     -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
     -moz-box-sizing: border-box;    /* Firefox, other Gecko */
@@ -94,7 +94,7 @@ color: #FFFF;
     appearance:none;
     position:relative;
     background:transparent;
-    padding:9px;
+    padding:7px;
     border:1px solid #adadad;
     -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
     -moz-box-sizing: border-box;    /* Firefox, other Gecko */
@@ -125,4 +125,12 @@ color: #FFFF;
   font-weight: 600;
   color:#454545;
   margin-left: 19px;  
+}
+
+:host /deep/ .multiselect-dropdown.dropdown-btn .selected-item{
+   
+  margin-right: 2px !important;
+ 
+  padding: 0 2px !important;
+
 }

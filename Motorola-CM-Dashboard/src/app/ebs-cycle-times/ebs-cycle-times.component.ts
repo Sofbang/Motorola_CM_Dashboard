@@ -15,7 +15,7 @@ import { ExcelServiceService } from '../services/convert_to_excel/excel-service.
   styleUrls: ['./ebs-cycle-times.component.css']
 })
 export class EbsCycleTimesComponent implements OnInit {
-  public contractsData: any = [];
+  public cycleTimesData: any = [];
   public ebscolumnChartData: any;
   public territories: any;
   public territoriesArr: any = [];
@@ -66,100 +66,141 @@ export class EbsCycleTimesComponent implements OnInit {
 
   public exportToExcel(){
     let data: any = [{
+      Customer: 'John',
+      Status: 'Doe',
+      Owner: 'john@example.com',
+      OpenDate:'05/03/2019',
+      NSSAging:'11 Days',
+      Contract_Start_Date:'05/03/2019'
+    },
 
-      eid: 'e101',
+    {
 
-      ename: 'ravi',
+      Customer: 'Mary',
+      Status: 'Moe',
+      Owner: 'mary@example.com',
+      OpenDate:'05/03/2019',
+      NSSAging:'3 Days',
+      Contract_Start_Date:'05/03/2019'
 
-      esal: 1000
 
     },
 
     {
 
-      eid: 'e102',
+      Customer: 'July',
+      Status: 'Dooley',
+      Owner: 'july@example.com',
+      OpenDate:'05/03/2019',
+      NSSAging:'5 Days',
+      Contract_Start_Date:'05/03/2019'
 
-      ename: 'ram',
 
-      esal: 2000
-
+    },
+    {
+    
+      Customer: 'July',
+      Status: 'Dooley',
+      Owner: 'july@example.com',
+      OpenDate:'05/03/2019',
+      NSSAging:'6 Days',
+      Contract_Start_Date:'05/03/2019'
     },
 
     {
-
-      eid: 'e103',
-
-      ename: 'rajesh',
-
-      esal: 3000
-
+      Customer: 'July',
+      Status: 'Dooley',
+      Owner: 'july@example.com',
+      OpenDate:'05/03/2019',
+      NSSAging:'7 Days',
+      Contract_Start_Date:'05/03/2019'
     },
-    { eid: 'e103',
-
-    ename: 'rajesh',
-
-    esal: 3000,
-
-    essl:2323},
-
-    { eid: 'e103',
-
-    ename: 'rajesh',
-
-    esal: 3000,
-  
-    essl:233,
     
-    vvv:2222},
+    {
+      
+      Customer: 'July',
+      Status: 'Dooley',
+      Owner: 'july@example.com',
+      OpenDate:'05/03/2019',
+      NSSAging:'9 Days',
+      Contract_Start_Date:'05/03/2019'
+   },
     
-    { eid: 'e103',
+    {
+      
+      Customer: 'July',
+      Status: 'Dooley',
+      Owner: 'july@example.com',
+      OpenDate:'05/03/2019',
+      NSSAging:'8 Days',
+      Contract_Start_Date:'05/03/2019'
+   },
+     {
+      Customer: 'July',
+      Status: 'Dooley',
+      Owner: 'july@example.com',
+      OpenDate:'05/03/2019',
+      NSSAging:'10 Days',
+      Contract_Start_Date:'05/03/2019'
 
-    ename: 'rajesh',
+     },
+     {
+      Customer: 'July',
+      Status: 'Dooley',
+      Owner: 'july@example.com',
+      OpenDate:'05/03/2019',
+      NSSAging:'15 Days',
+      Contract_Start_Date:'05/03/2019'
+     },
+    {
+      Customer: 'July',
+      Status: 'Dooley',
+      Owner: 'july@example.com',
+      OpenDate:'05/03/2019',
+      NSSAging:'14 Days',
+      Contract_Start_Date:'05/03/2019'
+    },
+   {
+    Customer: 'July',
+    Status: 'Dooley',
+    Owner: 'july@example.com',
+    OpenDate:'05/03/2019',
+    NSSAging:'12 Days',
+    Contract_Start_Date:'05/03/2019'
+   },
+   {
+    Customer: 'July',
+    Status: 'Dooley',
+    Owner: 'july@example.com',
+    OpenDate:'05/03/2019',
+    NSSAging:'1 Days',
+    Contract_Start_Date:'05/03/2019'
+   }];
 
-    esal: 3000,
-
-    essl:234,
-    
-    vvv:2223,
-    
-    ghgh:'ioii'},
-    
-    { eid: 'e103',
-
-    ename: 'rajesh',
-
-    esal: 3000,
-     
-    essl:234,
-    
-    vvv:2223,
-    
-    hghgh:'uyuy'}];
-
-    this._excelService.exportAsExcelFile(data, 'sample_excel');
+    this._excelService.exportAsExcelFile(data, 'EBS Cycle Times');
 
   }
 
 
 
-  public getContractData() {
-    return new Promise((resolve, reject) => {
-      let contractData;
-      this._ebsService.getEBSContractState().subscribe(data => {
-        this.contractsData = data;
-        contractData = this.makeChartData(data);
-        //console.log("contracts" + this.contracts)
-      }, err => console.error(err),
-        // the third argument is a function which runs on completion
-        () => {
-          resolve(this.makeChartArr(contractData));
-        }
-      )
-    }).catch((error) => {
-      reject(error);
-      console.log('errorin getting data :', error);
-    })
-  }
+  // public getCycleTimesData() {
+  //   return new Promise((resolve, reject) => {
+  //     let cycleTimesData;
+  //     this._ebsService.getEBSCycleTimes().subscribe(data => {
+  //       this.cycleTimesData = data;
+  //       cycleTimesData = this.makeChartData(data);
+  //       //console.log("contracts" + this.contracts)
+  //     }, err => console.error(err),
+  //       // the third argument is a function which runs on completion
+  //       () => {
+  //         resolve(this.makeChartArr(cycleTimesData));
+  //       }
+  //     )
+  //   }).catch((error) => {
+  //     reject(error);
+  //     console.log('errorin getting data :', error);
+  //   })
+  // }
 
   public getebsTerritoriesData() {
     return new Promise((resolve, reject) => {
@@ -228,7 +269,7 @@ export class EbsCycleTimesComponent implements OnInit {
         title: '',
         titleTextStyle: {
           color: '#FFFFFF',
-          fontName: 'Verdana',
+          fontName: 'Arial',
           fontSize: 18,
           bold: true,
           italic: false
@@ -241,7 +282,11 @@ export class EbsCycleTimesComponent implements OnInit {
           textStyle: { color: '#444444' }
         },
         vAxis: {
-          textStyle: { color: '#444444' }
+          textStyle: { color: '#444444' },
+          title:'Median Days',
+          slantedText: false,  
+          slantedTextAngle: 90,
+          
         },
         series: {
           0: { color: '0B91E2' }
@@ -304,7 +349,7 @@ export class EbsCycleTimesComponent implements OnInit {
         //console.log("t0 s>0");
         for (let j in this.workFlowStatusArr) {
           let workflowItem = this.workFlowStatusArr[j];
-          let workflowFilterarr = this.contractsData.filter(item => {
+          let workflowFilterarr = this.cycleTimesData.filter(item => {
             return (item.status == workflowItem);
           });
           for (let i = 0; i < workflowFilterarr.length; i++) {
@@ -317,7 +362,7 @@ export class EbsCycleTimesComponent implements OnInit {
         //console.log("t>1 s0");
         for (let i in this.territoriesArr) {
           let territoryItem = this.territoriesArr[i];
-          let territoryFilterarr = this.contractsData.filter(item => {
+          let territoryFilterarr = this.cycleTimesData.filter(item => {
             //console.log("territoryItem" + territoryItem);
             return item.territory == territoryItem;
           });
@@ -329,7 +374,7 @@ export class EbsCycleTimesComponent implements OnInit {
         }
       } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length == 0) {
         //console.log("t0 s0");
-        let cases = this.makeChartData(this.contractsData);
+        let cases = this.makeChartData(this.cycleTimesData);
         let chartArr = this.makeChartArr(cases)
         this.drawchart(chartArr);
         return;
@@ -338,7 +383,7 @@ export class EbsCycleTimesComponent implements OnInit {
         //console.log("t>0 s>0");
         for (let i in this.territoriesArr) {
           let territoryItem = this.territoriesArr[i];
-          let territoryFilterarr = this.contractsData.filter(item => {
+          let territoryFilterarr = this.cycleTimesData.filter(item => {
             return item.territory == territoryItem;
           });
           //console.log("territoryFilterarr" + JSON.stringify(territoryFilterarr));
@@ -484,7 +529,7 @@ export class EbsCycleTimesComponent implements OnInit {
     // }
 
 
-    // this.getContractData()
+    // this.getCycleTimesData()
     //   .then((res: any) => {
     //     this.drawchart(res);
     //   }, error => {

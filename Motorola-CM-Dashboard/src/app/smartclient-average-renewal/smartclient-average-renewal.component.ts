@@ -136,6 +136,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       reject(error);
     })
   }
+  
   public getCaseDataAvg() {
     return new Promise((resolve, reject) => {
       let cases;
@@ -254,7 +255,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
         title: '',
         titleTextStyle: {
           color: '#FFFFFF',    // any HTML string color ('red', '#cc00cc')
-          fontName: 'Verdana', // i.e. 'Times New Roman'
+          fontName: 'Arial', // i.e. 'Times New Roman'
           fontSize: 18, // 12, 18 whatever you want (don't specify px)
           bold: true,    // true or false
           italic: false
@@ -267,11 +268,13 @@ export class SmartclientAverageRenewalComponent implements OnInit {
           textStyle: { color: '#444444' }
         },
         vAxis: {
-          textStyle: { color: '#444444' }
+          textStyle: { color: '#444444' },
+          title:'Smart Client Status',
+          slantedText: true,  
+          slantedTextAngle: 90 
         },
         series: {
-          0: { color: '0B91E2' },
-          1: { color: '57A9EA' }
+          0: { color: '#93C0F6' },
         },
         tooltip: { isHtml: false }
       }
@@ -680,16 +683,16 @@ export class SmartclientAverageRenewalComponent implements OnInit {
     // console.log("the color new array for cases are as under:"+JSON.stringify(cases));
     for (let i in cases) {
       // let index=parseInt(i);
-      if(cases[i].status=='Insufficient Data'){
-        barColor='#4A90E2';
-      }else if(cases[i].status =='InProg Awt 3PS'){
+      if(cases[i].status=='Insufficient Data' || cases[i].status =='InProg Awt 3PS' || cases[i].status =='InProg Awt SSC' || cases[i].status =='InProg Awt Credit' || cases[i].status == 'InProg Awt Resource'){
         barColor='#93C0F6';
-      }else if(cases[i].status =='InProg Awt SSC'){
-        barColor='#4A90E2';
-      }else if(cases[i].status =='InProg Awt Credit'){
-        barColor='#618CF7';
-      }else if(cases[i].status == 'InProg Awt Resource'){
-        barColor='#164985';
+      // }else if(cases[i].status =='InProg Awt 3PS'){
+      //   barColor='#93C0F6';
+      // }else if(cases[i].status =='InProg Awt SSC'){
+      //   barColor='#4A90E2';
+      // }else if(cases[i].status =='InProg Awt Credit'){
+      //   barColor='#618CF7';
+      // }else if(cases[i].status == 'InProg Awt Resource'){
+      //   barColor='#164985';
       }else{
         barColor='#3274C2';
       }

@@ -6,8 +6,8 @@ const app = express();
 //for app logging
 const logger = require('./app_configuration/logger');
 const { Pool } = require('pg')
-//const connectionString = 'postgresql://sofbang_admin:Sofbang2019@sofbanginstance.cxbsn39rr5kp.us-east-2.rds.amazonaws.com/contract_dash';
-const connectionString = 'postgresql://admin_user:Motorola@2019@dss-subm-postgresql-uat2.ci9ygz3u43cw.us-east-1.rds.amazonaws.com:5432/contract_dash';
+const connectionString = 'postgresql://sofbang_admin:Sofbang2019@sofbanginstance.cxbsn39rr5kp.us-east-2.rds.amazonaws.com/contract_dash';
+//const connectionString = 'postgresql://admin_user:Motorola@2019@dss-subm-postgresql-uat2.ci9ygz3u43cw.us-east-1.rds.amazonaws.com:5432/contract_dash';
 //create postgre sql connection pool
 const pool = new Pool({
   connectionString: connectionString

@@ -133,6 +133,28 @@ router.get('/sc_arrival_type', (req, res, next) => {
   });
 });
 
+// // API for sc_case_territories
+router.get('/sc_new_cases', (req, res, next) => {
+  //call doConnect method in db_operations
+  conn.doConnect((err, dbConn) => {
+    if (err) { return next(err); }
+    //execute body using using connection instance returned by doConnect method
+    conn.doExecute(dbConn,
+      `Select distinct case_number,case_title,current_status,addnl_info,from_status,to_status,territory,case_creation_date,sts_changed_on,customer,case_owner FROM sc_case_state_master order by case_number asc `, [],
+      function (err, result) {
+        if (err) {
+          conn.doRelease(dbConn);
+          //call error handler
+          return next(err);
+        }
+        response.data = result.rows;
+        res.json(response);
+        //release connection back to pool
+        conn.doRelease(dbConn);
+      });
+  });
+});
+
 
 // API for sc_workflow_status
 router.get('/sc_workflow_status', (req, res, next) => {
@@ -262,6 +284,9 @@ router.post('/sc_case_status_med_yr', (req, res, next) => {
       });
   });
 });
+
+
+
 //sc_case_status_avg_yr filter
 router.post('/sc_case_status_avg_yr', (req, res, next) => {
   //call doConnect method in db_operations

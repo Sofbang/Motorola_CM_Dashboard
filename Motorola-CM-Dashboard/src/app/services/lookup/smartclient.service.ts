@@ -44,4 +44,10 @@ export class SmartclientService {
     return this.http.post("api/"+uri, JSON.stringify(dates), this.options)
     .map(response => this.result = response.json().data);
   }
+
+  getScNewCases(){
+    return this.http.get('api/sc_new_cases')
+    .map(result => this.result = result.json().data);
+  }
+
 }

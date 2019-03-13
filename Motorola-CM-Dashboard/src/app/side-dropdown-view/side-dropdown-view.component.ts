@@ -45,7 +45,7 @@ export class SideDropdownViewComponent implements OnInit {
       .subscribe(res => {
         this.sideViewDDObj=new SideViewDropDowns();
         this.sideViewDDObj = res;
-        console.log("subscribe inside sideview" + JSON.stringify(this.sideViewDDObj));
+        // console.log("subscribe inside sideview" + JSON.stringify(this.sideViewDDObj));
         this.ngFormDate.reset();
       });
     this.getScreenSize();
