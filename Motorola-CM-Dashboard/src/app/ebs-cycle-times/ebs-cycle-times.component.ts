@@ -289,7 +289,9 @@ export class EbsCycleTimesComponent implements OnInit {
           
         },
         series: {
-          0: { color: '0B91E2' }
+          0: { color: '#93C0F6' },
+          1: { color: '#3274C2' }
+
         },
         tooltip: { isHtml: false, type: 'string' }
       }

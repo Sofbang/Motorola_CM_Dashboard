@@ -30,7 +30,7 @@ export class ScNewCasesComponent implements OnInit {
   public casesSrvcData=[];
   public data:any;
   public res;
-  public checkDataSCNC: Boolean = false;
+  public checkDataSCNC: any = false;
   public sideViewDropDowns = new SideViewDropDowns();
   public jancount=0;
   public febcount=0;
@@ -130,51 +130,51 @@ export class ScNewCasesComponent implements OnInit {
        for(let j in data){
         console.log("1")
         if(moment(data[j].case_creation_date).format('MMM')=='Jan'){
-          console.log("2")
+          // console.log("2")
           
           this.jancount=this.jancount+1;
         }else if(moment(data[j].case_creation_date).format('MMM')=='Feb'){
-          console.log("3")
+          // console.log("3")
           
           this.febcount=this.febcount+1;
         }else if(moment(data[j].case_creation_date).format('MMM')=='Mar'){
-          console.log("4")
+          // console.log("4")
          
           this.marcount=this.marcount+1;
         }else if(moment(data[j].case_creation_date).format('MMM')=='Apr'){
-          console.log("5")
+          // console.log("5")
       
           this.aprcount=this.aprcount+1;
         }else if(moment(data[j].case_creation_date).format('MMM')=='May'){
-          console.log("6")
+          // console.log("6")
         
           this.maycount=this.maycount+1;
         }else if(moment(data[j].case_creation_date).format('MMM')=='Jun'){
-          console.log("7")
+          // console.log("7")
          
           this.juncount=this.juncount+1;
         }else if(moment(data[j].case_creation_date).format('MMM')=='Jul'){
-          console.log("8")
+          // console.log("8")
           
           this.julcount=this.julcount+1;
         }else if(moment(data[j].case_creation_date).format('MMM')=='Aug'){
-          console.log("9")
+          // console.log("9")
           
           this.augcount=this.augcount+1;
         }else if(moment(data[j].case_creation_date).format('MMM')=='Sep'){
-          console.log("10")
+          // console.log("10")
           
           this.sepcount=this.sepcount+1;
         }else if(moment(data[j].case_creation_date).format('MMM')=='Oct'){
-          console.log("11")
+          // console.log("11")
           
           this.octcount=this.octcount+1;
         }else if(moment(data[j].case_creation_date).format('MMM')=='Nov'){
-          console.log("12")
+          // console.log("12")
           
           this.novcount=this.novcount+1;
         }else if(moment(data[j].case_creation_date).format('MMM')=='Dec'){
-          console.log("13");
+          // console.log("13");
           
           this.deccount=this.deccount+1;
         }else{
@@ -183,7 +183,7 @@ export class ScNewCasesComponent implements OnInit {
     }
     console.log(this.jancount,this.febcount,this.marcount,this.aprcount,this.maycount,this.juncount,this.julcount,this.augcount,this.sepcount,this.octcount,this.novcount,this.deccount);
     this.arrr.push(this.jancount,this.febcount,this.marcount,this.aprcount,this.maycount,this.juncount,this.julcount,this.augcount,this.sepcount,this.octcount,this.novcount,this.deccount);
-    console.log("the data to be returned is:"+JSON.stringify(this.arrr));
+    // console.log("the data to be returned is:"+JSON.stringify(this.arrr));
     return this.arrr;
     // this.arrr=[];
   }
@@ -234,75 +234,117 @@ export class ScNewCasesComponent implements OnInit {
 
     public makeChartData(data){
       console.log("the data rec is :"+JSON.stringify(data));
-      let array =[['Months','Cases Counts'],['Jan',data[0]],['Feb',data[1]],['Mar',data[2]],['Apr',data[3]],['May',data[4]],['Jun',data[5]],['Jul',data[6]],['Aug',data[7]],['Sep',data[8]],['Oct',data[9]],['Nov',data[10]],['Dec',data[11]]];
-      this.drawChart(array);
+      // let array =[['Months','Cases Counts'],['Jan',data[0]],['Feb',data[1]],['Mar',data[2]],['Apr',data[3]],['May',data[4]],['Jun',data[5]],['Jul',data[6]],['Aug',data[7]],['Sep',data[8]],['Oct',data[9]],['Nov',data[10]],['Dec',data[11]]];
+      let array=[];
+      if(data.length>0){
+        array=[['Months','Cases Counts'],['Jan',data[0]],['Feb',data[1]],['Mar',data[2]],['Apr',data[3]],['May',data[4]],['Jun',data[5]],['Jul',data[6]],['Aug',data[7]],['Sep',data[8]],['Oct',data[9]],['Nov',data[10]],['Dec',data[11]]];
+        this.drawChart(array);
+        this.checkDataSCNC= false;
+        
+      }else if(data.length==0){
+
+        array =[['Months','Cases Counts'],['Jan',0],['Feb',0],['Mar',0],['Apr',0],['May',0],['Jun',0],['Jul',0],['Aug',0],['Sep',0],['Oct',0],['Nov',0],['Dec',0]];
+        this.drawChart(array);
+        this.checkDataSCNC=true;
+
+      }else{
+        alert("in else of makeChart Data before drawing chart");
+      }
+      //this.drawChart(array);
     }
 
 
     public filterChartData() {
       let finalArr = [];
-      if (this.territoriesArr.length == 0) {
-        console.log("inside the check no. 1");
-          if (this.datesData.length > 0) {
+     if(this.territoriesArr.length > 0){
+        if (this.datesData.length > 0) {
+        var result = this.casesSrvcData.filter(items=>{
+         return moment(items.case_creation_date).format('YYYY-MM-DD') >= this.firstDay &&   moment(items.case_creation_date).format('YYYY-MM-DD') <= this.lastDay;
+        })
+       
+       for (let j in this.territoriesArr) {
+          let workflowItem = this.territoriesArr[j]
+        var terrfilter = result.filter(items => {
+          // console.log("in the territories array filter")
+          return items.territory==workflowItem
+        })
+        for (let i = 0; i < terrfilter.length; i++) {
+          finalArr.push(terrfilter[i]);
+        }
+      }
+        // console.log("the filtered results length is:"+JSON.stringify(finalArr.length));
+        // console.log("the filtered results from territory filter is:"+JSON.stringify(finalArr));
+        finalArr = this.makeCount(finalArr);
+        // console.log("the resultant array to be bind to the graph length is:"+JSON.stringify(finalArr.length));
+        // console.log("the resultant array to be bind to the graph is:"+JSON.stringify(finalArr));
+        this.makeChartData(finalArr);
+
+      
+      }else {
+
+        console.log("in multiple territory select:"+JSON.stringify(this.territoriesArr));
+        alert("in multiple territory select:"+JSON.stringify(this.territoriesArr.length));
+         let finalArr=[];
+         for (let j in this.territoriesArr) {
+        let terr = this.territoriesArr[j];
+        var terrfilter = this.casesSrvcData.filter(items => {
+          // console.log("in the territories array filter")
+          return items.territory==terr
+        })
+         console.log("the filtered results from territory length is:"+JSON.stringify(terrfilter.length));
+           for (let i = 0; i < terrfilter.length; i++) {
+          finalArr.push(terrfilter[i]);
+        }
+      }
+        console.log("the filtered results length is:"+JSON.stringify(finalArr.length));
+        // console.log("the filtered results from territory filter is:"+JSON.stringify(finalArr));
+        finalArr = this.makeCount(finalArr);
+        // console.log("the resultant array to be bind to the graph length is:"+JSON.stringify(finalArr.length));
+        // console.log("the resultant array to be bind to the graph is:"+JSON.stringify(finalArr));
+        this.makeChartData(finalArr);
+    
+      }
+
+      
+      
+    }
+    else{
+         console.log("the check no.2 is:");
+         if (this.datesData.length > 0) {
           var result = this.casesSrvcData.filter(items=>{
            return moment(items.case_creation_date).format('YYYY-MM-DD') >= this.firstDay &&   moment(items.case_creation_date).format('YYYY-MM-DD') <= this.lastDay;
           })
-          console.log("the result after dates are filtered are as under:"+JSON.stringify(result));
-          console.log("the length of filter are as under:"+JSON.stringify(result.length));
+          // console.log("the result after dates are filtered are as under:"+JSON.stringify(result));
+          // console.log("the length of filter are as under:"+JSON.stringify(result.length));
           result = this.makeCount(result);
           // console.log("the result returned is as under:"+JSON.stringify(result));
           // console.log("the result is as under:"+JSON.stringify(result.length));
           this.makeChartData(result);
         
       }else {
-        // console.log("inside the check no. 4");
+        for (let j in this.territoriesArr) {
+          let workflowItem = this.territoriesArr[j];
+        var terrfilter = this.casesSrvcData.filter(items => {
+          // console.log("in the territories array filter")
+          return items.territory==workflowItem
+        })
 
-        // console.log("else part");
+        for (let i = 0; i < terrfilter.length; i++) {
+          finalArr.push(terrfilter[i]);
+        }
+      }
+        // console.log("the filtered results length is:"+JSON.stringify(finalArr.length));
+        // console.log("the filtered results from territory filter is:"+JSON.stringify(finalArr));
+        finalArr = this.makeCount(finalArr);
+        // console.log("the resultant array to be bind to the graph length is:"+JSON.stringify(finalArr.length));
+        // console.log("the resultant array to be bind to the graph is:"+JSON.stringify(finalArr));
+        this.makeChartData(finalArr);
+        
       
       }
-    }else if(this.territoriesArr.length >= 0){
-
-      console.log("inside the check no. 5 ");
-      console.log("the values returned by terr array is:"+JSON.stringify(this.territoriesArr));
-      console.log("the values of Dates are as follows: the first day is"+JSON.stringify(this.firstDay)+"the last day is"+JSON.stringify(this.lastDay));
-      
-      // for (let j in this.territoriesArr) {
-      //   let workflowItem = this.territoriesArr[j];
-      //   let terrfilter = this.casesSrvcData.filter(item => {
-      //     return item.territory == this.territoriesArr
-      //   });
-      //   for (let i = 0; i < terrfilter.length; i++) {
-      //     finalArr.push(terrfilter[i]);
-      //   }
-      // }
-      var terrfilter = this.casesSrvcData.filter(items => {
-        console.log("in the territories array filter")
-        return items.territory==this.territoriesArr
-      })
-      console.log("the filtered results length is:"+JSON.stringify(terrfilter.length));
-      console.log("the filtered results from territory filter is:"+JSON.stringify(terrfilter));
-      terrfilter = this.makeCount(terrfilter);
-      console.log("the resultant array to be bind to the graph length is:"+JSON.stringify(terrfilter.length));
-      console.log("the resultant array to be bind to the graph is:"+JSON.stringify(terrfilter));
-      this.makeChartData(terrfilter);
-      
     }
       
-      // let cases = this.makeChartData(finalArr);
-      // cases = this.calculatePerc(cases);
-      // let chartArr = this.makeChartArr(cases);
-      // if(chartArr.length>0){
-      //   this.checkDataEBS = false;
-  
-      // }else{
-      //   alert("no data to be bind to  graph");
-      //   this.checkDataEBS = true;
-  
-      // }
-      // this.drawChart(chartArr);
-      // console.log("chartArr" + JSON.stringify(chartArr));
-      // console.log("final arr" + JSON.stringify(finalArr));
-      // console.log("group by arr" + JSON.stringify(cases));
+      
     }
   
     public onChangeTo(filterVal: any) {
