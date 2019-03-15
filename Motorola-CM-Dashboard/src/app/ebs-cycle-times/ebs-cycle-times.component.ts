@@ -263,7 +263,7 @@ export class EbsCycleTimesComponent implements OnInit {
 
   public drawchart(res) {
     this.ebscolumnChartData = {
-      chartType: 'ColumnChart',
+      chartType: 'ComboChart',
       dataTable: res,
       options: {
         title: '',
@@ -274,12 +274,16 @@ export class EbsCycleTimesComponent implements OnInit {
           bold: true,
           italic: false
         },
+        seriesType: 'bars',
         width: 1150, height: 500,
         chartArea:{left:150,top:20,width:'50%'},
         legend: { position: 'bottom',alignment:'center', textStyle: { color: '#444444' } },
         backgroundColor: '#FFFFFF',
         hAxis: {
-          textStyle: { color: '#444444' }
+          textStyle: { color: '#444444' },
+          slantedText: true,
+          title:'Months',
+          slantedTextAngle: 90,
         },
         vAxis: {
           textStyle: { color: '#444444' },
@@ -500,14 +504,21 @@ export class EbsCycleTimesComponent implements OnInit {
 
   ngOnInit() {
 
-     let res=[['Month','Median Days'],['Jan',32],['Feb',55],['Mar',45],['Apr',38],['May',30],['Jun',56],['Total',42.6]];
-     if (res.length > 0) {
-      this.drawchart(res);
+    //  let res=[['Month','Median Days'],
+    //  ['Jan',32],['Feb',55],['Mar',45],['Apr',38],['May',30],['Jun',56],['Total',42.6]];
+     let res2 =[['Month 1', 'Month 1', 'Month 2', ],
+     [['Jan 17','Jan 18'],  165,      938 ],
+     [['Feb 17','Feb 18'],  135,      1120 ],
+     [['Mar 17','Mar 18'],  157,      1167 ],
+     [['Apr 17','Apr 18'],  139,      1110 ],
+     [['May 17','May 18'],  136,      691  ]];
+     if (res2.length > 0) {
+      this.drawchart(res2);
       this.checkData = false;
-    } else if (res.length == 0) {
+    } else if (res2.length == 0) {
       // alert("there is no data to bind to chart");
-      res = [['Month', 'Median Days'], ['', 0], ['', 0], ['', 0]];
-      this.drawchart(res);
+      res2 = [['Month', 'Median Days'], [['A','B'], 0,0], [['C','D'], 0,0], [['E','F'], 0,0]];
+      this.drawchart(res2);
       this.checkData = true;
 
     } else {
@@ -515,7 +526,7 @@ export class EbsCycleTimesComponent implements OnInit {
     }
 
 
-     this.drawchart(res);
+     this.drawchart(res2);
     //  this.checkData = false;
 
 
