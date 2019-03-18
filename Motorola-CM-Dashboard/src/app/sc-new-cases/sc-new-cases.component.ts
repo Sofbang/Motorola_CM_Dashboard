@@ -30,7 +30,7 @@ export class ScNewCasesComponent implements OnInit {
   public casesSrvcData=[];
   public data:any;
   public res;
-  public checkDataSCNC: any = false;
+  public checkDataSCNC: Boolean = false;
   public sideViewDropDowns = new SideViewDropDowns();
   public jancount=0;
   public febcount=0;
@@ -184,7 +184,14 @@ export class ScNewCasesComponent implements OnInit {
     console.log(this.jancount,this.febcount,this.marcount,this.aprcount,this.maycount,this.juncount,this.julcount,this.augcount,this.sepcount,this.octcount,this.novcount,this.deccount);
     this.arrr.push(this.jancount,this.febcount,this.marcount,this.aprcount,this.maycount,this.juncount,this.julcount,this.augcount,this.sepcount,this.octcount,this.novcount,this.deccount);
     // console.log("the data to be returned is:"+JSON.stringify(this.arrr));
+    // if(this.arrr.length==0 || this.arrr!==undefined){
+    //   console.log("in the if of length of array checks");
+    //    this.checkDataSCNC=true;
+    // }else{
+    //   console.log("in the else of length of array checks");
+    // }
     return this.arrr;
+
     // this.arrr=[];
   }
 
@@ -233,23 +240,29 @@ export class ScNewCasesComponent implements OnInit {
     }
 
     public makeChartData(data){
-      console.log("the data rec is :"+JSON.stringify(data));
-      // let array =[['Months','Cases Counts'],['Jan',data[0]],['Feb',data[1]],['Mar',data[2]],['Apr',data[3]],['May',data[4]],['Jun',data[5]],['Jul',data[6]],['Aug',data[7]],['Sep',data[8]],['Oct',data[9]],['Nov',data[10]],['Dec',data[11]]];
       let array=[];
-      if(data.length>0){
-        array=[['Months','Cases Counts'],['Jan',data[0]],['Feb',data[1]],['Mar',data[2]],['Apr',data[3]],['May',data[4]],['Jun',data[5]],['Jul',data[6]],['Aug',data[7]],['Sep',data[8]],['Oct',data[9]],['Nov',data[10]],['Dec',data[11]]];
-        this.drawChart(array);
-        this.checkDataSCNC= false;
+      // data=[];
+      console.log("the data rec is :"+JSON.stringify(data.length));
+      // let array =[['Months','Cases Counts'],['Jan',data[0]],['Feb',data[1]],['Mar',data[2]],['Apr',data[3]],['May',data[4]],['Jun',data[5]],['Jul',data[6]],['Aug',data[7]],['Sep',data[8]],['Oct',data[9]],['Nov',data[10]],['Dec',data[11]]];
+      for(let i in data){
+
+        if(data[i]==0){
+          console.log("the if of check for length");
+          this.checkDataSCNC=true;
+          array =[['Months','Cases Counts'],['Jan',0],['Feb',0],['Mar',0],['Apr',0],['May',0],['Jun',0],['Jul',0],['Aug',0],['Sep',0],['Oct',0],['Nov',0],['Dec',0]];
+          this.drawChart(array);
+          
+        }else {
+          console.log("the else if of check for length");
+          array=[['Months','Cases Counts'],['Jan',data[0]],['Feb',data[1]],['Mar',data[2]],['Apr',data[3]],['May',data[4]],['Jun',data[5]],['Jul',data[6]],['Aug',data[7]],['Sep',data[8]],['Oct',data[9]],['Nov',data[10]],['Dec',data[11]]];
+          this.drawChart(array);
+          this.checkDataSCNC= false;
+  
+        }
         
-      }else if(data.length==0){
 
-        array =[['Months','Cases Counts'],['Jan',0],['Feb',0],['Mar',0],['Apr',0],['May',0],['Jun',0],['Jul',0],['Aug',0],['Sep',0],['Oct',0],['Nov',0],['Dec',0]];
-        this.drawChart(array);
-        this.checkDataSCNC=true;
-
-      }else{
-        alert("in else of makeChart Data before drawing chart");
       }
+      
       //this.drawChart(array);
     }
 

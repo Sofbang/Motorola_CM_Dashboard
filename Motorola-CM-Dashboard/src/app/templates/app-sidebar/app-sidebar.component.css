@@ -10,10 +10,10 @@
 .title-black{
    color: #4A4A4A;
 }
-:host /deep/ .slimScrollDiv{
+/* :host /deep/ .slimScrollDiv{
     height: 70rem !important;
     max-height: 80rem !important;
-}
+} */
 .page-sidebar .page-sidebar-menu > li > a > .title, .page-sidebar-closed.page-sidebar-fixed .page-sidebar:hover .page-sidebar-menu > li > a > .title {
   font-size: 16px;
   font-weight: bold;
@@ -30,7 +30,7 @@
 .page-sidebar-menu .sub-menu > li:hover > a{
     background-color: unset !important;
 }
-@media(min-width:992px){
+@media(min-width:992px) and (max-width:992px){
   
     .page-sidebar-fixed .page-sidebar {
         margin-left: -19px !important;

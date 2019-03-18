@@ -506,8 +506,8 @@ export class EbsCycleTimesComponent implements OnInit {
 
     //  let res=[['Month','Median Days'],
     //  ['Jan',32],['Feb',55],['Mar',45],['Apr',38],['May',30],['Jun',56],['Total',42.6]];
-     let res2 =[['Month 1', 'Month 1', 'Month 2', ],
-     ['Jan 17',  165,      938 ],
+     let res2 =[['Month 1', 'Month 1', 'Month 2' ],
+     [ 'Jan 17' ,  165,      938 ],
      ['Feb 17',  135,      1120 ],
      ['Mar 17',  157,      1167 ],
      ['Apr 17',  139,      1110 ],
@@ -517,7 +517,7 @@ export class EbsCycleTimesComponent implements OnInit {
       this.checkData = false;
     } else if (res2.length == 0) {
       // alert("there is no data to bind to chart");
-      res2 = [['Month', 'Median Days'], ['', 0], ['', 0], ['', 0]];
+      res2 = [['Month 1', 'Median Days'], ['Jan 17', 0,0], ['Jan 18', 0,0], ['Feb 17', 0,0]];
       this.drawchart(res2);
       this.checkData = true;
 

@@ -113,6 +113,8 @@ color: #FFFF;
   font-weight: 600;
   color:#454545;
   margin-left: 19px;  
+  font-family: 'Arial';
+
 }
 
 :host /deep/ .multiselect-dropdown.dropdown-btn .selected-item{
