@@ -178,7 +178,7 @@ export class ScNewCasesComponent implements OnInit {
           
           this.deccount=this.deccount+1;
         }else{
-          alert("there is no such condition successful");
+          // alert("there is no such condition successful");
         }
     }
     console.log(this.jancount,this.febcount,this.marcount,this.aprcount,this.maycount,this.juncount,this.julcount,this.augcount,this.sepcount,this.octcount,this.novcount,this.deccount);
@@ -296,7 +296,7 @@ export class ScNewCasesComponent implements OnInit {
       }else {
 
         console.log("in multiple territory select:"+JSON.stringify(this.territoriesArr));
-        alert("in multiple territory select:"+JSON.stringify(this.territoriesArr.length));
+        // alert("in multiple territory select:"+JSON.stringify(this.territoriesArr.length));
          let finalArr=[];
          for (let j in this.territoriesArr) {
         let terr = this.territoriesArr[j];
@@ -411,7 +411,7 @@ export class ScNewCasesComponent implements OnInit {
           bold: true,    // true or false
           italic: false
         },
-        width: 1200, height: 500,
+        width: 1100, height: 500,
         chartArea:{left:100,top:30,width:'50%'},
         legend: { position: 'bottom',alignment:'center', textStyle: { color: '#444444' } },
         backgroundColor: '#FFFFFF',
@@ -520,9 +520,9 @@ export class ScNewCasesComponent implements OnInit {
  public NSSAging(){
    let arr = [2,3];
    arr.push(arr[1]-arr[0]);
-   alert("the array is:[2,3]");
+  //  alert("the array is:[2,3]");
   //  console.log("the diff is :"+JSON.stringify(arr));
-   alert("the calculated NSS Aging is:"+arr);
+  //  alert("the calculated NSS Aging is:"+arr);
    // NSS Aging main logic function
   //  let arrnew = [];
   //  for(let i in Response){
