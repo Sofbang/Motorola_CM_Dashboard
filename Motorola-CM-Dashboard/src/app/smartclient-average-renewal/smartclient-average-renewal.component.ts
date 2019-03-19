@@ -284,6 +284,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
   public fromMedOrAvg = 'median';
   // ng multiselect events implemented by Vishal Sehgal 12/2/2019
   onItemSelect(item, from) {
+    console.log("the data is:"+item+" item was"+"from is: "+from);
     if (from == 'territory') {
       this.territoriesArr.push(item);
       this.filterChartData();
@@ -291,7 +292,9 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       this.workFlowStatusArr.push(item);
       this.filterChartData();
     } else if (from == 'casetime') {
-      if (item.item_text == 'Median') {
+      console.log("casetime selected Median" + from);
+      if (item== 'Median') {
+        console.log("in the If of Medain Days" );
         this.restUrlFilterYr = 'sc_case_status_med_yr';
         this.fromMedOrAvg = 'median';
         //console.log("casetime selected Median" + this.restUrlFilterYr);
@@ -302,7 +305,8 @@ export class SmartclientAverageRenewalComponent implements OnInit {
           }, error => {
             console.log("error getCaseData " + error);
           });
-      } else if (item.item_text == 'Average') {
+      } else if (item == 'Average') {
+        console.log("in the else if of Medain Days" );
         this.restUrlFilterYr = 'sc_case_status_avg_yr';
         this.fromMedOrAvg = 'average';
         //console.log("casetime selected Averaage" + this.restUrlFilterYr);
