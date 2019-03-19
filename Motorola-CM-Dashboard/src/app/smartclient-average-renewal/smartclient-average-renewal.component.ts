@@ -261,7 +261,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
           italic: false
         },
         width: 800, height: 500,        
-        chartArea:{left:180,top:20,width:'50%'},
+        chartArea:{left:225,top:20,width:'50%'},
         legend: { position: 'bottom', textStyle: { color: '#444444' } },
         backgroundColor: '#FFFFFF',
         hAxis: {

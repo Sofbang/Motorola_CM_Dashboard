@@ -275,15 +275,15 @@ export class EbsCycleTimesComponent implements OnInit {
           italic: false
         },
         seriesType: 'bars',
-        width: 1150, height: 500,
-        chartArea:{left:150,top:20,width:'50%'},
+        width: 1000, height: 500,
+        bar: {groupWidth: "75%"},
+        chartArea:{left:75,top:20,width:'75%'},
         legend: { position: 'bottom',alignment:'center', textStyle: { color: '#444444' } },
         backgroundColor: '#FFFFFF',
         hAxis: {
           textStyle: { color: '#444444' },
-          slantedText: true,
-          title:'Months',
-          slantedTextAngle: 90,
+          slantedText: false,  
+          
         },
         vAxis: {
           textStyle: { color: '#444444' },
@@ -504,22 +504,29 @@ export class EbsCycleTimesComponent implements OnInit {
 
   ngOnInit() {
 
-    //  let res=[['Month','Median Days'],
-    //  ['Jan',32],['Feb',55],['Mar',45],['Apr',38],['May',30],['Jun',56],['Total',42.6]];
-     let res2 =[['Month 1', 'Month 1', 'Month 2' ],
-     [ 'Jan 17' ,  165,      938 ],
-     ['Feb 17',  135,      1120 ],
-     ['Mar 17',  157,      1167 ],
-     ['Apr 17',  139,      1110 ],
-     ['May 17',  136,      691  ]];
+     let res2 =[['Month Names', 'Contracts In', 'Contracts In' ],
+     [ 'Jan 17/18' ,  165,      938 ],
+     ['Feb 17/18',  135,      1120 ],
+     ['Mar 17/18',  157,      1167 ],
+     ['Apr 17/18',  139,      1110 ],
+     ['May 17/18',  136,      691  ],
+     ['Jun 17/18',  122,      155 ],
+     ['Jul 17/18',  544,       787 ],
+     ['Aug 17/18',  999,       900 ],
+     ['Sep 17/18', 667,       989],
+     ['Oct 17/18',  136,      691  ],
+     ['Nov 17/18',  136,      691  ],
+     ['Dec 17/18',  136,      691  ]    ];
+     //res2=[];
+     //let res2:any=[{'Jan 17':11,'Jan 18':111},{'Feb 17':1111,'Feb 18':22122},{'Mar 17':99900000,'Mar 18':9090}];
      if (res2.length > 0) {
       this.drawchart(res2);
       this.checkData = false;
     } else if (res2.length == 0) {
       // alert("there is no data to bind to chart");
-      res2 = [['Month 1', 'Median Days'], ['Jan 17', 0,0], ['Jan 18', 0,0], ['Feb 17', 0,0]];
-      this.drawchart(res2);
+      res2 = [['Month Names', 'Contracts In','Contracts In'], ['Jan 17', 0,0], ['Jan 18', 0,0], ['', 0,0]];
       this.checkData = true;
+      this.drawchart(res2);
 
     } else {
       this.checkData = true;
