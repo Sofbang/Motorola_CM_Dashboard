@@ -23,6 +23,7 @@ export class ScNewCasesComponent implements OnInit {
   public columnChart: any;
   public casesData: any = [];
   public selectedFrom: any;
+  public drillDown:any;
   public territoriesArr: any = [];
   public datesData=[];
   public newModelCounts:any;
@@ -76,6 +77,10 @@ export class ScNewCasesComponent implements OnInit {
    public selectBar(event: ChartSelectEvent) {
     this.openScModel.nativeElement.click();
 
+    let drillDownStatusnew =[];let status:any;
+    drillDownStatusnew = (event.selectedRowValues[0]).split(' ');
+    status = drillDownStatusnew[0];
+    console.log("the drilldown status is:"+JSON.stringify(status));
     // console.log("in the selectBar" + JSON.stringify(event.selectedRowValues[0]));
     if(event.message=='select'){
 
@@ -87,6 +92,22 @@ export class ScNewCasesComponent implements OnInit {
     $('tbody.SCModlTbody').css('overflow-y', 'scroll');
     $('tbody.SCModlTbody').css('overflow-x', 'hidden');
     $('tbody.SCModlTbody').css('width', '100%');
+
+    this.getSCDrillDownData(status)
+    .then((res:any) => {
+      //console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(res.length));
+      // for(let i in res){
+         
+      //    this.drillDown.push({'NSS_Aging': moment(res[i].contract_creation_date).format('YYY-MM-DD')});
+
+      // }
+      console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(this.drillDown));
+
+    }, error => {
+      console.log("error getTerritories " + error);
+    });
+    this.drillDown=[];
+
     }
   }
 
@@ -94,6 +115,27 @@ export class ScNewCasesComponent implements OnInit {
    
 
   }
+
+  public getSCDrillDownData(status){
+    return new Promise((resolve, reject) => {
+      this._smartclientService.getScDrillDown(status).subscribe(data => {
+        this.drillDown = data;
+        // console.log("territories" + this.territories)
+      }, err => console.error(err),
+        // the third argument is a function which runs on completion
+        () => {
+          console.log("the drilldown data recived is:"+this.drillDown);
+          resolve(this.drillDown);
+        }
+      )
+    }).catch((error) => {
+      reject(error);
+      console.log('errorin getting data :', error);
+    })
+
+  }
+
+
 
   public getSCNewCases(){
     return new Promise((resolve, reject) => {
@@ -517,19 +559,7 @@ export class ScNewCasesComponent implements OnInit {
 
 
 
- public NSSAging(){
-   let arr = [2,3];
-   arr.push(arr[1]-arr[0]);
-  //  alert("the array is:[2,3]");
-  //  console.log("the diff is :"+JSON.stringify(arr));
-  //  alert("the calculated NSS Aging is:"+arr);
-   // NSS Aging main logic function
-  //  let arrnew = [];
-  //  for(let i in Response){
-  //     arrnew.push(['NSS_Aging':[moment(Response[i].ClosingDate).format('YYYY-MM_DD')]-[moment(Response[i].StartDate).format('YYYY-MM_DD')]);
-  //  }
-  //  console.log("the final arrnew is:")
-  }
+
 
   ngOnInit() {
     this.getSCNewCases()

@@ -20,6 +20,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
   // public dropdownListCaseStatusTerritory = [];
   public territoriesArr: any = [];
   public workFlowStatusArr: any = [];
+  public drillDown:any;
   public caseData = [];
   public Total: any;
   public newModelCounts = [];
@@ -56,6 +57,11 @@ export class SmartclientCaseByStatusComponent implements OnInit {
 
     this.openScModel.nativeElement.click();
 
+    let drillDownStatusnew =[];let status:any;
+    drillDownStatusnew = (event.selectedRowValues[0]).split(' ');
+    status = drillDownStatusnew[0];
+    console.log("the drilldown status is:"+JSON.stringify(status));
+
     console.log("event.." + JSON.stringify(event));
     if (event.message == 'select') {
 
@@ -75,9 +81,44 @@ export class SmartclientCaseByStatusComponent implements OnInit {
       // $('tbody.SCModlTbody').css('display', 'block');
       $('tbody.SCModlTbody').css('width', '100%');
 
+      this.getSCDrillDownData(status)
+      .then((res:any) => {
+        //console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(res.length));
+        // for(let i in res){
+           
+        //    this.drillDown.push({'NSS_Aging': moment(res[i].contract_creation_date).format('YYY-MM-DD')});
+  
+        // }
+        console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(this.drillDown));
+  
+      }, error => {
+        console.log("error getTerritories " + error);
+      });
+      this.drillDown=[];
+
 
     }
   }
+
+  public getSCDrillDownData(status){
+    return new Promise((resolve, reject) => {
+      this._smartclientService.getScDrillDown(status).subscribe(data => {
+        this.drillDown = data;
+        // console.log("territories" + this.territories)
+      }, err => console.error(err),
+        // the third argument is a function which runs on completion
+        () => {
+          console.log("the drilldown data recived is:"+this.drillDown);
+          resolve(this.drillDown);
+        }
+      )
+    }).catch((error) => {
+      reject(error);
+      console.log('errorin getting data :', error);
+    })
+  
+  }
+  
 
   /**
      * calling the Angular Lookup Service Method getContracts() implemented by Vishal Sehgal as on 8/2/2019

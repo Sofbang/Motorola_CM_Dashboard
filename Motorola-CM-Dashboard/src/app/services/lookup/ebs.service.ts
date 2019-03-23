@@ -36,8 +36,9 @@ export class EbsService {
 
 
   // New REST SERVICES FOR EBS CYCLE TIMES (to be Used)
-  getEBSCycleTimes(){
-    return this.http.get('api/ebs_cycle_times')
+  // drilldowmn service
+  getEBSDrillDown(status){
+    return this.http.get('api/ebs_contracts_drilldown?contractstatus='+status)
     .map(result => this.result = result.json().data);
   }
   

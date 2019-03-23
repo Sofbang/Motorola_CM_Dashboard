@@ -8,6 +8,7 @@ import * as $ from 'jquery';
 import { ChartSelectEvent } from 'ng2-google-charts';
 import { appheading } from '../enums/enum';
 import { ExcelServiceService } from '../services/convert_to_excel/excel-service.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-ebs-cycle-times',
@@ -17,6 +18,7 @@ import { ExcelServiceService } from '../services/convert_to_excel/excel-service.
 export class EbsCycleTimesComponent implements OnInit {
   public cycleTimesData: any = [];
   public ebscolumnChartData: any;
+  public drillDown:any;
   public territories: any;
   public territoriesArr: any = [];
   public data:any;
@@ -48,6 +50,10 @@ export class EbsCycleTimesComponent implements OnInit {
    public selectBar(event: ChartSelectEvent) {
     this.openScModel.nativeElement.click();
 
+    let drillDownStatusnew =[];let status:any;
+    drillDownStatusnew = (event.selectedRowValues[0]).split(' ');
+    status = drillDownStatusnew[0];
+    console.log("the drilldown status is:"+JSON.stringify(status));
     console.log("in the selectBar"+JSON.stringify(event.selectedRowValues[0]));
     if(event.message=='select'){
 
@@ -61,6 +67,21 @@ export class EbsCycleTimesComponent implements OnInit {
     $('tbody.SCModlTbody').css('overflow-x', 'hidden');
     // $('tbody.SCModlTbody').css('display', 'block');
     $('tbody.SCModlTbody').css('width', '100%');
+
+    this.getDrillDownData(status)
+    .then((res:any) => {
+      //console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(res.length));
+      // for(let i in res){
+         
+      //    this.drillDown.push({'NSS_Aging': moment(res[i].contract_creation_date).format('YYY-MM-DD')});
+
+      // }
+      console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(this.drillDown));
+
+    }, error => {
+      console.log("error getTerritories " + error);
+    });
+    this.drillDown=[];
     }
   }
 
@@ -498,6 +519,26 @@ export class EbsCycleTimesComponent implements OnInit {
       if (index !== -1) array.splice(index, 1);
       return array;
     }
+
+    public getDrillDownData(status){
+      return new Promise((resolve, reject) => {
+        this._ebsService.getEBSDrillDown(status).subscribe(data => {
+          this.drillDown = data;
+          // console.log("territories" + this.territories)
+        }, err => console.error(err),
+          // the third argument is a function which runs on completion
+          () => {
+            console.log("the drilldown data recived is:"+this.drillDown);
+            resolve(this.drillDown);
+          }
+        )
+      }).catch((error) => {
+        reject(error);
+        console.log('errorin getting data :', error);
+      })
+  
+    }
+  
 
     
 

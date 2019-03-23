@@ -7,6 +7,7 @@ import { ViewChild, ElementRef } from '@angular/core';
 import * as $ from 'jquery';
 import { ChartSelectEvent } from 'ng2-google-charts';
 import { appheading } from '../enums/enum';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-ebs-contract-by-status',
@@ -19,6 +20,7 @@ export class EbsContractByStatusComponent implements OnInit {
   // public selectedTerritories: any = 'all';
   public ebscolumnChartData: any;
   public territories: any;
+  public drillDown:any;
   public checkDataEBS:any=false;
   // public caseStatusTerritories: any;
   // public dropdownListTerritory = [];
@@ -60,13 +62,16 @@ export class EbsContractByStatusComponent implements OnInit {
   
   public selectBar(event: ChartSelectEvent) {
     this.openScModel.nativeElement.click();
-
+    let drillDownStatusnew =[];let status:any;
+    drillDownStatusnew = (event.selectedRowValues[0]).split(' ');
+    status = drillDownStatusnew[0];
+    console.log("the drilldown status is:"+JSON.stringify(status));
     console.log("in the selectBar" + JSON.stringify(event.selectedRowValues[0]));
     if(event.message=='select'){
 
     this.newModelCounts = event.selectedRowValues[1]
     this.data = event.selectedRowValues[0];
-    console.log("the data is:", this.data);
+    console.log("the data is:", JSON.stringify(this.data));
     $('.modal .modal-dialog').css('width', $(window).width() * 0.95);//fixed
     $('.modal .modal-body').css('height', $(window).height() * 0.77);//fixed
     $('tbody.SCModlTbody').css('max-height', $(window).height() * 0.69);
@@ -74,6 +79,22 @@ export class EbsContractByStatusComponent implements OnInit {
     $('tbody.SCModlTbody').css('overflow-x', 'hidden');
     // $('tbody.SCModlTbody').css('display', 'block');
     $('tbody.SCModlTbody').css('width', '100%');
+    
+    this.getEBSDrillDownData(status)
+    .then((res:any) => {
+      //console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(res.length));
+      for(let i in res){
+         
+         this.drillDown.push({'NSS_Aging': moment(res[i].contract_creation_date).format('YYY-MM-DD')});
+
+      }
+      console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(this.drillDown));
+
+    }, error => {
+      console.log("error getTerritories " + error);
+    });
+    this.drillDown=[];
+    
     }
   }
 
@@ -126,6 +147,27 @@ export class EbsContractByStatusComponent implements OnInit {
       console.log('errorin getting data :', error);
     })
   }
+
+  public getEBSDrillDownData(status){
+    return new Promise((resolve, reject) => {
+      this._ebsService.getEBSDrillDown(status).subscribe(data => {
+        this.drillDown = data;
+        // console.log("territories" + this.territories)
+      }, err => console.error(err),
+        // the third argument is a function which runs on completion
+        () => {
+          console.log("the drilldown data recived is:"+this.drillDown);
+          resolve(this.drillDown);
+        }
+      )
+    }).catch((error) => {
+      reject(error);
+      console.log('errorin getting data :', error);
+    })
+
+  }
+
+
 
   public getebsTerritoriesData() {
     return new Promise((resolve, reject) => {
@@ -478,6 +520,9 @@ export class EbsContractByStatusComponent implements OnInit {
       }, error => {
         console.log("error getTerritories " + error);
       });
+    
+
+    
 
     this.getWorkflowStatus()
       .then((res: any) => {

@@ -65,7 +65,7 @@
               [settings]="dropdownSettingsCaseTime" (onSelect)="onItemSelect($event,'casetime')"
               [(ngModel)]='selectedItemsCaseTime'>
             </ng-multiselect-dropdown> -->
-            <select class="form-control" id="casetime" name="casetime" [(ngModel)]="casetime" (click)="onItemSelect($event.target.value,'casetime')">
+            <select class="form-control" id="casetime" name="casetime" [(ngModel)]="casetime" (click)="onItemSelect($event.target.value,'casetime')"  >
               <option [value]="null">Select</option>
               <option *ngFor="let caseData of sideViewDDObj.caseTimeData" >{{caseData.item_text}}</option>
               </select>
@@ -73,7 +73,7 @@
         <div class="dropdown hello-me" *ngIf="sideViewDDObj.showYearDD">
          <label for="options" id="fromLabel">From
             </label>
-            <select class="form-control" id="from" name="from" [(ngModel)]="from" (change)="onChangeFrom($event.target.value)">
+            <select class="form-control" id="from" name="from" [(ngModel)]="from" (change)="onChangeFrom($event.target.value)" >
                 <option [value]="null">Select </option>
                 <option *ngFor="let datesFormed of fianldates" >{{datesFormed}}</option>
  

@@ -75,6 +75,8 @@ color: #FFFF;
     border-radius: 0px;
     width:130px;
     max-width: 130px !important;
+    height: 36px;
+
   }
   #casetime{
    
@@ -96,6 +98,7 @@ color: #FFFF;
       border-radius: 0px;
       width:130px;
       max-width: 130px !important;
+      height: 36px;
     
   }
   #to{
@@ -117,6 +120,8 @@ color: #FFFF;
     border-radius: 0px;
     width:130px;
     max-width: 130px !important;
+    height: 36px;
+
   }
   
   .hello-me:after, .hello-men:after{

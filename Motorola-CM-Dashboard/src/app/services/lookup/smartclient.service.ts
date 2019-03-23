@@ -35,10 +35,11 @@ export class SmartclientService {
       .map(result => this.result = result.json().data);
   }
 
-  // getScArrivalType(){
-  //   return this.http.get('api/sc_arrival_type')
-  //     .map(result => this.result = result.json().data);
-  // }
+  // drilldowmn service
+  getScDrillDown(status){
+    return this.http.get('api/sc_cases_drilldown?casestatus='+status)
+      .map(result => this.result = result.json().data);
+  }
 
   getScDateFilteredReults(dates,uri){
     return this.http.post("api/"+uri, JSON.stringify(dates), this.options)

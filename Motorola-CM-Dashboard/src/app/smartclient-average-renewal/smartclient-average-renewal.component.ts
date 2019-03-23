@@ -13,14 +13,17 @@ import { ConstantPool } from '@angular/compiler';
 import { last } from '@angular/router/src/utils/collection';
 import { appheading } from '../enums/enum';
 
+
 @Component({
   selector: 'app-smartclient-average-renewal',
   templateUrl: './smartclient-average-renewal.component.html',
   styleUrls: ['./smartclient-average-renewal.component.css']
 })
 export class SmartclientAverageRenewalComponent implements OnInit {
+
   public barChartData: any;
   public Total:any;
+  public drillDown:any;
   public territoriesArr: any = [];
   public workFlowStatusArr: any = [];
   public caseData = [];
@@ -66,6 +69,10 @@ export class SmartclientAverageRenewalComponent implements OnInit {
 
     this.openScModel.nativeElement.click();
 
+    let drillDownStatusnew =[];let status:any;
+    drillDownStatusnew = (event.selectedRowValues[0]).split(' ');
+    status = drillDownStatusnew[0];
+    console.log("the drilldown status is:"+JSON.stringify(status));
 
     console.log("in the selectBar" + JSON.stringify(event));
     if(event.message=='select'){
@@ -81,6 +88,22 @@ export class SmartclientAverageRenewalComponent implements OnInit {
     $('tbody.SCModlTbody').css('overflow-x', 'hidden');
     // $('tbody.SCModlTbody').css('display', 'block');
     $('tbody.SCModlTbody').css('width', '100%');
+
+    this.getSCDrillDownData(status)
+    .then((res:any) => {
+      //console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(res.length));
+      // for(let i in res){
+         
+      //    this.drillDown.push({'NSS_Aging': moment(res[i].contract_creation_date).format('YYY-MM-DD')});
+
+      // }
+      console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(this.drillDown));
+
+    }, error => {
+      console.log("error getTerritories " + error);
+    });
+    this.drillDown=[];
+
     }
   }
 
@@ -105,6 +128,25 @@ export class SmartclientAverageRenewalComponent implements OnInit {
    console.log("in the export to excel function");
  }
 
+
+ public getSCDrillDownData(status){
+  return new Promise((resolve, reject) => {
+    this._smartclientService.getScDrillDown(status).subscribe(data => {
+      this.drillDown = data;
+      // console.log("territories" + this.territories)
+    }, err => console.error(err),
+      // the third argument is a function which runs on completion
+      () => {
+        console.log("the drilldown data recived is:"+this.drillDown);
+        resolve(this.drillDown);
+      }
+    )
+  }).catch((error) => {
+    reject(error);
+    console.log('errorin getting data :', error);
+  })
+
+}
 
 
   /**
@@ -783,6 +825,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
     let caseTimeData = [{ 'item_id': 1, 'item_text': 'Median' },
     { 'item_id': 2, 'item_text': 'Average' }]
     
+   
 
     this.sideViewDropDowns.showArrivalType = true;
     // this.sideViewDropDowns.arrivalTypeData = ['SAOF', 'CPQ', 'Q2SC', 'Other'];

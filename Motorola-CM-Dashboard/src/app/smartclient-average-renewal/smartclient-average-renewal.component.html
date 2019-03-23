@@ -37,102 +37,15 @@
           </thead>
           <!-- outer for each  -->
           <tbody class="SCModlTbody" style="height: auto !important;min-height:52vh;">
-            <tr>
-              <td>John</td>
-              <td>Doe</td>
-              <td>john@example.com</td>
-              <td>05/03/2019</td>
-              <td> </td>
-              <td>05/03/2019</td>
+            <tr *ngFor="let drilldown of this.drillDown" >
+              <td>{{drilldown.customer}}</td>
+              <td>{{drilldown.current_status}}</td>
+              <td>{{drilldown.case_owner}}</td>
+              <td>{{drilldown.case_creation_date}}</td>
+              <td>{{drilldown.NSSAging}}</td>
+              <td>{{drilldown.case_creation_date}}</td>
             </tr>
-            <tr>
-              <td>Mary</td>
-              <td>Moe</td>
-              <td>mary@example.com</td>
-              <td>05/03/2019</td>
-              <td> 3 Days</td>
-              <td>05/03/2019</td>
-            </tr>
-            <tr>
-              <td>July</td>
-              <td>Dooley</td>
-              <td>july@example.com</td>
-              <td>05/03/2019</td>
-              <td> 5 Days</td>
-              <td>05/03/2019</td>
-            </tr>
-            <tr>
-              <td>July</td>
-              <td>Dooley</td>
-              <td>july@example.com</td>
-              <td>05/03/2019</td>
-              <td> 6 Days</td>
-              <td>05/03/2019</td>
-            </tr>
-            <tr>
-              <td>July</td>
-              <td>Dooley</td>
-              <td>july@example.com</td>
-              <td>05/03/2019</td>
-              <td> 7 Days</td>
-              <td>05/03/2019</td>
-            </tr>
-            <tr>
-              <td>July</td>
-              <td>Dooley</td>
-              <td>july@example.com</td>
-              <td>05/03/2019</td>
-              <td> 9 Days</td>
-              <td>05/03/2019</td>
-            </tr>
-            <tr>
-              <td>July</td>
-              <td>Dooley</td>
-              <td>july@example.com</td>
-              <td>05/03/2019</td>
-              <td> 8 Days</td>
-              <td>05/03/2019</td>
-            </tr>
-            <tr>
-              <td>July</td>
-              <td>Dooley</td>
-              <td>july@example.com</td>
-              <td>05/03/2019</td>
-              <td> 10 Days</td>
-              <td>05/03/2019</td>
-            </tr>
-            <tr>
-              <td>July</td>
-              <td>Dooley</td>
-              <td>july@example.com</td>
-              <td>05/03/2019</td>
-              <td> 15 Days</td>
-              <td>05/03/2019</td>
-            </tr>
-            <tr>
-              <td>July</td>
-              <td>Dooley</td>
-              <td>july@example.com</td>
-              <td>05/03/2019</td>
-              <td> 14 Days</td>
-              <td>05/03/2019</td>
-            </tr>
-            <tr>
-              <td>July</td>
-              <td>Dooley</td>
-              <td>july@example.com</td>
-              <td>05/03/2019</td>
-              <td> 12 Days</td>
-              <td>05/03/2019</td>
-            </tr>
-            <tr>
-              <td>July</td>
-              <td>Dooley</td>
-              <td>july@example.com</td>
-              <td>05/03/2019</td>
-              <td> 01 Day</td>
-              <td>05/03/2019</td>
-            </tr>
+          
           </tbody>
           <!-- outer for each  -->
         </table>
