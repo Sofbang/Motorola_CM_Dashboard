@@ -180,6 +180,54 @@ router.get('/sc_cases_drilldown', (req, res, next) => {
   });
 });
 
+// // API for sc_case_territories
+router.get('/sc_cases_drilldownfilter', (req, res, next) => {
+  //call doConnect method in db_operations
+  var status =  req.query;
+  console.log("the status passed is:"+JSON.stringify(status));
+  conn.doConnect((err, dbConn) => {
+    if (err) { return next(err); }
+    //execute body using using connection instance returned by doConnect method
+    conn.doExecute(dbConn,
+      "Select distinct case_number,customer,case_owner,case_creation_date,current_status from sc_case_state_master where case_creation_date BETWEEN '"+status.start+"' AND '"+status.end+"' ", [],
+      function (err, result) {
+        if (err) {
+          conn.doRelease(dbConn);
+          //call error handler
+          return next(err);
+        }
+        response.data = result.rows;
+        res.json(response);
+        //release connection back to pool
+        conn.doRelease(dbConn);
+      });
+  });
+});
+
+
+// // API for sc_case_territories
+router.get('/sc_dates_max_min', (req, res, next) => {
+  //call doConnect method in db_operations
+  conn.doConnect((err, dbConn) => {
+    if (err) { return next(err); }
+    //execute body using using connection instance returned by doConnect method
+    conn.doExecute(dbConn,
+      "Select TO_CHAR(MAX(case_creation_date), 'yyyy-mm-dd') as max_date_cases, TO_CHAR(MIN(case_creation_date), 'yyyy-mm-dd')  as min_date_cases from sc_case_state_master", [],
+      function (err, result) {
+        if (err) {
+          conn.doRelease(dbConn);
+          //call error handler
+          return next(err);
+        }
+        response.data = result.rows;
+        res.json(response);
+        //release connection back to pool
+        conn.doRelease(dbConn);
+      });
+  });
+});
+
+
 
 // API for sc_workflow_status
 router.get('/sc_workflow_status', (req, res, next) => {

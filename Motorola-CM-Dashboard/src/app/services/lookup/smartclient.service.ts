@@ -41,6 +41,19 @@ export class SmartclientService {
       .map(result => this.result = result.json().data);
   }
 
+  getScDrillDownDates(first,last){
+    console.log("the first is:"+JSON.stringify(first));
+    console.log("the first is:"+JSON.stringify(last));
+
+    return this.http.get('api/sc_cases_drilldownfilter?start='+first+'?end='+last)
+      .map(result => this.result = result.json().data);
+  }
+
+  getScMinMaxDates(){
+    return this.http.get("api/sc_dates_max_min")
+    .map(response => this.result = response.json().data);
+  }
+
   getScDateFilteredReults(dates,uri){
     return this.http.post("api/"+uri, JSON.stringify(dates), this.options)
     .map(response => this.result = response.json().data);

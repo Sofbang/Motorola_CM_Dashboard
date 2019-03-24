@@ -81,7 +81,7 @@ export class SideDropdownViewComponent implements OnInit {
 
   public makeDate() {
     var startDate = '2017-01-01';
-    var endDate = '2018-12-01';
+    var endDate = '2019-12-01';
     var starting = new Date(startDate);
     var ending = new Date(endDate);
     var dates = [];
@@ -145,7 +145,7 @@ export class SideDropdownViewComponent implements OnInit {
 
     this.n = this.fianldates.indexOf(this.selectedFrom);
     // console.log("the index is :" + this.n);
-    for (let i = this.n + 1; i <= this.n + 11; i++) {
+    for (let i = this.n + 1; i <= this.n + 23; i++) {
       // console.log("inside the for loop :")
       this.toYear.push(this.fianldates[i]);
       //  console.log("after the push is done"+JSON.stringify(this.toYear));

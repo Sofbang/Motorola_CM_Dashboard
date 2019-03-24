@@ -43,6 +43,11 @@ export class EbsService {
   }
   
 
+  getEBSMinMaxDates(){
+    return this.http.get("api/ebs_dates_max_min")
+    .map(response => this.result = response.json().data);
+  }
+
 }
 
 
