@@ -63,5 +63,8 @@ export class SmartclientService {
     return this.http.get('api/sc_new_cases')
     .map(result => this.result = result.json().data);
   }
-
+  getScArrivalType(){
+    return this.http.get('api/sc_arrival_type')
+    .map(result => this.result = result.json().data);
+  }
 }

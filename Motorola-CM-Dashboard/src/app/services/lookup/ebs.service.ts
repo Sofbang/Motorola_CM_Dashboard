@@ -48,6 +48,10 @@ export class EbsService {
     .map(response => this.result = response.json().data);
   }
 
+  getEBSArrivalType(){
+    return this.http.get("api/ebs_arrival_type")
+    .map(response => this.result = response.json().data);
+  }
 }
 
 
