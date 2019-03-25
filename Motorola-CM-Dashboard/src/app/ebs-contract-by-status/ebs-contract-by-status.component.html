@@ -31,7 +31,6 @@
                 <th>Status</th>
                 <th>Owner</th>
                 <th>Open Date</th>
-                <th>NSS Aging</th>
                 <th>Contract start date </th>
               </tr>
             </thead>
@@ -39,10 +38,9 @@
             <tbody class="SCModlTbody" style="height: auto !important;min-height:52vh;">
               <tr *ngFor="let drilldown of this.drillDown" >
                 <td>{{drilldown.customer_name}}</td>
-                <td>{{drilldown.contract_status}}</td>
+                <td>{{drilldown.to_status}}</td>
                 <td>{{drilldown.contract_owner}}</td>
                 <td>{{drilldown.contract_creation_date}}</td>
-                <td>{{drilldown.NSSAging}}</td>
                 <td>{{drilldown.contract_creation_date}}</td>
               </tr>
               

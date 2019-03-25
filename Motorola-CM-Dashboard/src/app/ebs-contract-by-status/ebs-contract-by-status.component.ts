@@ -85,7 +85,7 @@ export class EbsContractByStatusComponent implements OnInit {
       //console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(res.length));
       for(let i in res){
          
-         this.drillDown.push({'NSS_Aging': moment(res[i].contract_creation_date).format('YYY-MM-DD')});
+         this.drillDown(moment(res[i].contract_creation_date).format('YYY-MM-DD'));
 
       }
       console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(this.drillDown));
