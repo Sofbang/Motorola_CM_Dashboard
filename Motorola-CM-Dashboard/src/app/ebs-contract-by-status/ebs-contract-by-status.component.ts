@@ -8,6 +8,7 @@ import * as $ from 'jquery';
 import { ChartSelectEvent } from 'ng2-google-charts';
 import { appheading } from '../enums/enum';
 import * as moment from 'moment';
+import { ExcelServiceService } from '../services/convert_to_excel/excel-service.service';
 
 @Component({
   selector: 'app-ebs-contract-by-status',
@@ -19,6 +20,7 @@ export class EbsContractByStatusComponent implements OnInit {
   public contractsData: any = [];
   // public selectedTerritories: any = 'all';
   public ebscolumnChartData: any;
+  public drillDownData:any;
   public territories: any;
   public drillDown: any;
   public checkDataEBS: any = false;
@@ -32,7 +34,7 @@ export class EbsContractByStatusComponent implements OnInit {
   public sideViewDropDowns = new SideViewDropDowns();
   @ViewChild('openSCModal') openScModel: ElementRef;
 
-  constructor(private _ebsService: EbsService, private _dataHandlerService: DataHandlerService) {
+  constructor(private _ebsService: EbsService, private _dataHandlerService: DataHandlerService,private _excelService:ExcelServiceService) {
     this._dataHandlerService.dataFromSideView
       .subscribe(res => {
         //console.log("sub ebs" + JSON.stringify(res));
@@ -51,9 +53,7 @@ export class EbsContractByStatusComponent implements OnInit {
     this._dataHandlerService.setDataForMainLayout(true);
   }
 
-  public exportToExcel() {
-    console.log("in the export to excel function");
-  }
+  
 
   public selectBar(event: ChartSelectEvent) {
     this.openScModel.nativeElement.click();
@@ -85,7 +85,7 @@ export class EbsContractByStatusComponent implements OnInit {
             //this.drillDown(moment(res[i].contract_creation_date).format('YYY-MM-DD'));
           }
           console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(this.drillDown));
-
+          this.drillDownData = res;
         }, error => {
           console.log("error getTerritories " + error);
         });
@@ -93,6 +93,13 @@ export class EbsContractByStatusComponent implements OnInit {
 
     }
   }
+  public exportToExcel(){
+
+    // console.log("the excel data is :"+JSON.stringify(this.drillDownData));
+    this._excelService.exportAsExcelFile(this.drillDownData, 'EBS Contracts By Status');
+
+  }
+
 
   public calculatePerc(cases) {
     for (let i in cases) {
