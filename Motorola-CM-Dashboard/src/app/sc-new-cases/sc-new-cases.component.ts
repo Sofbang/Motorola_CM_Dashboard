@@ -60,6 +60,8 @@ export class ScNewCasesComponent implements OnInit {
   public arrr=[];
   public firstDay:any;
   public lastDay:any;
+  public  status:any;
+
 
   @ViewChild('openSCModal') openScModel: ElementRef;
 
@@ -90,7 +92,6 @@ export class ScNewCasesComponent implements OnInit {
     this.openScModel.nativeElement.click();
 
     // let drillDownStatusnew =[];
-    let status:any;
     // drillDownStatusnew = (event.selectedRowValues[0]);
     // status = drillDownStatusnew[0];
     console.log("the drilldown data is:"+JSON.stringify(event));
@@ -100,8 +101,8 @@ export class ScNewCasesComponent implements OnInit {
     this.newModelCounts = event.selectedRowValues[1];
     this.data = event.selectedRowValues[0];
     console.log("the data is:"+JSON.stringify(this.data));
-    status = this.fdld(this.data);
-    console.log("the ld is:"+JSON.stringify(status));
+    this.status = this.fdld(this.data);
+    console.log("the ld is:"+JSON.stringify(this.status));
     $('.modal .modal-dialog').css('width', $(window).width() * 0.95);//fixed
     $('.modal .modal-body').css('height', $(window).height() * 0.77);//fixed
     $('tbody.SCModlTbody').css('max-height', $(window).height() * 0.69);
@@ -110,11 +111,18 @@ export class ScNewCasesComponent implements OnInit {
     $('tbody.SCModlTbody').css('width', '100%');
     // status = this.fdld(status);
     // console.log("the fd ld is :"+JSON.stringify(status[0])+"the ld is :"+JSON.stringify(status[1]));
-    this.getSCDrillDownData(moment(status[0]).format('YYYY-MM-DD hh:mm:ss'),moment(status[1]).format('YYYY-MM-DD hh:mm:ss'))
+    this.getSCDrillDownData(moment(status[0]).format('YYYY-MM-DD'),moment(status[1]).format('YYYY-MM-DD'))
 
     .then((res:any) => {
+      var dat = new Date();
+
      
-      this.drillDown =res;
+      for(let i in res){
+         
+        res[i].case_creation_date=moment(res[i].case_creation_date).format('YYYY-MM-DD');
+        res[i].sts_changed_on=moment(res[i].sts_changed_on).format('YYYY-MM-DD');
+
+      }
       //console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(this.drillDown));
       
     }, error => {
@@ -124,23 +132,11 @@ export class ScNewCasesComponent implements OnInit {
 
     }
   }
-  public NSSAging(data){
-    var now = moment(new Date()); //todays date
-    var end = moment("2015-12-1"); // another date
-    var duration = moment.duration(now.diff(end));
-    var days = duration.asDays();
-    console.log(days);
-
-    // console.log("the current date is:"+JSON.stringify(dat));
-
-    // for(let i in data){
-    //   data.push({'NSS_Aging':moment[(dat)-(data[i].contract_creation_date)].format('YYYY-MM-DD')})
-    // }
-    // return data;
-  }
+  
 
   public fdld(data){
     var v = data.split(' ');
+    let arr=[];
     var newone = v[0] + ' 1, '
     var newtwo = v[1];
     var newthree = newone + newtwo;
@@ -149,7 +145,9 @@ export class ScNewCasesComponent implements OnInit {
     var LastDay = new Date(newModDate.getFullYear(), newModDate.getMonth() + 1, 0).toLocaleDateString();
     var fd = moment(FirstDay).format('YYYY-MM-DD');
     var ld = moment(LastDay).format('YYYY-MM-DD');
-    return [fd,ld];
+    arr.push(fd);
+    arr.push(ld);
+    return arr;
 
   }
 
@@ -160,7 +158,8 @@ export class ScNewCasesComponent implements OnInit {
 
   public getSCDrillDownData(first,last){
     return new Promise((resolve, reject) => {
-      this._smartclientService.getScDrillDownDates(first,last).subscribe(data => {
+      let jsonObj= {'first':this.status[0],'last':this.status[1]};
+      this._smartclientService.getScDrillDownDates(jsonObj).subscribe(data => {
         this.drillDown = data;
         // console.log("territories" + this.territories)
       }, err => console.error(err),

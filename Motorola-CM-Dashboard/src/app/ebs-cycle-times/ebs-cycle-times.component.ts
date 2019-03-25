@@ -495,12 +495,15 @@ export class EbsCycleTimesComponent implements OnInit {
       }
       // ARRAY OF OBJECTS
       for (let i in cases) {
-        let index=parseInt(i);
-      if(index % 2 == 0){
+        // let index=parseInt(i);
         barColor='#4A90E2';
-      }else{
-        barColor='#93C0F6';
-      }
+
+      // if(index % 2 == 0){
+      //   barColor='#4A90E2';
+      // }
+      // else{
+      //   barColor='#93C0F6';
+      // }
         //console.log(i);
         // Create new array above and push every object in
         array.push([cases[i].status,parseInt(cases[i].contractscount),parseInt(cases[i].mediandays), barColor]);

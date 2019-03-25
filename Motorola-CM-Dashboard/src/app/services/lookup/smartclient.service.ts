@@ -41,11 +41,8 @@ export class SmartclientService {
       .map(result => this.result = result.json().data);
   }
 
-  getScDrillDownDates(first,last){
-    console.log("the first is:"+JSON.stringify(first));
-    console.log("the first is:"+JSON.stringify(last));
-
-    return this.http.get('api/sc_cases_drilldownfilter?start='+first+'?end='+last)
+  getScDrillDownDates(jsonObj){
+     return this.http.post('api/sc_cases_drilldownfilter',JSON.stringify(jsonObj),this.options)
       .map(result => this.result = result.json().data);
   }
 

@@ -452,13 +452,14 @@ export class EbsContractByStatusComponent implements OnInit {
       this.checkDataEBS = false;
 
       for (let i in cases) {
-        let index=parseInt(i);
-        if(index % 2 == 0){
+        //let index=parseInt(i);
+        // if(index % 2 == 0){
           barColor='#4A90E2';
-        }else{
-          barColor='#93C0F6';
-        }
-        console.log("i--"+barColor)
+        //}
+        // else{
+        //   barColor='#93C0F6';
+        // }
+        //console.log("i--"+barColor)
         //console.log(i);
         // Create new array above and push every object in
         array.push([cases[i].status+"  "+cases[i].status_percent, parseInt(cases[i].contractscount), "Median Days  " + parseInt(cases[i].mediandays),barColor]);

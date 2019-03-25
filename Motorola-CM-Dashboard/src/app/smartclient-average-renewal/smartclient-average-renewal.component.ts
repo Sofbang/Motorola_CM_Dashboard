@@ -13,6 +13,7 @@ import { ConstantPool } from '@angular/compiler';
 import { last } from '@angular/router/src/utils/collection';
 import { appheading } from '../enums/enum';
 
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-smartclient-average-renewal',
@@ -69,12 +70,20 @@ export class SmartclientAverageRenewalComponent implements OnInit {
 
     this.openScModel.nativeElement.click();
 
-    let drillDownStatusnew =[];let status:any;
+    let drillDownStatusnew='' ; let status: any;let letters = /^[0-9a-zA-Z]\s+$/;
+    let statusStr='',j=0;
     drillDownStatusnew = (event.selectedRowValues[0]).split(' ');
     status = drillDownStatusnew[0];
-    console.log("the drilldown status is:"+JSON.stringify(status));
-
-    console.log("in the selectBar" + JSON.stringify(event));
+   // console.log("the drilldown status is:" + JSON.stringify(status));
+    for(let i=event.selectedRowValues[0].length;i>0;i--){
+      if(event.selectedRowValues[0][i]==' '){
+        j=i;
+        //console.log("i---"+j)
+        break;
+      }
+      //console.log("hhh--"+event.selectedRowValues[0][i].match(/^[a-zA-Z]\s+$/));
+    }
+    status = event.selectedRowValues[0].substring(0,j);
     if(event.message=='select'){
 
 
@@ -91,12 +100,14 @@ export class SmartclientAverageRenewalComponent implements OnInit {
 
     this.getSCDrillDownData(status)
     .then((res:any) => {
+      var dat = new Date();
       //console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(res.length));
-      // for(let i in res){
+      for(let i in res){
          
-      //    this.drillDown.push({'NSS_Aging': moment(res[i].contract_creation_date).format('YYY-MM-DD')});
+        res[i].case_creation_date=moment(res[i].case_creation_date).format('YYYY-MM-DD');
+        res[i].sts_changed_on=moment(res[i].sts_changed_on).format('YYYY-MM-DD');
 
-      // }
+      }
       console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(this.drillDown));
 
     }, error => {
@@ -731,8 +742,8 @@ export class SmartclientAverageRenewalComponent implements OnInit {
     // console.log("the color new array for cases are as under:"+JSON.stringify(cases));
     for (let i in cases) {
       // let index=parseInt(i);
-      if(cases[i].status=='Insufficient Data' || cases[i].status =='InProg Awt 3PS' || cases[i].status =='InProg Awt SSC' || cases[i].status =='InProg Awt Credit' || cases[i].status == 'InProg Awt Resource'){
-        barColor='#93C0F6';
+     // if(cases[i].status=='Insufficient Data' || cases[i].status =='InProg Awt 3PS' || cases[i].status =='InProg Awt SSC' || cases[i].status =='InProg Awt Credit' || cases[i].status == 'InProg Awt Resource'){
+        barColor='#4A90E2';
       // }else if(cases[i].status =='InProg Awt 3PS'){
       //   barColor='#93C0F6';
       // }else if(cases[i].status =='InProg Awt SSC'){
@@ -741,13 +752,13 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       //   barColor='#618CF7';
       // }else if(cases[i].status == 'InProg Awt Resource'){
       //   barColor='#164985';
-      }else{
-        barColor='#3274C2';
-      }
+      // }else{
+      //   barColor='#3274C2';
+      // }
       //console.log(i);
       // Create new array above and push every object in
       //array.push([cases[i].status+"  "+cases[i].status_percent,  this.fromMedOrAvg == 'median' ? "Median Days - " + parseInt(cases[i].mediandays) : "Average Days - " + parseInt(cases[i].averagedays),parseInt(cases[i].contractscount), '0B91E2']);
-      array.push([cases[i].status+"  "+cases[i].status_percent,  this.fromMedOrAvg == 'median' ? parseInt(cases[i].mediandays) :parseInt(cases[i].averagedays),parseInt(cases[i].contractscount), barColor]);
+      array.push([cases[i].status+"  "+cases[i].status_percent,  this.fromMedOrAvg == 'median' ? parseInt(cases[i].mediandays) :parseInt(cases[i].averagedays)," No. Of Cases - "+parseInt(cases[i].contractscount), barColor]);
 
     }
     //console.log("the array is :", array);
