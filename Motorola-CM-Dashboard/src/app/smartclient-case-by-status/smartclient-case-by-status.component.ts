@@ -7,6 +7,7 @@ import { ViewChild, ElementRef } from '@angular/core';
 import * as $ from 'jquery';
 import { ChartSelectEvent } from 'ng2-google-charts';
 import { appheading } from '../enums/enum';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-smartclient-case-by-status',
@@ -20,7 +21,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
   // public dropdownListCaseStatusTerritory = [];
   public territoriesArr: any = [];
   public workFlowStatusArr: any = [];
-  public drillDown:any;
+  public drillDown: any;
   public caseData = [];
   public Total: any;
   public newModelCounts = [];
@@ -31,7 +32,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
   constructor(private _smartclientService: SmartclientService, private _dataHandlerService: DataHandlerService) {
     this._dataHandlerService.dataFromSideView
       .subscribe(res => {
-        console.log("suc sc" + JSON.stringify(res));
+        //console.log("suc sc" + JSON.stringify(res));
         let incomingData = res.data, event = res.event.toLowerCase(), from = res.from;
         if (event == 'onitemselect') {
           this.onItemSelect(incomingData, from)
@@ -48,7 +49,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
   }
 
   public exportToExcel() {
-    console.log("in the export to excel function");
+    //console.log("in the export to excel function");
   }
 
 
@@ -57,21 +58,27 @@ export class SmartclientCaseByStatusComponent implements OnInit {
 
     this.openScModel.nativeElement.click();
 
-    let drillDownStatusnew =[];let status:any;
+    let drillDownStatusnew='' ; let status: any;let letters = /^[0-9a-zA-Z]\s+$/;
+    let statusStr='',j=0;
     drillDownStatusnew = (event.selectedRowValues[0]).split(' ');
     status = drillDownStatusnew[0];
-    console.log("the drilldown status is:"+JSON.stringify(status));
-
-    console.log("event.." + JSON.stringify(event));
+   // console.log("the drilldown status is:" + JSON.stringify(status));
+    for(let i=event.selectedRowValues[0].length;i>0;i--){
+      if(event.selectedRowValues[0][i]==' '){
+        j=i;
+        //console.log("i---"+j)
+        break;
+      }
+      //console.log("hhh--"+event.selectedRowValues[0][i].match(/^[a-zA-Z]\s+$/));
+    }
+    status = event.selectedRowValues[0].substring(0,j);
+    //console.log("event.." + event.selectedRowValues[0].substring(0,j));
     if (event.message == 'select') {
-
-
-
-      //console.log("in the selectBar"+JSON.stringify(e));
+     //console.log("in the selectBar"+JSON.stringify(e));
       this.newModelCounts = event.selectedRowValues[1];
-      console.log("the selectBar is:" + JSON.stringify(this.newModelCounts));
+      //console.log("the selectBar is:" + JSON.stringify(this.newModelCounts));
       this.data = event.selectedRowValues[0];
-      console.log("the second time cases are:" + JSON.stringify(event));
+      //console.log("the second time cases are:" + JSON.stringify(event));
       //console.log("the data is:",this.data);
       $('.modal .modal-dialog').css('width', $(window).width() * 0.95);//fixed
       $('.modal .modal-body').css('height', $(window).height() * 0.77);//fixed
@@ -82,45 +89,51 @@ export class SmartclientCaseByStatusComponent implements OnInit {
       $('tbody.SCModlTbody').css('width', '100%');
 
       this.getSCDrillDownData(status)
-      .then((res:any) => {
-        //console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(res.length));
-        // for(let i in res){
-           
-        //    this.drillDown.push({'NSS_Aging': moment(res[i].contract_creation_date).format('YYY-MM-DD')});
-  
-        // }
-        console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(this.drillDown));
-  
-      }, error => {
-        console.log("error getTerritories " + error);
-      });
-      this.drillDown=[];
+        .then((res: any) => {
+          let currentDate: any = new Date();
+          for (let i = 0; i < res.length; i++) {
+            let caseCreationdate = new Date(moment(res[i].case_creation_date).format('YYYY-MM-DD'));
+            let timeDiff = Math.abs(currentDate.getTime() - caseCreationdate.getTime());
+            let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            //console.log("diff----"+diffDays)
+            res[i]['nss_aging']=diffDays+' days';
+            res[i].case_creation_date = moment(res[i].case_creation_date).format('YYYY-MM-DD');
+            res[i].sts_changed_on = moment(res[i].sts_changed_on).format('YYYY-MM-DD');
+
+          }
+          //console.log("the res is:" + JSON.stringify(res));
+          //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(this.drillDown));
+
+        }, error => {
+          //console.log("error getTerritories " + error);
+        });
+      this.drillDown = [];
 
 
     }
   }
 
-  public getSCDrillDownData(status){
+  public getSCDrillDownData(status) {
     return new Promise((resolve, reject) => {
 
-      console.log("territories" + status)
+      //console.log("territories" + status)
       this._smartclientService.getScDrillDown(status).subscribe(data => {
         this.drillDown = data;
         // console.log("territories" + this.territories)
       }, err => console.error(err),
         // the third argument is a function which runs on completion
         () => {
-          console.log("the drilldown data recived is:"+this.drillDown);
+          //console.log("the drilldown data recived is:" + this.drillDown);
           resolve(this.drillDown);
         }
       )
     }).catch((error) => {
       reject(error);
-      console.log('errorin getting data :', error);
+      //console.log('errorin getting data :', error);
     })
-  
+
   }
-  
+
 
   /**
      * calling the Angular Lookup Service Method getContracts() implemented by Vishal Sehgal as on 8/2/2019
@@ -132,7 +145,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
       this._smartclientService.getSCCases().
         subscribe(data => {
           cases = this.makeChartData(data);
-          console.log("the cases data is :" + JSON.stringify(cases));
+          //console.log("the cases data is :" + JSON.stringify(cases));
           let arr = [];
           for (let i in cases) {
             arr.push(cases[i].contractscount);
@@ -152,7 +165,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
           }
         )
     }).catch((error) => {
-      console.log('errorin getting data :', error);
+      //console.log('errorin getting data :', error);
       reject(error);
     })
   }
@@ -161,13 +174,13 @@ export class SmartclientCaseByStatusComponent implements OnInit {
 
     for (let i in cases) {
 
-      console.log("the cases are as under:" + JSON.stringify(cases));
+      //console.log("the cases are as under:" + JSON.stringify(cases));
       let calcPer = ((cases[i].contractscount / this.Total) * 100).toFixed(2)
       cases[i]['status_percent'] = calcPer + '%';
       //console.log("the values are :"+JSON.stringify(value));
 
     }
-    console.log("after the for loop in the calcPerc method:" + JSON.stringify(cases));
+    //console.log("after the for loop in the calcPerc method:" + JSON.stringify(cases));
     return cases;
   }
 
@@ -203,7 +216,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
           }
         )
     }).catch((error) => {
-      console.log('errorin getting data :', error);
+      //console.log('errorin getting data :', error);
       reject(error);
 
     })
@@ -237,7 +250,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
           }
         )
     }).catch((error) => {
-      console.log('errorin getting data :', error);
+      //console.log('errorin getting data :', error);
       reject(error);
     })
   }
@@ -291,26 +304,27 @@ export class SmartclientCaseByStatusComponent implements OnInit {
         },
         vAxis: {
           textStyle: { color: '#444444' },
-          title:'Smart Client Status',
-          slantedText: true,  
-          slantedTextAngle: 90 
+          title: 'Smart Client Status',
+          slantedText: true,
+          slantedTextAngle: 90
         },
         series: {
           0: { color: '#93C0F6' }
         },
         tooltip: { isHtml: false },
         annotations: {
-          alwaysOutside:true}
+          alwaysOutside: true
+        }
       }
     };
   }
   // ng multiselect events implemented by Vishal Sehgal 12/2/2019
   onItemSelect(item, from) {
-    console.log("the item returned is :" + JSON.stringify(item));
+    //console.log("the item returned is :" + JSON.stringify(item));
     if (from == 'territory') {
-      console.log("inside the if of territory check:" + JSON.stringify(item));
+      //console.log("inside the if of territory check:" + JSON.stringify(item));
       this.territoriesArr.push(item)
-      console.log("the terr is:" + JSON.stringify(this.territoriesArr));
+      //console.log("the terr is:" + JSON.stringify(this.territoriesArr));
     } else if (from == 'workflow') {
       this.workFlowStatusArr.push(item);
     }
@@ -355,7 +369,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
    */
   public filterChartData() {
     let finalArr = [];
-    console.log("the finalarr:" + JSON.stringify(finalArr));
+    //console.log("the finalarr:" + JSON.stringify(finalArr));
     //console.log("case data" + JSON.stringify(this.caseData));
     if (this.territoriesArr.length == 0 && this.workFlowStatusArr.length > 0) {
       //console.log("t0 s>0");
@@ -375,7 +389,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
       for (let i in this.territoriesArr) {
         let territoryItem = this.territoriesArr[i];
         let territoryFilterarr = this.caseData.filter(item => {
-          console.log("territoryItem" + territoryItem);
+          //console.log("territoryItem" + territoryItem);
           return item.territory == territoryItem;
         });
         for (let i = 0; i < territoryFilterarr.length; i++) {
@@ -385,23 +399,23 @@ export class SmartclientCaseByStatusComponent implements OnInit {
         //finalArr = territoryFilterarr;
       }
     } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length == 0) {
-      console.log("t0 s0");
+      //console.log("t0 s0");
       let cases = this.makeChartData(this.caseData);
       cases = this.calculatePerc(cases);
       let chartArr = this.makeChartArr(cases);
       // if(chartArr.length>0){
       //   this.checkDataSCS = false;
-  
+
       // }else{
       //   alert("no data to be bind to  graph");
       //   this.checkDataSCS = true;
-  
+
       // }
       this.drawChart(chartArr);
       return;
     }
     else {
-      console.log("t>0 s>0");
+      //console.log("t>0 s>0");
       for (let i in this.territoriesArr) {
         let territoryItem = this.territoriesArr[i];
         let territoryFilterarr = this.caseData.filter(item => {
@@ -423,7 +437,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
       }
     }
     let cases = this.makeChartData(finalArr);
-    console.log("the cases data before the finalArr is:" + JSON.stringify(cases));
+    //console.log("the cases data before the finalArr is:" + JSON.stringify(cases));
     // console.log("the caeses before binding are :"+JSON.stringify(cases));
     cases = this.calculatePerc(cases);
 
@@ -496,20 +510,20 @@ export class SmartclientCaseByStatusComponent implements OnInit {
 
       for (let i in cases) {
         let index = parseInt(i);
-        if(cases[i].status=='Insufficient Data' || cases[i].status =='InProg Awt 3PS' ||  cases[i].status =='InProg Awt SSC' || cases[i].status =='InProg Awt Credit' || cases[i].status == 'InProg Awt Resource'){
-          barColor='#93C0F6';
-        // }else if(cases[i].status =='InProg Awt 3PS'){
-        //   barColor='#93C0F6';
-        // }else if(cases[i].status =='InProg Awt SSC'){
-        //   barColor='#4A90E2';
-        // }else if(cases[i].status =='InProg Awt Credit'){
-        //   barColor='#618CF7';
-        // }else if(cases[i].status == 'InProg Awt Resource'){
-        //   barColor='#164985';
-        // }
+        if (cases[i].status == 'Insufficient Data' || cases[i].status == 'InProg Awt 3PS' || cases[i].status == 'InProg Awt SSC' || cases[i].status == 'InProg Awt Credit' || cases[i].status == 'InProg Awt Resource') {
+          barColor = '#93C0F6';
+          // }else if(cases[i].status =='InProg Awt 3PS'){
+          //   barColor='#93C0F6';
+          // }else if(cases[i].status =='InProg Awt SSC'){
+          //   barColor='#4A90E2';
+          // }else if(cases[i].status =='InProg Awt Credit'){
+          //   barColor='#618CF7';
+          // }else if(cases[i].status == 'InProg Awt Resource'){
+          //   barColor='#164985';
+          // }
         }
-        else{
-          barColor='#3274C2';
+        else {
+          barColor = '#3274C2';
         }
         //console.log(i);
         // Create new array above and push every object in
@@ -521,7 +535,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
       //cases = [['Status','Cases'],['No_Status',0]];
       this.drawChart(cases);
       this.checkDataSCS = true;
-      array.push(['', 0,'','']);
+      array.push(['', 0, '', '']);
       return array;
 
     } else {
@@ -562,7 +576,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
 
         // this.drawChart(res);
       }, error => {
-        console.log("error getCaseData " + error);
+        //console.log("error getCaseData " + error);
       });
 
     this.getTerritories()
@@ -572,7 +586,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
         this.sideViewDropDowns.territoryData = res;
         this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
       }, error => {
-        console.log("error getTerritories " + error);
+        //console.log("error getTerritories " + error);
       });
     this.getWorkflowStatus()
       .then((res: any) => {
@@ -581,7 +595,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
         this.sideViewDropDowns.workFlowData = res;
         this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
       }, error => {
-        console.log("error getWorkflowStatus " + error);
+        //console.log("error getWorkflowStatus " + error);
       });
 
     this.sideViewDropDowns.showArrivalType = true;
