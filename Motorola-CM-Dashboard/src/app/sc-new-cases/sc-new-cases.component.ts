@@ -11,7 +11,7 @@ import { ChartReadyEvent } from 'ng2-google-charts';
 import * as moment from 'moment';
 import { sep } from 'path';
 import { Title } from '@angular/platform-browser';
-// import {moment} from 'moment';
+import { ExcelServiceService } from '../services/convert_to_excel/excel-service.service';
 
 
 @Component({
@@ -21,6 +21,7 @@ import { Title } from '@angular/platform-browser';
 })
 export class ScNewCasesComponent implements OnInit {
   public columnChart: any;
+  public drillDownData:any;
   public casesData: any = [];
   public selectedFrom: any;
   public drillDown:any;
@@ -66,7 +67,7 @@ export class ScNewCasesComponent implements OnInit {
   @ViewChild('openSCModal') openScModel: ElementRef;
 
 
-  constructor(private _smartclientService: SmartclientService, private _dataHandlerService:DataHandlerService) {
+  constructor(private _smartclientService: SmartclientService, private _dataHandlerService:DataHandlerService,private _excelService:ExcelServiceService) {
     this._dataHandlerService.dataFromSideView
       .subscribe(res => {
         //console.log("sub ebs" + JSON.stringify(res));
@@ -124,13 +125,18 @@ export class ScNewCasesComponent implements OnInit {
 
       }
       //console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(this.drillDown));
-      
+      this.drillDownData = res;
+
     }, error => {
       console.log("error getTerritories " + error);
     });
     this.drillDown=[];
 
     }
+  }
+
+  public exportToExcel() {
+    this._excelService.exportAsExcelFile(this.drillDownData, 'Smart Client New Cases');
   }
   
 

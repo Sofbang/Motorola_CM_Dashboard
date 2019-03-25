@@ -12,6 +12,7 @@ import { from } from 'rxjs';
 import { ConstantPool } from '@angular/compiler';
 import { last } from '@angular/router/src/utils/collection';
 import { appheading } from '../enums/enum';
+import { ExcelServiceService } from '../services/convert_to_excel/excel-service.service';
 
 import * as moment from 'moment';
 
@@ -21,6 +22,7 @@ import * as moment from 'moment';
   styleUrls: ['./smartclient-average-renewal.component.css']
 })
 export class SmartclientAverageRenewalComponent implements OnInit {
+  public drillDownData:any;
 
   public barChartData: any;
   public Total:any;
@@ -43,7 +45,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
   @ViewChild('openSCModal') openScModel: ElementRef;
   @ViewChild('FromTo') FromTo;
 
-  constructor(private _smartclientService: SmartclientService, private _dataHandlerService: DataHandlerService) {
+  constructor(private _smartclientService: SmartclientService, private _dataHandlerService: DataHandlerService,private _excelService:ExcelServiceService) {
     this._dataHandlerService.dataFromSideView
       .subscribe(res => {
         //console.log("suc smartclient avg-ren" + JSON.stringify(res));
@@ -109,13 +111,20 @@ export class SmartclientAverageRenewalComponent implements OnInit {
 
       }
       console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(this.drillDown));
-
+      this.drillDownData = res;
     }, error => {
       console.log("error getTerritories " + error);
     });
     this.drillDown=[];
 
     }
+  }
+
+  public exportToExcel(){
+
+
+    this._excelService.exportAsExcelFile(this.drillDownData, 'Smart Client Cases');
+
   }
 
   public calculatePerc(cases){
@@ -134,10 +143,6 @@ export class SmartclientAverageRenewalComponent implements OnInit {
   public SUM(accumulator, num) {
     return accumulator + num;
   }
-
- public exportToExcel(){
-   console.log("in the export to excel function");
- }
 
 
  public getSCDrillDownData(status){

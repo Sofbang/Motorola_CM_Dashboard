@@ -8,6 +8,7 @@ import * as $ from 'jquery';
 import { ChartSelectEvent } from 'ng2-google-charts';
 import { appheading } from '../enums/enum';
 import * as moment from 'moment';
+import { ExcelServiceService } from '../services/convert_to_excel/excel-service.service';
 
 @Component({
   selector: 'app-smartclient-case-by-status',
@@ -16,6 +17,8 @@ import * as moment from 'moment';
 })
 export class SmartclientCaseByStatusComponent implements OnInit {
   public barChartData: any;
+  public drillDownData:any;
+
   //public cases: any;
   // public selectedTerritoriesCasetype: any = 'all';
   // public dropdownListCaseStatusTerritory = [];
@@ -30,7 +33,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
   public data = [];
   public sideViewDropDowns = new SideViewDropDowns();
   @ViewChild('openSCModal') openScModel: ElementRef;
-  constructor(private _smartclientService: SmartclientService, private _dataHandlerService: DataHandlerService) {
+  constructor(private _smartclientService: SmartclientService, private _dataHandlerService: DataHandlerService,private _excelService:ExcelServiceService) {
     this._dataHandlerService.dataFromSideView
       .subscribe(res => {
         //console.log("suc sc" + JSON.stringify(res));
@@ -49,11 +52,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
     this._dataHandlerService.setDataForMainLayout(true);
   }
 
-  public exportToExcel() {
-    //console.log("in the export to excel function");
-  }
-
-
+  
 
   public selectBarScCaseByStatus(event: ChartSelectEvent) {
 
@@ -104,6 +103,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
           }
           //console.log("the res is:" + JSON.stringify(res));
           //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(this.drillDown));
+          this.drillDownData = res;
 
         }, error => {
           //console.log("error getTerritories " + error);
@@ -113,6 +113,11 @@ export class SmartclientCaseByStatusComponent implements OnInit {
 
     }
   }
+
+  public exportToExcel() {
+    this._excelService.exportAsExcelFile(this.drillDownData, 'Smart Client Cases');
+  }
+
 
   public getSCDrillDownData(status) {
     return new Promise((resolve, reject) => {
