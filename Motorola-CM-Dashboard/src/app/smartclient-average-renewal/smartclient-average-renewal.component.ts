@@ -318,7 +318,9 @@ export class SmartclientAverageRenewalComponent implements OnInit {
         series: {
           0: { color: '#93C0F6' },
         },
-        tooltip: { isHtml: false }
+        tooltip: { isHtml: false },
+        annotations: {
+          alwaysOutside:true}
       }
     };
   }

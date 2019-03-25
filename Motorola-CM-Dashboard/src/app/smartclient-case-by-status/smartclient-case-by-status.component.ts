@@ -102,6 +102,8 @@ export class SmartclientCaseByStatusComponent implements OnInit {
 
   public getSCDrillDownData(status){
     return new Promise((resolve, reject) => {
+
+      console.log("territories" + status)
       this._smartclientService.getScDrillDown(status).subscribe(data => {
         this.drillDown = data;
         // console.log("territories" + this.territories)
@@ -296,7 +298,9 @@ export class SmartclientCaseByStatusComponent implements OnInit {
         series: {
           0: { color: '#93C0F6' }
         },
-        tooltip: { isHtml: false }
+        tooltip: { isHtml: false },
+        annotations: {
+          alwaysOutside:true}
       }
     };
   }

@@ -258,7 +258,9 @@ export class EbsContractByStatusComponent implements OnInit {
         series: {
           0: { color: '0B91E2' }
         },
-        tooltip: { isHtml: false, type: 'string' }
+        tooltip: { isHtml: false, type: 'string' },
+        annotations: {
+          alwaysOutside:true}
       }
     }
   }
