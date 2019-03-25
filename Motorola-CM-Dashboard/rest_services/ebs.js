@@ -123,7 +123,7 @@ router.get('/ebs_contracts_drilldown', (req, res, next) => {
     if (err) { return next(err); }
     //execute query using using connection instance returned by doConnect method
     conn.doExecute(dbConn,
-      "Select distinct contract_number,customer_name,contract_owner,contract_creation_date,to_status from ebs_contracts_state_master where to_status='"+status.contractstatus+"'", [],
+      "Select distinct contract_number,customer_name,contract_owner,contract_creation_date,to_status,sts_changed_on from ebs_contracts_state_master where to_status='"+status.contractstatus+"'", [],
       function (err, result) {
         if (err) {
           conn.doRelease(dbConn);
@@ -224,5 +224,8 @@ router.get('/ebs_contract_state_avg', (req, res, next) => {
       });
   });
 });
+
+
+
 
 module.exports = router;

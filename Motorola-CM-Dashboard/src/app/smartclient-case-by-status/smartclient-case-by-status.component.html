@@ -2,7 +2,10 @@
     <button id="openSCModal" #openSCModal [hidden]="true" data-toggle="modal" data-target="#smartClientModal">Open
         Modal</button>
     <google-chart #cchartnew [data]="barChartData" (chartSelect)='selectBarScCaseByStatus($event)'></google-chart>
+    <p class="para"> Dark Blue = waiting for outside resource Light Blue = NSS workflow</p>
+   
 </div>
+
 <div class="show-msg"  *ngIf="this.checkDataSCS">
   <h3>No Data Available</h3>
 </div>
@@ -34,9 +37,9 @@
               <th>Case Owner</th>
               <th>Case Open Date</th>
               <th>NSS Aging</th>
-              <th>Contract start date</th>
+              <th>Case start date</th>
             </tr>
-          </thead>
+          </thead>    
           <!-- outer for each  -->
           <tbody class="SCModlTbody" style="height: auto !important;min-height:52vh;">
             <tr *ngFor="let drilldown of drillDown" >

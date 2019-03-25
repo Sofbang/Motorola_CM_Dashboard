@@ -678,7 +678,7 @@ export class ScNewCasesComponent implements OnInit {
     this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
     this.sideViewDropDowns.compHeading=appheading.graph3;
     
-   
+        
 
   }
 

@@ -849,7 +849,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
 
     this.sideViewDropDowns.compHeading = appheading.graph5;
 
-
+      
   }
 
 }

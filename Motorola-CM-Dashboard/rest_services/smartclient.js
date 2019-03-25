@@ -89,6 +89,9 @@ router.get('/sc_case_status', (req, res, next) => {
   });
 });
 
+
+
+     
 // API for sc_case_territories
 router.get('/sc_territories', (req, res, next) => {
   //call doConnect method in db_operations
@@ -383,4 +386,6 @@ router.post('/sc_case_status_avg_yr', (req, res, next) => {
       });
   });
 });
+
+
 module.exports = router;

@@ -302,7 +302,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
         },
         width: 1100, height: 500,
         chartArea: { left: 223, top: 20, width: '50%' },
-        legend: { position: 'bottom', alignment: 'center', textStyle: { color: '#444444' } },
+        legend: { position: 'none'},
         backgroundColor: '#FFFFFF',
         hAxis: {
           textStyle: { color: '#444444' }
@@ -688,7 +688,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
     // this.sideViewDropDowns.arrivalTypeData = ['SAOF','CPQ','Q2SC','Other'];
     this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
     this.sideViewDropDowns.compHeading = appheading.graph1;
-
+      
 
 
   }

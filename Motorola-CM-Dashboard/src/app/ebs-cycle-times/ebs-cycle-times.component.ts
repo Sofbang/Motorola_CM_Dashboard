@@ -498,6 +498,7 @@ export class EbsCycleTimesComponent implements OnInit {
         // let index=parseInt(i);
         barColor='#4A90E2';
 
+
       // if(index % 2 == 0){
       //   barColor='#4A90E2';
       // }
@@ -636,5 +637,5 @@ export class EbsCycleTimesComponent implements OnInit {
 
       this.sideViewDropDowns.compHeading=appheading.garph4;
   }
-
+     
 }

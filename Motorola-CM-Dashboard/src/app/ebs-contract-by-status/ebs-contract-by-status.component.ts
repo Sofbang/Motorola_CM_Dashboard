@@ -79,7 +79,10 @@ export class EbsContractByStatusComponent implements OnInit {
         .then((res: any) => {
           //console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(res.length));
           for (let i in res) {
-            this.drillDown(moment(res[i].contract_creation_date).format('YYY-MM-DD'));
+            //res[i].
+            res[i].contract_creation_date = moment(res[i].case_creation_date).format('YYYY-MM-DD');
+            res[i].sts_changed_on = moment(res[i].sts_changed_on).format('YYYY-MM-DD');
+            //this.drillDown(moment(res[i].contract_creation_date).format('YYY-MM-DD'));
           }
           console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(this.drillDown));
 
@@ -607,6 +610,7 @@ export class EbsContractByStatusComponent implements OnInit {
     this.sideViewDropDowns.showYearDD = false;
     this.sideViewDropDowns.compHeading = appheading.graph2;
     this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
+             
   }
 }
 
