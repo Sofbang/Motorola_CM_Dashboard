@@ -13,58 +13,62 @@ router.get('/sc_case_status', (req, res, next) => {
   //   sql = "SELECT status, CASE WHEN status = 'Open' THEN '1' WHEN status = 'Insufficient Data' THEN '2' WHEN status = 'InProg' THEN '3' WHEN status = 'InProg Acknowledged' THEN '4' WHEN status = 'InProg Awt 3PS' THEN '5' WHEN status = 'InProg Awt Bus Unit' THEN '6' WHEN status = 'InProg Awt SSC' THEN '7' WHEN status = 'InProg Awt Credit' THEN '8' WHEN status = 'InProg Awt Resource' THEN '9' ELSE 'OTHER' END                         AS status_order, SUM (mediandays :: INTEGER) AS mediandays, SUM(contractperstatus)      AS contractscount FROM   (SELECT to_status            AS Status, Median(daysinstatus) AS MedianDays, Count(case_number)   AS contractPerStatus, territory FROM   (SELECT case_number, to_status, Min(sts_changed_on), datemoved, To_number(Trim(To_char(datemoved - Min(sts_changed_on), 'DD')), '99G999D9S') AS DaysInStatus, territory FROM   (SELECT A2.case_number, A2.to_status, A2.sts_changed_on, territory, Coalesce((SELECT Max(A1.sts_changed_on) FROM   sc_case_state_master A1 WHERE  A1.case_number = A2.case_number AND A1.from_status = A2.to_status), current_date) AS DateMoved FROM   sc_case_state_master A2 ORDER  BY case_number, sts_changed_on) resultset GROUP  BY case_number, to_status, datemoved, territory)R2 GROUP  BY to_status, territory ORDER  BY to_status) R3 WHERE  territory IN ( " + territory + " ) AND status IN (" + status + " ) GROUP  BY status ORDER  BY status_order";
   // }
   var postgreSql = `SELECT status, 
-  CASE 
-    WHEN status = 'Open' THEN '1' 
-    WHEN status = 'Insufficient Data' THEN '2' 
-    WHEN status = 'InProg' THEN '3' 
-    WHEN status = 'InProg Acknowledged' THEN '4' 
-    WHEN status = 'InProg Awt 3PS' THEN '5' 
-    WHEN status = 'InProg Awt Bus Unit' THEN '6' 
-    WHEN status = 'InProg Awt SSC' THEN '7' 
-    WHEN status = 'InProg Awt Credit' THEN '8' 
-    WHEN status = 'InProg Awt Resource' THEN '9' 
-    ELSE 'OTHER' 
-  END                         AS status_order, 
-  SUM (mediandays :: INTEGER) AS mediandays, 
-  SUM(contractperstatus)      AS contractscount, 
-  territory 
-FROM   (SELECT to_status            AS Status, 
-          Median(daysinstatus) AS MedianDays, 
-          Count(case_number)   AS contractPerStatus, 
-          territory 
-   FROM   (SELECT case_number, 
-                  to_status, 
-                  Min(sts_changed_on), 
-                  datemoved, 
-                  To_number(Trim(To_char(datemoved - Min(sts_changed_on), 
-                                 'DD')), 
-                  '99G999D9S') AS 
-                  DaysInStatus, 
-                  territory 
-           FROM   (SELECT A2.case_number, 
-                          A2.to_status, 
-                          A2.sts_changed_on, 
-                          territory, 
-                          Coalesce((SELECT Max(A1.sts_changed_on) 
-                                    FROM   sc_case_state_master A1 
-                                    WHERE  A1.case_number = A2.case_number 
-                                           AND A1.from_status = 
-                                               A2.to_status), 
-                          current_date) AS 
-                                  DateMoved 
-                   FROM   sc_case_state_master A2 
-                   ORDER  BY case_number, 
-                             sts_changed_on) resultset 
-           GROUP  BY case_number, 
-                     to_status, 
-                     datemoved, 
-                     territory)R2 
-   GROUP  BY to_status, 
-             territory 
-   ORDER  BY to_status) R3 
-GROUP  BY status, 
-     territory 
-ORDER  BY status_order`;
+	CASE 
+      WHEN status = 'Open' THEN '1' 
+      WHEN status = 'Insufficient Data' THEN '2' 
+      WHEN status = 'InProg' THEN '3' 
+      WHEN status = 'InProg Acknowledged' THEN '4' 
+      WHEN status = 'InProg Awt 3PS' THEN '5' 
+      WHEN status = 'InProg Awt Bus Unit' THEN '6' 
+      WHEN status = 'InProg Awt SSC' THEN '7' 
+      WHEN status = 'InProg Awt Credit' THEN '8' 
+      WHEN status = 'InProg Awt Resource' THEN '9' 
+      ELSE 'OTHER' 
+    END                         AS status_order, 
+    SUM (mediandays :: INTEGER) AS mediandays, 
+    SUM(contractperstatus)      AS contractscount, 
+    arrival_type,
+    territory 
+  FROM   (SELECT to_status            AS Status, 
+            Median(daysinstatus) AS MedianDays, 
+            Count(case_number)   AS contractPerStatus, 
+            arrival_type,
+            territory 
+     FROM   (SELECT case_number, 
+                    to_status, 
+                    Min(sts_changed_on), 
+                    datemoved, 
+                    To_number(Trim(To_char(datemoved - Min(sts_changed_on), 
+                                   'DD')), 
+                    '99G999D9S') AS 
+                    DaysInStatus,
+                    arrival_type, 
+                    territory 
+             FROM   (SELECT A2.case_number, 
+                            A2.to_status, 
+                            A2.sts_changed_on,
+                            arrival_type, 
+                            territory, 
+                            Coalesce((SELECT Max(A1.sts_changed_on) 
+                                      FROM   sc_case_state_master A1 
+                                      WHERE  A1.case_number = A2.case_number 
+                                             AND A1.from_status = 
+                                                 A2.to_status), 
+                            current_date) AS 
+                                    DateMoved 
+                     FROM   sc_case_state_master A2 
+                     ORDER  BY case_number, 
+                               sts_changed_on) resultset 
+             GROUP  BY case_number, 
+                       to_status, 
+                       datemoved, 
+                       territory,arrival_type)R2 
+     GROUP  BY to_status, 
+               territory,arrival_type 
+     ORDER  BY to_status) R3 
+  GROUP  BY status, 
+       territory,arrival_type 
+  ORDER  BY status_order`;
   //call doConnect method in db_operations
   conn.doConnect((err, dbConn) => {
     if (err) { return next(err); }
@@ -140,7 +144,7 @@ router.get('/sc_new_cases', (req, res, next) => {
     if (err) { return next(err); }
     //execute body using using connection instance returned by doConnect method
     conn.doExecute(dbConn,
-      `Select distinct case_number,case_title,current_status,addnl_info,from_status,to_status,territory,case_creation_date,sts_changed_on,customer,case_owner FROM sc_case_state_master order by case_number asc `, [],
+      `Select distinct case_number,case_title,current_status,from_status,to_status,territory,case_creation_date,sts_changed_on,customer,case_owner FROM sc_case_state_master order by case_number asc `, [],
       function (err, result) {
         if (err) {
           conn.doRelease(dbConn);

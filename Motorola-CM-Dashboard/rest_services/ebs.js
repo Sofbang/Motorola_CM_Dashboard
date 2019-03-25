@@ -163,7 +163,7 @@ router.get('/ebs_dates_max_min', (req, res, next) => {
 
 
 // // API for arrival_type
-router.get('/arrival_type', (req, res, next) => {
+router.get('/ebs_arrival_type', (req, res, next) => {
   //call doConnect method in db_operations
   conn.doConnect((err, dbConn) => {
     if (err) { return next(err); }

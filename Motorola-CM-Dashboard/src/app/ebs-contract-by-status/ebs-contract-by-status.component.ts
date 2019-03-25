@@ -20,19 +20,14 @@ export class EbsContractByStatusComponent implements OnInit {
   // public selectedTerritories: any = 'all';
   public ebscolumnChartData: any;
   public territories: any;
-  public drillDown:any;
-  public checkDataEBS:any=false;
-  // public caseStatusTerritories: any;
-  // public dropdownListTerritory = [];
-  // public dropdownListCaseStatusTerritory = [];
-  // public selectedItems = [];
-  // public dropdownSettings = {};
-  // public sideViewDropDowns = new SideViewDropDowns();
+  public drillDown: any;
+  public checkDataEBS: any = false;
   public territoriesArr: any = [];
+  public arrivalTypesArr: any = [];
   public data: any;
-  public newModelCounts:any;
+  public newModelCounts: any;
   public workFlowStatusArr: any = [];
-  public Total:any;
+  public Total: any;
 
   public sideViewDropDowns = new SideViewDropDowns();
   @ViewChild('openSCModal') openScModel: ElementRef;
@@ -56,58 +51,51 @@ export class EbsContractByStatusComponent implements OnInit {
     this._dataHandlerService.setDataForMainLayout(true);
   }
 
-  public exportToExcel(){
+  public exportToExcel() {
     console.log("in the export to excel function");
   }
-  
+
   public selectBar(event: ChartSelectEvent) {
     this.openScModel.nativeElement.click();
-    let drillDownStatusnew =[];let status:any;
+    let drillDownStatusnew = []; let status: any;
     drillDownStatusnew = (event.selectedRowValues[0]).split(' ');
     status = drillDownStatusnew[0];
-    console.log("the drilldown status is:"+JSON.stringify(status));
+    console.log("the drilldown status is:" + JSON.stringify(status));
     console.log("in the selectBar" + JSON.stringify(event.selectedRowValues[0]));
-    if(event.message=='select'){
+    if (event.message == 'select') {
 
-    this.newModelCounts = event.selectedRowValues[1]
-    this.data = event.selectedRowValues[0];
-    console.log("the data is:", JSON.stringify(this.data));
-    $('.modal .modal-dialog').css('width', $(window).width() * 0.95);//fixed
-    $('.modal .modal-body').css('height', $(window).height() * 0.77);//fixed
-    $('tbody.SCModlTbody').css('max-height', $(window).height() * 0.69);
-    $('tbody.SCModlTbody').css('overflow-y', 'scroll');
-    $('tbody.SCModlTbody').css('overflow-x', 'hidden');
-    // $('tbody.SCModlTbody').css('display', 'block');
-    $('tbody.SCModlTbody').css('width', '100%');
-    
-    this.getEBSDrillDownData(status)
-    .then((res:any) => {
-      //console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(res.length));
-      for(let i in res){
-         
-         this.drillDown(moment(res[i].contract_creation_date).format('YYY-MM-DD'));
+      this.newModelCounts = event.selectedRowValues[1]
+      this.data = event.selectedRowValues[0];
+      console.log("the data is:", JSON.stringify(this.data));
+      $('.modal .modal-dialog').css('width', $(window).width() * 0.95);//fixed
+      $('.modal .modal-body').css('height', $(window).height() * 0.77);//fixed
+      $('tbody.SCModlTbody').css('max-height', $(window).height() * 0.69);
+      $('tbody.SCModlTbody').css('overflow-y', 'scroll');
+      $('tbody.SCModlTbody').css('overflow-x', 'hidden');
+      // $('tbody.SCModlTbody').css('display', 'block');
+      $('tbody.SCModlTbody').css('width', '100%');
 
-      }
-      console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(this.drillDown));
+      this.getEBSDrillDownData(status)
+        .then((res: any) => {
+          //console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(res.length));
+          for (let i in res) {
+            this.drillDown(moment(res[i].contract_creation_date).format('YYY-MM-DD'));
+          }
+          console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(this.drillDown));
 
-    }, error => {
-      console.log("error getTerritories " + error);
-    });
-    this.drillDown=[];
-    
+        }, error => {
+          console.log("error getTerritories " + error);
+        });
+      this.drillDown = [];
+
     }
   }
 
-  public calculatePerc(cases){
-    for(let i in cases){
-
-      console.log("the cases are as under:"+JSON.stringify(cases));
-      let calcPer=((cases[i].contractscount/this.Total)*100).toFixed(2)
-      cases[i]['status_percent']=calcPer+'%';
-      //console.log("the values are :"+JSON.stringify(value));
-
+  public calculatePerc(cases) {
+    for (let i in cases) {
+      let calcPer = ((cases[i].contractscount / this.Total) * 100).toFixed(2)
+      cases[i]['status_percent'] = calcPer + '%';
     }
-    //console.log("after the for loop in the calcPerc method:"+JSON.stringify(value));
     return cases;
   }
 
@@ -121,21 +109,20 @@ export class EbsContractByStatusComponent implements OnInit {
    */
   public getContractData() {
     return new Promise((resolve, reject) => {
-      let contractData;
+      let contractData=[];
       this._ebsService.getEBSContractState().subscribe(data => {
-        this.contractsData = data;
-        contractData = this.makeChartData(data);
-        console.log("contracts" + JSON.stringify(contractData));
-        let arr = [];
-        for(let i in contractData){
+        if (data.length > 0) {
+          this.contractsData = data;
+          contractData = this.makeChartData(data);
+          //console.log("contracts" + JSON.stringify(contractData));
+          let arr = [];
+          for (let i in contractData) {
+            arr.push(contractData[i].contractscount)
 
-          console.log("in the for to calculate total:"+i)
-          arr.push(contractData[i].contractscount)
-
+          }
+          this.Total = arr.reduce(this.SUM);
+          contractData = this.calculatePerc(contractData);
         }
-        this.Total = arr.reduce(this.SUM);
-        contractData=this.calculatePerc(contractData);
-        console.log("the total is :"+JSON.stringify(this.Total));
       }, err => console.error(err),
         // the third argument is a function which runs on completion
         () => {
@@ -148,7 +135,7 @@ export class EbsContractByStatusComponent implements OnInit {
     })
   }
 
-  public getEBSDrillDownData(status){
+  public getEBSDrillDownData(status) {
     return new Promise((resolve, reject) => {
       this._ebsService.getEBSDrillDown(status).subscribe(data => {
         this.drillDown = data;
@@ -156,7 +143,7 @@ export class EbsContractByStatusComponent implements OnInit {
       }, err => console.error(err),
         // the third argument is a function which runs on completion
         () => {
-          console.log("the drilldown data recived is:"+this.drillDown);
+          console.log("the drilldown data recived is:" + this.drillDown);
           resolve(this.drillDown);
         }
       )
@@ -190,8 +177,8 @@ export class EbsContractByStatusComponent implements OnInit {
               array.push({ 'item_id': territories[i].territory, 'item_text': territories[i].territory });
             }
           }
+          if (territories.length > 0)
           array.push(otherTerritory);
-          console.log(array);
           resolve(array);
         }
       )
@@ -226,7 +213,30 @@ export class EbsContractByStatusComponent implements OnInit {
     })
   }
 
-
+  public getArrivalType() {
+    return new Promise((resolve, reject) => {
+      let workflowStatus;
+      this._ebsService.getEBSArrivalType()
+        .subscribe(data => {
+          workflowStatus = data;
+          //console.log("territories" + territories)
+        }, err => console.error(err),
+          // the third argument is a function which runs on completion
+          () => {
+            let array = [];
+            let count = 0;
+            let otherStatus, otherFlag = false;
+            for (let i in workflowStatus) {
+              array.push({ 'item_id': workflowStatus[i].arrival_type, 'item_text': workflowStatus[i].arrival_type });
+            }
+            resolve(array);
+          }
+        )
+    }).catch((error) => {
+      console.log('errorin getting data :', error);
+      reject(error);
+    })
+  }
 
   public drawchart(res) {
     this.ebscolumnChartData = {
@@ -241,9 +251,9 @@ export class EbsContractByStatusComponent implements OnInit {
           bold: true,
           italic: false
         },
-        width: 800, height: 500, 
-        bar: {groupWidth: "75%"},
-        chartArea:{left:180,top:20,width:'50%'},
+        width: 800, height: 500,
+        bar: { groupWidth: "75%" },
+        chartArea: { left: 180, top: 20, width: '50%' },
         legend: { position: 'bottom', textStyle: { color: '#444444' } },
         backgroundColor: '#FFFFFF',
         hAxis: {
@@ -251,16 +261,17 @@ export class EbsContractByStatusComponent implements OnInit {
         },
         vAxis: {
           textStyle: { color: '#444444' },
-          title:'R12 Status',
-          slantedText: true,  
-          slantedTextAngle: 90 
+          title: 'R12 Status',
+          slantedText: true,
+          slantedTextAngle: 90
         },
         series: {
           0: { color: '0B91E2' }
         },
         tooltip: { isHtml: false, type: 'string' },
         annotations: {
-          alwaysOutside:true}
+          alwaysOutside: true
+        }
       }
     }
   }
@@ -272,8 +283,9 @@ export class EbsContractByStatusComponent implements OnInit {
     } else if (from == 'workflow') {
       this.workFlowStatusArr.push(item);
     }
-    console.log("territory" + JSON.stringify(this.territoriesArr));
-    console.log("workflow" + JSON.stringify(this.workFlowStatusArr));
+    else if (from == 'arrivalType') {
+      this.arrivalTypesArr.push(item);
+    }
     this.filterChartData();
   }
 
@@ -283,29 +295,31 @@ export class EbsContractByStatusComponent implements OnInit {
     } else if (from == 'workflow') {
       this.workFlowStatusArr = this.removeElementArr(this.workFlowStatusArr, item);;
     }
-    // console.log("territory" + JSON.stringify(this.territoriesArr));
-    // console.log("workflow" + JSON.stringify(this.workFlowStatusArr));
-    this.filterChartData();
+    else if (from == 'arrivalType') {
+      this.arrivalTypesArr = this.removeElementArr(this.arrivalTypesArr, item);
+    }
+    // this.filterChartData();
   }
 
   onSelectAll(item, from) {
-    // console.log("the selectAll is:"+JSON.stringify(item)+JSON.stringify(from));
-    // if (from == 'territory') {
-    //   this.territoriesArr = [];
-    //   this.territoriesArr = item
-    // } else if (from == 'workflow') {
-    //   this.workFlowStatusArr = [];
-    //   this.workFlowStatusArr = item;
-    // }
-    // this.filterChartData();
-    // console.log("territory" + JSON.stringify(this.territoriesArr));
-    // console.log("workflow" + JSON.stringify(this.workFlowStatusArr));
+    //console.log("the selectAll is:" + JSON.stringify(item) + JSON.stringify(from));
+    if (from == 'territory') {
+      this.territoriesArr = [];
+      this.territoriesArr = item
+    } else if (from == 'workflow') {
+      this.workFlowStatusArr = [];
+      this.workFlowStatusArr = item;
+    } else if (from == 'arrivalType') {
+      this.arrivalTypesArr = [];
+      this.arrivalTypesArr = item;
+    }
+    this.filterChartData();
   }
 
   onDeSelectAll(item, from) {
     this.territoriesArr = [];
     this.workFlowStatusArr = [];
-    // console.log("onDeSelectAll" + JSON.stringify(item));
+    this.arrivalTypesArr = [];
     this.filterChartData();
   }
 
@@ -314,9 +328,9 @@ export class EbsContractByStatusComponent implements OnInit {
    */
   public filterChartData() {
     let finalArr = [];
-    //console.log("case data" + JSON.stringify(this.caseData));
-    if (this.territoriesArr.length == 0 && this.workFlowStatusArr.length > 0) {
-      //console.log("t0 s>0");
+    //console.log("case data" + JSON.stringify(this.contractsData));
+    if (this.territoriesArr.length == 0 && this.arrivalTypesArr.length == 0 && this.workFlowStatusArr.length > 0) {
+      console.log("t0 s>0 a0");
       for (let j in this.workFlowStatusArr) {
         let workflowItem = this.workFlowStatusArr[j];
         let workflowFilterarr = this.contractsData.filter(item => {
@@ -328,8 +342,8 @@ export class EbsContractByStatusComponent implements OnInit {
         //finalArr.push(workflowFilterarr);
         //finalArr = workflowFilterarr;
       }
-    } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length > 0) {
-      //console.log("t>1 s0");
+    } else if (this.workFlowStatusArr.length == 0 && this.arrivalTypesArr.length == 0 && this.territoriesArr.length > 0) {
+      console.log("t>1 s0 a0");
       for (let i in this.territoriesArr) {
         let territoryItem = this.territoriesArr[i];
         let territoryFilterarr = this.contractsData.filter(item => {
@@ -342,27 +356,63 @@ export class EbsContractByStatusComponent implements OnInit {
         //finalArr.push(territoryFilterarr);
         //finalArr = territoryFilterarr;
       }
-    } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length == 0) {
-      //console.log("t0 s0");
-      // let casesnew = this.makeChartData(this.contractsData);
-      // console.log("the cases are "+JSON.stringify(casesnew));
-      // this.calculatePerc(casesnew);
+    } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length == 0 && this.arrivalTypesArr.length == 0) {
+      console.log("t0 s0 a0");
       let cases = this.makeChartData(this.contractsData);
       this.calculatePerc(cases);
       let chartArr = this.makeChartArr(cases)
-      // if(chartArr.length>0){
-      //   this.checkDataEBS = false;
-  
-      // }else{
-      //   alert("no data to be bind to  graph");
-      //   this.checkDataEBS = true;
-
-      // }
       this.drawchart(chartArr);
       return;
-    }
-    else {
-      //console.log("t>0 s>0");
+    } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length == 0 && this.arrivalTypesArr.length > 0) {
+      for (let i in this.arrivalTypesArr) {
+        let arrivalTypeItem = this.arrivalTypesArr[i];
+        let arrivalTypeFilterarr = this.contractsData.filter(item => {
+
+          return item.arrival_type == arrivalTypeItem;
+        });
+        for (let i = 0; i < arrivalTypeFilterarr.length; i++) {
+          finalArr.push(arrivalTypeFilterarr[i]);
+        }
+      }
+    } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length > 0 && this.arrivalTypesArr.length > 0) {
+      console.log("t>0 s0 a>0");
+      for (let i in this.territoriesArr) {
+        let territoryItem = this.territoriesArr[i];
+        let territoryFilterarr = this.contractsData.filter(item => {
+          return item.territory.toLowerCase() == territoryItem.toLowerCase();
+        });
+        //console.log("territoryFilterarr" + JSON.stringify(territoryFilterarr));
+        //finalArr = territoryFilterarr;
+        for (let j in this.arrivalTypesArr) {
+          let arrivalTypeItem = this.arrivalTypesArr[j];
+          let arrrTypeFilterAarr = territoryFilterarr.filter(item => {
+            return (item.status.toLowerCase() == arrivalTypeItem.toLowerCase() || item.status_order.toLowerCase() == arrivalTypeItem.toLowerCase());
+          });
+          for (let i = 0; i < arrrTypeFilterAarr.length; i++) {
+            finalArr.push(arrrTypeFilterAarr[i]);
+          }
+
+        }
+      }
+    } else if (this.workFlowStatusArr.length > 0 && this.territoriesArr.length == 0 && this.arrivalTypesArr.length > 0) {
+      console.log("t0 s>0 a>0");
+      for (let j in this.workFlowStatusArr) {
+        let workflowItem = this.workFlowStatusArr[j];
+        let workflowFilterarr = this.contractsData.filter(item => {
+          return (item.status.toLowerCase() == workflowItem.toLowerCase() || item.status_order.toLowerCase() == workflowItem.toLowerCase());
+        });
+        for (let i in this.arrivalTypesArr) {
+          let arrivalTypeItem = this.arrivalTypesArr[i];
+          let arrivalTypeFilterarr = workflowFilterarr.filter(item => {
+            return item.arrival_type == arrivalTypeItem;
+          });
+          for (let i = 0; i < arrivalTypeFilterarr.length; i++) {
+            finalArr.push(arrivalTypeFilterarr[i]);
+          }
+        }
+      }
+    } else if (this.workFlowStatusArr.length > 0 && this.territoriesArr.length > 0 && this.arrivalTypesArr.length == 0) {
+      console.log("t>0 s>0 a0");
       for (let i in this.territoriesArr) {
         let territoryItem = this.territoriesArr[i];
         let territoryFilterarr = this.contractsData.filter(item => {
@@ -378,26 +428,44 @@ export class EbsContractByStatusComponent implements OnInit {
           for (let i = 0; i < workflowFilterarr.length; i++) {
             finalArr.push(workflowFilterarr[i]);
           }
-          //console.log("workflowFilterarr" + JSON.stringify(workflowFilterarr));
-          //finalArr = workflowFilterarr;
         }
+        //console.log("workflowFilterarr" + JSON.stringify(workflowFilterarr));
+        //finalArr = workflowFilterarr;
       }
     }
+    else {
+      console.log("t>0 s>0 a>0");
+      for (let i in this.territoriesArr) {
+        let territoryItem = this.territoriesArr[i];
+        let territoryFilterarr = this.contractsData.filter(item => {
+          return item.territory == territoryItem;
+        });
+        //console.log("territoryFilterarr" + JSON.stringify(territoryFilterarr));
+        //finalArr = territoryFilterarr;
+        for (let j in this.workFlowStatusArr) {
+          let workflowItem = this.workFlowStatusArr[j];
+          let workflowFilterarr = territoryFilterarr.filter(item => {
+            return (item.status == workflowItem);
+          });
+          for (let i in this.arrivalTypesArr) {
+            let arrivalTypeItem = this.arrivalTypesArr[i];
+            let arrivalTypeFilterarr = workflowFilterarr.filter(item => {
+              return item.arrival_type == arrivalTypeItem;
+            });
+            for (let i = 0; i < arrivalTypeFilterarr.length; i++) {
+              finalArr.push(arrivalTypeFilterarr[i]);
+            }
+          }
+        }
+        //console.log("workflowFilterarr" + JSON.stringify(workflowFilterarr));
+        //finalArr = workflowFilterarr;
+      }
+    }
+
     let cases = this.makeChartData(finalArr);
     cases = this.calculatePerc(cases);
     let chartArr = this.makeChartArr(cases);
-    // if(chartArr.length>0){
-    //   this.checkDataEBS = false;
-
-    // }else{
-    //   alert("no data to be bind to  graph");
-    //   this.checkDataEBS = true;
-
-    // }
     this.drawchart(chartArr);
-    // console.log("chartArr" + JSON.stringify(chartArr));
-    // console.log("final arr" + JSON.stringify(finalArr));
-    // console.log("group by arr" + JSON.stringify(cases));
   }
 
   /**
@@ -446,8 +514,8 @@ export class EbsContractByStatusComponent implements OnInit {
     //console.log("the make chart data is :" + JSON.stringify(cases));
     let array = [];
     array.push(['Status', 'No. of Contracts', { role: "annotation" }, { role: "style" }]);
-    let barColor=null;
-    if(cases.length > 0){
+    let barColor = null;
+    if (cases.length > 0) {
       this.drawchart(cases);
       this.checkDataEBS = false;
 
@@ -462,21 +530,21 @@ export class EbsContractByStatusComponent implements OnInit {
         //console.log("i--"+barColor)
         //console.log(i);
         // Create new array above and push every object in
-        array.push([cases[i].status+"  "+cases[i].status_percent, parseInt(cases[i].contractscount), "Median Days  " + parseInt(cases[i].mediandays),barColor]);
+        array.push([cases[i].status + "  " + cases[i].status_percent, parseInt(cases[i].contractscount), "Median Days  " + parseInt(cases[i].mediandays), barColor]);
       }
       // console.log("the final cases are as under:" + JSON.stringify(array));
-  
+
       return array;
 
-      }else if(cases.length == 0){
-        this.drawchart(cases);
-        this.checkDataEBS = true;
-        array.push(['', 0,'','']);
-        return array;
-      }else {
-        this.checkDataEBS = true;
-      }
-   
+    } else if (cases.length == 0) {
+      this.drawchart(cases);
+      this.checkDataEBS = true;
+      array.push(['', 0, '', '']);
+      return array;
+    } else {
+      this.checkDataEBS = true;
+    }
+
   }
 
   /**
@@ -495,18 +563,18 @@ export class EbsContractByStatusComponent implements OnInit {
   ngOnInit() {
     this.getContractData()
       .then((res: any) => {
-        if(res.length>0){
+        if (res.length > 0) {
           this.drawchart(res);
           // this.checkDataEBS = false;
-        }else if(res.length==0){
+        } else if (res.length == 0) {
           // alert("there is no data to bind to chart");
-          res = [['Status','Cases'],['No Status',0],['No Status',0],['No Status',0]];
+          res = [['Status', 'Cases'], ['No Status', 0], ['No Status', 0], ['No Status', 0]];
           this.drawchart(res);
           // this.checkDataEBS = true;
 
-        }else{
+        } else {
           // this.checkDataEBS = true;
-       }
+        }
 
         // this.drawchart(res);
       }, error => {
@@ -515,7 +583,7 @@ export class EbsContractByStatusComponent implements OnInit {
 
     this.getebsTerritoriesData()
       .then((res: any) => {
-        console.log("the res is:"+JSON.stringify(res));
+        console.log("the res is:" + JSON.stringify(res));
         //this.drawChart(res);
         this.sideViewDropDowns.showTerritory = true;
         this.sideViewDropDowns.territoryData = res;
@@ -523,9 +591,9 @@ export class EbsContractByStatusComponent implements OnInit {
       }, error => {
         console.log("error getTerritories " + error);
       });
-    
 
-    
+
+
 
     this.getWorkflowStatus()
       .then((res: any) => {
