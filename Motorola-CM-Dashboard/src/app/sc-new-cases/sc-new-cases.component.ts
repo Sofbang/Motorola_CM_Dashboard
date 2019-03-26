@@ -115,17 +115,20 @@ export class ScNewCasesComponent implements OnInit {
     this.getSCDrillDownData(moment(status[0]).format('YYYY-MM-DD'),moment(status[1]).format('YYYY-MM-DD'))
 
     .then((res:any) => {
-      var dat = new Date();
-
+      let currentDate: any = new Date();
      
-      for(let i in res){
-         
-        res[i].case_creation_date=moment(res[i].case_creation_date).format('YYYY-MM-DD');
-        res[i].sts_changed_on=moment(res[i].sts_changed_on).format('YYYY-MM-DD');
+      for (let i = 0; i < res.length; i++) {
+        let caseCreationdate = new Date(moment(res[i].case_creation_date).format('YYYY-MM-DD'));
+        let timeDiff = Math.abs(currentDate.getTime() - caseCreationdate.getTime());
+        let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+        //console.log("diff----"+diffDays)
+        res[i]['nss_aging'] = diffDays + ' days';
+        res[i].case_creation_date = moment(res[i].case_creation_date).format('YYYY-MM-DD');
+        res[i].sts_changed_on = moment(res[i].sts_changed_on).format('YYYY-MM-DD');
 
       }
       //console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(this.drillDown));
-      this.drillDownData = res;
+      //this.drillDownData = res;
 
     }, error => {
       console.log("error getTerritories " + error);
