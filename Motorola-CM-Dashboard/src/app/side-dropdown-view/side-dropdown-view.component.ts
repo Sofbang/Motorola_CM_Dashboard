@@ -18,7 +18,7 @@ export class SideDropdownViewComponent implements OnInit {
   public selectedFrom: any;
   public fianldates = [];
   public toYear = [];
-
+  public selectedYear:any;
 
   public selectedItemsCaseTime = [
     { 'item_id': 1, 'item_text': 'Median' },
@@ -49,6 +49,10 @@ export class SideDropdownViewComponent implements OnInit {
         this.resetDropDowns();
       })
     this.getScreenSize();
+    this._dataHandlerService.SCMinMaxDates
+    .subscribe(res=>{
+     this.makeDate(res);
+    });
    
   }
 
@@ -92,9 +96,10 @@ export class SideDropdownViewComponent implements OnInit {
   }
 
 
-  public makeDate() {
-    let startDate = '2017-01-01';
-    let endDate = '2019-12-01';
+  public makeDate(data) {
+    //console.log("the res is:"+JSON.stringify(data));
+    let startDate = data[0].min_date_cases;
+    let endDate = data[0].max_date_cases;
     let starting = new Date(startDate);
     let ending = new Date(endDate);
     let dates = [];
@@ -142,6 +147,9 @@ export class SideDropdownViewComponent implements OnInit {
   }
 
   public onChangeFrom(filterVal: any) {
+    console.log(JSON.stringify("the event is:"+filterVal));
+    this.selectedYear=moment(filterVal).format('YY');
+    console.log("the year :"+JSON.stringify(this.selectedYear));
     this.toYear = [];
 
     // console.log("the value for newval is:" + JSON.stringify(filterVal));
@@ -150,7 +158,7 @@ export class SideDropdownViewComponent implements OnInit {
 
     this.n = this.fianldates.indexOf(this.selectedFrom);
     // console.log("the index is :" + this.n);
-    for (let i = this.n + 1; i <= this.n + 23; i++) {
+    for (let i = this.n ; i <= this.n + 23; i++) {
       // console.log("inside the for loop :")
       this.toYear.push(this.fianldates[i]);
       //  console.log("after the push is done"+JSON.stringify(this.toYear));
@@ -219,7 +227,7 @@ export class SideDropdownViewComponent implements OnInit {
       allowSearchFilter: true,
       dir: 'asc'
     };
-    this.makeDate();
+   // this.makeDate();
     
    
     //$('.side-view-dropDowns').css('height', this.screenHeight);//to make side dropdown view to screen height
