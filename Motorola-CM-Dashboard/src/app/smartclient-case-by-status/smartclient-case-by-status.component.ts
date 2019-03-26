@@ -17,7 +17,7 @@ import { ExcelServiceService } from '../services/convert_to_excel/excel-service.
 })
 export class SmartclientCaseByStatusComponent implements OnInit {
   public barChartData: any;
-  public drillDownData:any;
+  public drillDownData: any;
 
   //public cases: any;
   // public selectedTerritoriesCasetype: any = 'all';
@@ -33,7 +33,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
   public data = [];
   public sideViewDropDowns = new SideViewDropDowns();
   @ViewChild('openSCModal') openScModel: ElementRef;
-  constructor(private _smartclientService: SmartclientService, private _dataHandlerService: DataHandlerService,private _excelService:ExcelServiceService) {
+  constructor(private _smartclientService: SmartclientService, private _dataHandlerService: DataHandlerService, private _excelService: ExcelServiceService) {
     this._dataHandlerService.dataFromSideView
       .subscribe(res => {
         //console.log("suc sc" + JSON.stringify(res));
@@ -52,7 +52,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
     this._dataHandlerService.setDataForMainLayout(true);
   }
 
-  
+
 
   public selectBarScCaseByStatus(event: ChartSelectEvent) {
 
@@ -306,8 +306,8 @@ export class SmartclientCaseByStatusComponent implements OnInit {
           italic: false
         },
         width: 1100, height: 400,
-        chartArea: { left: 223, top: 20,  width: '50%' },
-        legend: { position: 'none'},
+        chartArea: { left: 223, top: 20, width: '50%' },
+        legend: { position: 'none' },
         backgroundColor: '#FFFFFF',
         hAxis: {
           textStyle: { color: '#444444' }
@@ -315,7 +315,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
         vAxis: {
           textStyle: { color: '#444444' },
           title: 'Smart Client Status',
-          titleTextStyle:{italic: false}
+          titleTextStyle: { italic: false }
         },
         series: {
           0: { color: '#93C0F6' }
@@ -498,7 +498,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
       }
     }
     else {
-     // console.log("t>0 s>0 a>0");
+      // console.log("t>0 s>0 a>0");
       for (let i in this.territoriesArr) {
         let territoryItem = this.territoriesArr[i];
         let territoryFilterarr = this.caseData.filter(item => {
@@ -689,12 +689,10 @@ export class SmartclientCaseByStatusComponent implements OnInit {
       });
     // this.sideViewDropDowns.showArrivalType = true;
     this.sideViewDropDowns.showYearDD = false;
-    // this.sideViewDropDowns.arrivalTypeData = ['SAOF','CPQ','Q2SC','Other'];
+    this.sideViewDropDowns.arrivalTypeData = ['SAOF', 'CPQ', 'Q2SC'];
+    this.sideViewDropDowns.showArrivalType = true;
     this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
     this.sideViewDropDowns.compHeading = appheading.graph1;
-      
-
-
   }
 
 }

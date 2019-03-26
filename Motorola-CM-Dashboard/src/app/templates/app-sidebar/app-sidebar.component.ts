@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import * as $ from 'jquery';
-
+import { DataHandlerService } from '../../services/data-handler/data-handler.service';
 @Component({
   selector: 'app-app-sidebar',
   templateUrl: './app-sidebar.component.html',
@@ -8,7 +8,40 @@ import * as $ from 'jquery';
 })
 export class AppSidebarComponent implements OnInit {
   public elmClkCount: number = 0;
-  constructor() { }
+  constructor(private _dataHandlerService: DataHandlerService) {
+    this._dataHandlerService.clickDashboard
+      .subscribe(result => {
+        let len = result.length, linkStr, j;
+        for (let i = len; i > 0; i--) {
+          if (result[i] == '/') {
+            j = i;
+            break;
+          }
+          linkStr = result.substring(i, len);
+        }
+        console.log("subs" + linkStr);
+        if (linkStr == 'sc-caseByStatus') {
+          $('.sidebar-elm-parent2').find("ul").css("display", "block");
+          $('.sidebar-elm-parent2').find('a.nav-link.nav-toggle ').find('span.arrow').addClass('open');
+          $('.sidebar-elm-parent2').find('a.nav-link.nav-toggle').find('span.title-black').addClass('title-blue').removeClass('title-black');
+        } else if (linkStr == 'sc-new-cases') {
+          $('.sidebar-elm-parent2').find("ul").css("display", "block");
+          $('.sidebar-elm-parent2').find('a.nav-link.nav-toggle ').find('span.arrow').addClass('open');
+          $('.sidebar-elm-parent2').find('a.nav-link.nav-toggle').find('span.title-black').addClass('title-blue').removeClass('title-black');
+
+        } else if (linkStr == 'ebs-cycle-times') {
+
+          $('.sidebar-elm-parent3').find("ul").css("display", "block");
+          $('.sidebar-elm-parent3').find('a.nav-link.nav-toggle ').find('span.arrow').addClass('open');
+          $('.sidebar-elm-parent3').find('a.nav-link.nav-toggle').find('span.title-black').addClass('title-blue').removeClass('title-black');
+
+        } else if (linkStr == 'smartclient-average-renewal') {
+          $('.sidebar-elm-parent3').find("ul").css("display", "block");
+          $('.sidebar-elm-parent3').find('a.nav-link.nav-toggle ').find('span.arrow').addClass('open');
+          $('.sidebar-elm-parent3').find('a.nav-link.nav-toggle').find('span.title-black').addClass('title-blue').removeClass('title-black');
+        }
+      });
+  }
 
   sidebarElmClk(id) {
     this.elmClkCount++;
@@ -25,14 +58,14 @@ export class AppSidebarComponent implements OnInit {
           $('.' + id).find('a.nav-link.nav-toggle').find('span.arrow').removeClass('open');
           $('.' + id).find('a.nav-link.nav-toggle').find('span.title-blue').addClass('title-black').removeClass('title-blue');
           $('.' + id).find("ul").css("display", "none");
-         // $('#'+ id+' ul:first').css('display', 'none');
+          // $('#'+ id+' ul:first').css('display', 'none');
         }
         //sub menu close
         else {
           $('.' + id).find('a.nav-link.nav-toggle ').find('span.arrow').addClass('open');
           $('.' + id).find('a.nav-link.nav-toggle').find('span.title-black').addClass('title-blue').removeClass('title-black');
           $('.' + id).find("ul").css("display", "block");
-         // $('#'+ id+' ul:first').css('display', 'block');
+          // $('#'+ id+' ul:first').css('display', 'block');
         }
       }
     }

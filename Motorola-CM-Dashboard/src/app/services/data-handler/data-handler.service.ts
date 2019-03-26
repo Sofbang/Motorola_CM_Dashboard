@@ -7,7 +7,8 @@ export class DataHandlerService {
   public sideViewDropDownData = new Subject<any>();
   public dataFromSideView = new Subject<any>();
   public dataForMainLayout = new Subject<any>();
-  public resetDropdowns = new Subject<any>()
+  public resetDropdowns = new Subject<any>();
+  public clickDashboard = new Subject<any>();
   constructor() { }
 
   /**
@@ -49,5 +50,9 @@ export class DataHandlerService {
   }
   resetAllDropDowns(data) {
     this.resetDropdowns.next(data);
+  }
+
+  clickDashboardLink(data){
+    this.clickDashboard.next(data);
   }
 }

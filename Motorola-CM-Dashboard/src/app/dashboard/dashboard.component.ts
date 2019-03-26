@@ -10,7 +10,10 @@ export class DashboardComponent implements OnInit {
   constructor(private _lookupService: LookupService,private _dataHandlerService: DataHandlerService) {
     this._dataHandlerService.setDataForMainLayout(false);
    }
-
+   linkClick(link){
+     this._dataHandlerService.clickDashboardLink(link);
+     console.log("click");
+   }
   ngOnInit() {
   
     // demo test service for starting the Project
