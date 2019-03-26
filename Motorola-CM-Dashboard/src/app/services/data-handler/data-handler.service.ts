@@ -9,6 +9,7 @@ export class DataHandlerService {
   public dataForMainLayout = new Subject<any>();
   public resetDropdowns = new Subject<any>();
   public clickDashboard = new Subject<any>();
+  public SCMinMaxDates = new Subject<any>();
   constructor() { }
 
   /**
@@ -55,4 +56,8 @@ export class DataHandlerService {
   clickDashboardLink(data){
     this.clickDashboard.next(data);
   }
+setMinMaxDate(data){
+ // console.log("the data passed from sc is:"+JSON.stringify(data));
+  this.SCMinMaxDates.next(data);
+}
 }
