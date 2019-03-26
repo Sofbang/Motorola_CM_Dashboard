@@ -166,13 +166,19 @@ router.get('/sc_new_cases', (req, res, next) => {
 // // API for sc_case_territories
 router.get('/sc_cases_drilldown', (req, res, next) => {
   //call doConnect method in db_operations
-  var status =  req.query;
+  var status =  req.query;var postgreSql;
   console.log("the status passed is:"+JSON.stringify(status));
   conn.doConnect((err, dbConn) => {
     if (err) { return next(err); }
     //execute body using using connection instance returned by doConnect method
+    if(status.casestatus=='Other'){
+      postgreSql = "Select distinct case_number,customer,case_owner,case_creation_date,to_status,sts_changed_on from sc_case_state_master  where to_status NOT IN ('Open','Insufficient Data','InProg Awt 3PS','InProg Awt SSC','InProg Awt Credit','InProg Awt Resource','InProg Awt 3PS','InProg Acknowledged','InProg','InProg Awt Bus Unit')"
+    }else{
+      postgreSql = "Select distinct case_number,customer,case_owner,case_creation_date,to_status from sc_case_state_master where to_status = '"+status.casestatus+"'";
+
+    }
     conn.doExecute(dbConn,
-      "Select distinct case_number,customer,case_owner,case_creation_date,current_status from sc_case_state_master where to_status = '"+status.casestatus+"'", [],
+           postgreSql, [],
       function (err, result) {
         if (err) {
           conn.doRelease(dbConn);
