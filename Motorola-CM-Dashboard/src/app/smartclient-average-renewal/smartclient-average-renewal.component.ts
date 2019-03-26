@@ -700,10 +700,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
                 }
               }
               // for (let i = 0; i < workflowFilterarr.length; i++) {
-              //   finalArr.push(workflowFilterarr[i]);
-              // }
-              //console.log("workflowFilterarr" + JSON.stringify(workflowFilterarr));
-              //finalArr = workflowFilterarr;
+              
             }
           }
           // let cases = this.makeChartData(finalArr);
@@ -840,9 +837,6 @@ export class SmartclientAverageRenewalComponent implements OnInit {
     if (index !== -1) array.splice(index, 1);
     return array;
   }
-
-
-
   ngOnInit() {
     this.getCaseData()
       .then((res: any) => {
@@ -884,10 +878,10 @@ export class SmartclientAverageRenewalComponent implements OnInit {
         console.log("error getWorkflowStatus " + error);
       });
 
+    this.sideViewDropDowns.showCaseTime = true;
     let caseTimeData = [{ 'item_id': 1, 'item_text': 'Median' },
     { 'item_id': 2, 'item_text': 'Average' }];
     //let caseTimeData = ['Median' , 'Average' ];
-    this.sideViewDropDowns.showCaseTime = true;
     this.sideViewDropDowns.caseTimeData = caseTimeData;
     this.sideViewDropDowns.showArrivalType = true;
     this.sideViewDropDowns.arrivalTypeData = ['SAOF', 'CPQ', 'Q2SC'];

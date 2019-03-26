@@ -36,11 +36,13 @@ export class SideDropdownViewComponent implements OnInit {
   screenWidth: any;
   fromModel: any;
   toModel: any;
+  casetimeModel:any
   constructor(private _dataHandlerService: DataHandlerService) {
     this._dataHandlerService.sideViewDropDownData
       .subscribe(res => {
         this.sideViewDDObj = new SideViewDropDowns();
         this.sideViewDDObj = res;
+        this.casetimeModel='Median';
         // console.log("subscribe inside sideview" + JSON.stringify(this.sideViewDDObj));
         this.ngFormDate.reset();
       });
@@ -61,6 +63,7 @@ export class SideDropdownViewComponent implements OnInit {
     this.screenHeight = window.innerHeight;
     this.screenWidth = window.innerWidth;
     $('.side-view-dropDowns').css('height', this.screenHeight);//to make side dropdown view to screen height
+    $('.slimScrollDiv').removeAttr('style');//remove slimscroll from side menus on screen size change
   }
 
   onItemSelect(item, dropDownName) {

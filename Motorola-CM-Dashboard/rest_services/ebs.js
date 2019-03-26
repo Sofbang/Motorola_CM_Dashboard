@@ -225,7 +225,34 @@ router.get('/ebs_contract_state_avg', (req, res, next) => {
   });
 });
 
-
+router.get('/ebs_cycle_times', (req, res, next) => {
+  //call doConnect method in db_operations
+  conn.doConnect((err, dbConn) => {
+    if (err) { return next(err); }
+    //execute query using using connection instance returned by doConnect method
+    conn.doExecute(dbConn,
+      `select to_status as status,count(contract_number) as contracts_count,median(q.days) median_days,territory 
+      from(select contract_number,to_status,territory,contract_creation_date, date_signed,
+      CASE 
+      WHEN date_signed is not null
+      THEN date_signed::date-contract_creation_date::date
+      ELSE current_date::date-contract_creation_date::date
+      END as days
+      from ebs_contracts_state_master)q
+      group by to_status,territory`, [],
+      function (err, result) {
+        if (err) {
+          conn.doRelease(dbConn);
+          //call error handler
+          return next(err);
+        }
+        response.data = result.rows;
+        res.json(response);
+        //release connection back to pool
+        conn.doRelease(dbConn);
+      });
+  });
+});
 
 
 module.exports = router;

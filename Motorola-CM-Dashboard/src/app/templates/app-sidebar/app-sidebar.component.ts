@@ -19,7 +19,6 @@ export class AppSidebarComponent implements OnInit {
           }
           linkStr = result.substring(i, len);
         }
-        console.log("subs" + linkStr);
         if (linkStr == 'sc-caseByStatus') {
           $('.sidebar-elm-parent2').find("ul").css("display", "block");
           $('.sidebar-elm-parent2').find('a.nav-link.nav-toggle ').find('span.arrow').addClass('open');
@@ -40,6 +39,7 @@ export class AppSidebarComponent implements OnInit {
           $('.sidebar-elm-parent3').find('a.nav-link.nav-toggle ').find('span.arrow').addClass('open');
           $('.sidebar-elm-parent3').find('a.nav-link.nav-toggle').find('span.title-black').addClass('title-blue').removeClass('title-black');
         }
+        $('.slimScrollDiv').removeAttr('style');
       });
   }
 
@@ -47,8 +47,9 @@ export class AppSidebarComponent implements OnInit {
     this.elmClkCount++;
     // $('.slimScrollDiv').css('height', '90rem');
     // $('.slimScrollDiv').css('max-height', '100rem');
-    $('.page-sidebar-menu').css('height', '90rem');
-    $('.page-sidebar-menu').css('max-height', '100rem');
+    // $('.page-sidebar-menu').css('height', '90rem');
+    // $('.page-sidebar-menu').css('max-height', '100rem');
+    $('.slimScrollDiv').removeAttr('style');
     //close
     if ((this.elmClkCount % 2) == 0) {
       //check li has submenu ul
@@ -89,7 +90,7 @@ export class AppSidebarComponent implements OnInit {
     }
   }
   ngOnInit() {
-    //$('#sidebar-elm-parent2 ul:first').css('display', 'block');
+    $('.slimScrollDiv').removeAttr('style');
   }
 
 }

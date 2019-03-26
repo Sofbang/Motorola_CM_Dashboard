@@ -254,6 +254,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
                 array.push({ 'item_id': workflowStatus[i].to_status, 'item_text': workflowStatus[i].to_status });
               }
             }
+            if(workflowStatus.length>0)
             array.push(otherStatus);
             // console.log("workflowStatus" + JSON.stringify(array));
             resolve(array);
