@@ -21,9 +21,11 @@ import { ExcelServiceService } from '../services/convert_to_excel/excel-service.
 })
 export class ScNewCasesComponent implements OnInit {
   public columnChart: any;
+  public selectedYear:any;
   public drillDownData:any;
   public casesData: any = [];
   public selectedFrom: any;
+  public minmaxdates:any;
   public drillDown:any;
   public territoriesArr: any = [];
   public datesData=[];
@@ -205,113 +207,161 @@ export class ScNewCasesComponent implements OnInit {
   }
 
   public makeCount(data){
-    this.arrr=[];
-    this.jancount17=0;
-    this.febcount17=0;
-    this.marcount17=0;
-    this.aprcount17=0;
-    this.maycount17=0;
-    this.juncount17=0;
-    this.julcount17=0;
-    this.augcount17=0;
-    this.sepcount17=0;
-    this.octcount17=0;
-    this.novcount17=0;
-    this.deccount17=0;
-    console.log("the data is:"+JSON.stringify(data));
-    console.log("the array is:"+JSON.stringify(this.arrr))
-       for(let j in data){
-        console.log("1")
-        if(moment(data[j].case_creation_date).format('MMM-YY')=='Jan-17'){
-          // console.log("2")
+    // this.arrr=[];
+    // this.jancount17=0;
+    // this.febcount17=0;
+    // this.marcount17=0;
+    // this.aprcount17=0;
+    // this.maycount17=0;
+    // this.juncount17=0;
+    // this.julcount17=0;
+    // this.augcount17=0;
+    // this.sepcount17=0;
+    // this.octcount17=0;
+    // this.novcount17=0;
+    // this.deccount17=0;
+    // this.jancount18=0;
+    // this.febcount18=0;
+    // this.marcount18=0;
+    // this.aprcount18=0;
+    // this.maycount18=0;
+    // this.juncount18=0;
+    // this.julcount18=0;
+    // this.augcount18=0;
+    // this.sepcount18=0;
+    // this.octcount18=0;
+    // this.novcount18=0;
+    // this.deccount18=0;
+   // let monthCount=0;
+    console.log("the data res is:"+JSON.stringify(data));
+    let json:any;
+    let date = new Date();
+    let lastDate = (moment(date).format('YYYY-MM-DD'));
+    console.log("the last date is:"+JSON.stringify(lastDate));
+    let firstDate = (moment(date).subtract(1, 'years'))
+    console.log("the first date is: "+JSON.stringify(moment(firstDate).format('YYYY-MM-DD')));
+
+    json = this.dateRange(moment(firstDate).format('YYYY-MM-DD'),lastDate);
+    console.log("the json returned is:"+JSON.stringify(json));
+    //console.log("the data is:"+JSON.stringify(data));
+    //console.log("the array is:"+JSON.stringify(this.arrr))
+      // for(let j in data){
+    //     console.log("1")
+      //   if(moment(data[j].case_creation_date).format('MMM-YY')=='Jan-'+moment(firstDate).format('YY')){
+      //     // console.log("2")
           
-          this.jancount17=this.jancount17+1;
-        }else if(moment(data[j].case_creation_date).format('MMM-YY')=='Feb-17'){
-          // console.log("3")
+      //     this.jancount17++;
+      //   }
+      //    else if(moment(data[j].case_creation_date).format('MMM-YY')=='Feb-'+moment(firstDate).format('YY')){
+      //     // console.log("3")
           
-          this.febcount17=this.febcount17+1;
-        }else if(moment(data[j].case_creation_date).format('MMM-YY')=='Mar-17'){
-          // console.log("4")
+      //     this.febcount17++;
+      //   }
+      //    else if(moment(data[j].case_creation_date).format('MMM-YY')=='Mar-'+moment(firstDate).format('YY')){
+      //     // console.log("4")
          
-          this.marcount17=this.marcount17+1;
-        }else if(moment(data[j].case_creation_date).format('MMM-YY')=='Apr-17'){
-          // console.log("5")
+      //     this.marcount17++;
+      //   }
+      //   else if(moment(data[j].case_creation_date).format('MMM-YY')=='Apr-'+moment(firstDate).format('YY')){
+      //     // console.log("5")
       
-          this.aprcount17=this.aprcount17+1;
-        }else if(moment(data[j].case_creation_date).format('MMM-YY')=='May-17'){
-          // console.log("6")
+      //     this.aprcount17++;
+      //   }
+      //    else if(moment(data[j].case_creation_date).format('MMM-YY')=='May-'+moment(firstDate).format('YY')){
+      //     // console.log("6")
         
-          this.maycount17=this.maycount17+1;
-        }else if(moment(data[j].case_creation_date).format('MMM-YY')=='Jun-17'){
-          // console.log("7")
+      //     this.maycount17++;
+      //   }
+      //     else if(moment(data[j].case_creation_date).format('MMM-YY')=='Jun-'+moment(firstDate).format('YY')){
+      //     // console.log("7")
          
-          this.juncount17=this.juncount17+1;
-        }else if(moment(data[j].case_creation_date).format('MMM-YY')=='Jul-17'){
-          // console.log("8")
+      //     this.juncount17++;
+      //   }
+      //      else if(moment(data[j].case_creation_date).format('MMM-YY')=='Jul-'+moment(firstDate).format('YY')){
+      //     // console.log("8")
           
-          this.julcount17=this.julcount17+1;
-        }else if(moment(data[j].case_creation_date).format('MMM-YY')=='Aug-17'){
-          // console.log("9")
+      //     this.julcount17++;
+      //   }
+      //     else if(moment(data[j].case_creation_date).format('MMM-YY')=='Aug-'+moment(firstDate).format('YY')){
+      //     // console.log("9")
           
-          this.augcount17=this.augcount17+1;
-        }else if(moment(data[j].case_creation_date).format('MMM-YY')=='Sep-17'){
-          // console.log("10")
+      //     this.augcount17++;
+      //   }
+      //    else if(moment(data[j].case_creation_date).format('MMM-YY')=='Sep-'+moment(firstDate).format('YY')){
+      //     // console.log("10")
           
-          this.sepcount17=this.sepcount17+1;
-        }else if(moment(data[j].case_creation_date).format('MMM-YY')=='Oct-17'){
-          // console.log("11")
+      //     this.sepcount17++;
+      //   }
+      //      else if(moment(data[j].case_creation_date).format('MMM-YY')=='Oct-'+moment(firstDate).format('YY')){
+      //     // console.log("11")
           
-          this.octcount17=this.octcount17+1;
-        }else if(moment(data[j].case_creation_date).format('MMM-YY')=='Nov-17'){
-          // console.log("12")
+      //     this.octcount17++;
+      //   }
+      //      else if(moment(data[j].case_creation_date).format('MMM-YY')=='Nov-'+moment(firstDate).format('YY')){
+      //     // console.log("12")
           
-          this.novcount17=this.novcount17+1;
-        }else if(moment(data[j].case_creation_date).format('MMM-YY')=='Dec-17'){
-          // console.log("13");
+      //     this.novcount17++;
+      //   }
+      //      else if(moment(data[j].case_creation_date).format('MMM-YY')=='Dec-'+moment(firstDate).format('YY')){
+      //     // console.log("13");
           
-          this.deccount17=this.deccount17+1;
-        }else if(moment(data[j].case_creation_date).format('MMM-YY')=='Jan-18'){
-          this.jancount18=this.jancount18+1;
+      //     this.deccount17++;
+      //   }
+      //   else{
+          
+      //   }
+      // }
 
-        }else if(moment(data[j].case_creation_date).format('MMM-YY')=='Feb-18'){
-          this.febcount18=this.febcount18+1;
+     // json = [['Jan '+moment(firstDate).format('YY')+" :"+this.jancount17],['Feb '+moment(firstDate).format('YY')+" :"+this.febcount17],['Mar '+moment(firstDate).format('YY')+" :"+this.marcount17]];
+      //console.log("the data is:"+JSON.stringify(json));
+    //     // else if(moment(data[j].case_creation_date).format('MMM-YY')=='Jan-18'){
+    //     //   this.jancount18=this.jancount18+1;
 
-        }else if(moment(data[j].case_creation_date).format('MMM-YY')=='Mar-18'){
-          this.marcount18=this.marcount18+1;
+    //     // }else if(moment(data[j].case_creation_date).format('MMM-YY')=='Feb-18'){
+    //     //   this.febcount18=this.febcount18+1;
 
-        }else if(moment(data[j].case_creation_date).format('MMM-YY')=='Apr-18'){
-          this.aprcount18=this.aprcount18+1;
+    //     // }else if(moment(data[j].case_creation_date).format('MMM-YY')=='Mar-18'){
+    //     //   this.marcount18=this.marcount18+1;
 
-        }else if(moment(data[j].case_creation_date).format('MMM-YY')=='May-18'){
-          this.maycount18=this.maycount18+1;
+    //     // }else if(moment(data[j].case_creation_date).format('MMM-YY')=='Apr-18'){
+    //     //   this.aprcount18=this.aprcount18+1;
 
-        }else if(moment(data[j].case_creation_date).format('MMM-YY')=='Jun-18'){
-          this.juncount18=this.juncount18+1;
+    //     // }else if(moment(data[j].case_creation_date).format('MMM-YY')=='May-18'){
+    //     //   this.maycount18=this.maycount18+1;
 
-        }else if(moment(data[j].case_creation_date).format('MMM-YY')=='Jul-18'){
-          this.julcount18=this.julcount18+1;
+    //     // }else if(moment(data[j].case_creation_date).format('MMM-YY')=='Jun-18'){
+    //     //   this.juncount18=this.juncount18+1;
 
-        }else if(moment(data[j].case_creation_date).format('MMM-YY')=='Aug-18'){
-          this.augcount18=this.augcount18+1;
+    //     // }else if(moment(data[j].case_creation_date).format('MMM-YY')=='Jul-18'){
+    //     //   this.julcount18=this.julcount18+1;
 
-        }else if(moment(data[j].case_creation_date).format('MMM-YY')=='Sep-18'){
-          this.sepcount18=this.sepcount18+1;
+    //     // }else if(moment(data[j].case_creation_date).format('MMM-YY')=='Aug-18'){
+    //     //   this.augcount18=this.augcount18+1;
 
-        }else if(moment(data[j].case_creation_date).format('MMM-YY')=='Oct-18'){
-          this.octcount18=this.octcount18+1;
+    //     // }else if(moment(data[j].case_creation_date).format('MMM-YY')=='Sep-18'){
+    //     //   this.sepcount18=this.sepcount18+1;
 
-        }else if(moment(data[j].case_creation_date).format('MMM-YY')=='Nov-18'){
-          this.novcount18=this.novcount18+1;
+    //     // }else if(moment(data[j].case_creation_date).format('MMM-YY')=='Oct-18'){
+    //     //   this.octcount18=this.octcount18+1;
 
-        }else if(moment(data[j].case_creation_date).format('MMM-YY')=='Dec-18'){
-          this.deccount18=this.deccount18+1;
+    //     // }else if(moment(data[j].case_creation_date).format('MMM-YY')=='Nov-18'){
+    //     //   this.novcount18=this.novcount18+1;
 
-        }else{
+    //     // }else if(moment(data[j].case_creation_date).format('MMM-YY')=='Dec-18'){
+    //     //   this.deccount18=this.deccount18+1;
 
-        }
-    }
-    console.log(this.jancount17,this.febcount17,this.marcount17,this.aprcount17,this.maycount17,this.juncount17,this.julcount17,this.augcount17,this.sepcount17,this.octcount17,this.novcount17,this.deccount17,this.jancount18,this.febcount18,this.marcount18,this.aprcount18,this.maycount18,this.juncount18,this.julcount18,this.augcount18,this.sepcount18,this.octcount18,this.novcount18,this.deccount18);
-    this.arrr.push(this.jancount17,this.febcount17,this.marcount17,this.aprcount17,this.maycount17,this.juncount17,this.julcount17,this.augcount17,this.sepcount17,this.octcount17,this.novcount17,this.deccount17,this.jancount18,this.febcount18,this.marcount18,this.aprcount18,this.maycount18,this.juncount18,this.julcount18,this.augcount18,this.sepcount18,this.octcount18,this.novcount18,this.deccount18);
+    //     // }
+    //     // else{
+
+    //     // }
+
+    //     // monthCount++;
+    //    if(moment(data[j].case_creation_date).format('MMM')=='Dec')    {
+    //       this.selectedYear+1;
+    //    }    
+    // }
+    // console.log(this.jancount17,this.febcount17,this.marcount17,this.aprcount17,this.maycount17,this.juncount17,this.julcount17,this.augcount17,this.sepcount17,this.octcount17,this.novcount17,this.deccount17);
+    // this.arrr.push(this.jancount17,this.febcount17,this.marcount17,this.aprcount17,this.maycount17,this.juncount17,this.julcount17,this.augcount17,this.sepcount17,this.octcount17,this.novcount17,this.deccount17);
     // console.log("the data to be returned is:"+JSON.stringify(this.arrr));
     // if(this.arrr.length==0 || this.arrr!==undefined){
     //   console.log("in the if of length of array checks");
@@ -319,9 +369,28 @@ export class ScNewCasesComponent implements OnInit {
     // }else{
     //   console.log("in the else of length of array checks");
     // }
-    return this.arrr;
+    //return this.arrr;
 
     // this.arrr=[];
+  }
+
+  public dateRange(startDate, endDate) {
+    let start      = startDate.split('-');
+    let end        = endDate.split('-');
+    let startYear  = parseInt(start[0]);
+    let endYear    = parseInt(end[0]);
+    let dates      = [];
+  
+    for(var i = startYear; i <= endYear; i++) {
+      var endMonth = i != endYear ? 11 : parseInt(end[1]) - 1;
+      var startMon = i === startYear ? parseInt(start[1])-1 : 0;
+      for(var j = startMon; j <= endMonth; j = j > 12 ? j % 12 || 11 : j+1) {
+        var month = j+1;
+        var displayMonth = month < 10 ? '0'+month : month;
+        dates.push([i, displayMonth, '01'].join('-'));
+      }
+    }
+    return dates;
   }
 
   public getTerritories() {
@@ -372,7 +441,7 @@ export class ScNewCasesComponent implements OnInit {
     public makeChartData(data){
       let array=[];
       // data=[];
-      console.log("the data rec is :"+JSON.stringify(data.length));
+      console.log("the data rec is :"+JSON.stringify(data));
       // let array =[['Months','Cases Counts'],['Jan',data[0]],['Feb',data[1]],['Mar',data[2]],['Apr',data[3]],['May',data[4]],['Jun',data[5]],['Jul',data[6]],['Aug',data[7]],['Sep',data[8]],['Oct',data[9]],['Nov',data[10]],['Dec',data[11]]];
       // for(let i in data){
 
@@ -384,7 +453,10 @@ export class ScNewCasesComponent implements OnInit {
           
         }else {
           console.log("the else if of check for length");
-          array=[['Months','Cases Counts'],['Jan 17',data[0]],['Feb 17',data[1]],['Mar 17',data[2]],['Apr 17',data[3]],['May 17',data[4]],['Jun 17',data[5]],['Jul 17',data[6]],['Aug 17',data[7]],['Sep 17',data[8]],['Oct 17',data[9]],['Nov 17',data[10]],['Dec 17',data[11]],['Jan 18',data[12]],['Feb 18',data[13]],['Mar 18',data[14]],['Apr 18',data[15]],['May 18',data[16]],['Jun 18',data[17]],['Jul 18',data[18]],['Aug 18',data[19]],['Sep 18',data[20]],['Oct 18',data[21]],['Nov 18',data[22]],['Dec 18',data[23]]];
+          for(let k in data){
+            array.push("")
+          }
+          // array=[['Months','Cases Counts'],['Jan 17',data[0]],['Feb 17',data[1]],['Mar 17',data[2]],['Apr 17',data[3]],['May 17',data[4]],['Jun 17',data[5]],['Jul 17',data[6]],['Aug 17',data[7]],['Sep 17',data[8]],['Oct 17',data[9]],['Nov 17',data[10]],['Dec 17',data[11]],['Jan 18',data[12]],['Feb 18',data[13]],['Mar 18',data[14]],['Apr 18',data[15]],['May 18',data[16]],['Jun 18',data[17]],['Jul 18',data[18]],['Aug 18',data[19]],['Sep 18',data[20]],['Oct 18',data[21]],['Nov 18',data[22]],['Dec 18',data[23]]];
           console.log("the data to be binded to charts is: "+JSON.stringify(array));
           this.drawChart(array);
           this.checkDataSCNC= false;
@@ -419,7 +491,7 @@ export class ScNewCasesComponent implements OnInit {
       }
         // console.log("the filtered results length is:"+JSON.stringify(finalArr.length));
         // console.log("the filtered results from territory filter is:"+JSON.stringify(finalArr));
-        finalArr = this.makeCount(finalArr);
+        //finalArr = this.makeCount(finalArr);
         // console.log("the resultant array to be bind to the graph length is:"+JSON.stringify(finalArr.length));
         // console.log("the resultant array to be bind to the graph is:"+JSON.stringify(finalArr));
         this.makeChartData(finalArr);
@@ -443,7 +515,7 @@ export class ScNewCasesComponent implements OnInit {
       }
         console.log("the filtered results length is:"+JSON.stringify(finalArr.length));
         // console.log("the filtered results from territory filter is:"+JSON.stringify(finalArr));
-        finalArr = this.makeCount(finalArr);
+        //finalArr = this.makeCount(finalArr);
         // console.log("the resultant array to be bind to the graph length is:"+JSON.stringify(finalArr.length));
         // console.log("the resultant array to be bind to the graph is:"+JSON.stringify(finalArr));
         this.makeChartData(finalArr);
@@ -461,7 +533,7 @@ export class ScNewCasesComponent implements OnInit {
           })
           // console.log("the result after dates are filtered are as under:"+JSON.stringify(result));
           // console.log("the length of filter are as under:"+JSON.stringify(result.length));
-          result = this.makeCount(result);
+         // result = this.makeCount(result);
           // console.log("the result returned is as under:"+JSON.stringify(result));
           // console.log("the result is as under:"+JSON.stringify(result.length));
           this.makeChartData(result);
@@ -482,7 +554,7 @@ export class ScNewCasesComponent implements OnInit {
       }
         // console.log("the filtered results length is:"+JSON.stringify(finalArr.length));
         // console.log("the filtered results from territory filter is:"+JSON.stringify(finalArr));
-        finalArr = this.makeCount(finalArr);
+        //finalArr = this.makeCount(finalArr);
         // console.log("the resultant array to be bind to the graph length is:"+JSON.stringify(finalArr.length));
         // console.log("the resultant array to be bind to the graph is:"+JSON.stringify(finalArr));
         this.makeChartData(finalArr);
@@ -621,6 +693,8 @@ export class ScNewCasesComponent implements OnInit {
     }
   
     onToYearChange(item) {
+      this.selectedYear=moment(item.firstDay).format('YY');
+      console.log("ii  --"+this.selectedYear);
       this.firstDay=item.firstDay;
       this.lastDay=item.lastDay;
       console.log("the item rec is:"+JSON.stringify(this.firstDay));
@@ -654,6 +728,25 @@ export class ScNewCasesComponent implements OnInit {
   }
 
 
+  public getMinMaxDates(){
+   return new Promise((resolve, reject) => {
+      this._smartclientService.getScMinMaxDates().subscribe(data => {
+        this.minmaxdates = data;
+        // console.log("territories" + this.territories)
+      }, err => console.error(err),
+        // the third argument is a function which runs on completion
+        () => {
+          console.log("the drilldown data recived is:"+JSON.stringify(this.drillDown));
+          resolve(this.minmaxdates);
+        }
+      )
+    }).catch((error) => {
+      reject(error);
+      console.log('errorin getting data :', error);
+    })
+  }
+
+
 
 
 
@@ -667,7 +760,7 @@ export class ScNewCasesComponent implements OnInit {
         this.checkDataSCNC = true;
      } else if (res.length > 0) {
         // alert("there is no data to bind to chart");
-        res=[['Months','Cases Counts'],['Jan 2017',this.arrr[0]],['Feb 2017',this.arrr[1]],['Mar 2017',this.arrr[2]],['Apr 2017',this.arrr[3]],['May 2017',this.arrr[4]],['Jun 2017',this.arrr[5]],['Jul 2017',this.arrr[6]],['Aug 2017',this.arrr[7]],['Sep 2017',this.arrr[8]],['Oct 2017',this.arrr[9]],['Nov 2017',this.arrr[10]],['Dec 2017',this.arrr[11]],['Jan 2018',this.arrr[12]],['Feb 2018',this.arrr[13]],['Mar 2018',this.arrr[14]],['Apr 2018',this.arrr[15]],['May 2018',this.arrr[16]],['Jun 2018',this.arrr[17]],['Jul 2018',this.arrr[18]],['Aug 2018',this.arrr[19]],['Sep 2018',this.arrr[20]],['Oct 2018',this.arrr[21]],['Nov 2018',this.arrr[22]],['Dec 2018',this.arrr[23]]];
+        res=[['Months','Cases Counts'],['Jan 2017',this.arrr[0]],['Feb 2017',this.arrr[1]],['Mar 2017',this.arrr[2]],['Apr 2017',this.arrr[3]],['May 2017',this.arrr[4]],['Jun 2017',this.arrr[5]],['Jul 2017',this.arrr[6]],['Aug 2017',this.arrr[7]],['Sep 2017',this.arrr[8]],['Oct 2017',this.arrr[9]],['Nov 2017',this.arrr[10]],['Dec 2017',this.arrr[11]]];
         this.drawChart(res);
         this.checkDataSCNC = false;
      } else {
@@ -677,6 +770,16 @@ export class ScNewCasesComponent implements OnInit {
     }, error => {
         // console.log("error getCaseData " + error);
     });
+
+
+    this.getMinMaxDates().then((res:any) =>{
+      //console.log("res is:"+JSON.stringify(res));
+      let resnew:any=res;
+      //console.log("the json to be sent is:"+JSON.stringify(resnew));
+      this._dataHandlerService.setMinMaxDate(resnew);
+      //console.log("the json is:"+JSON.stringify());
+    });
+
 
 
     this.getTerritories()
@@ -689,7 +792,7 @@ export class ScNewCasesComponent implements OnInit {
         // console.log("error getTerritories " + error);
       });
 
-    this.sideViewDropDowns.showTerritory = true;
+    //this.sideViewDropDowns.showTerritory = true;
     this.sideViewDropDowns.showArrivalType=true;
     this.sideViewDropDowns.showYearDD=true;
     this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
