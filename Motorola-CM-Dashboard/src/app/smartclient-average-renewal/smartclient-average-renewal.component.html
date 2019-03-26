@@ -18,7 +18,7 @@
 
         </div>
         <div class="col-lg-6">
-          <span class="fontCss pull-left"><b>Number Of Cases - {{newModelCounts}} </b></span>
+          <span class="fontCss pull-left"><b>{{newModelCounts}} </b></span>
           <button class="pull-right btn btn-sucess btn-sm" title="Export To Excel" type="button" (click)="exportToExcel()"><i class="fas fa-file-export "></i></button>
         </div>
 
@@ -44,7 +44,7 @@
               <td>{{drilldown.to_status}}</td>
               <td>{{drilldown.case_owner==null?'_':drilldown.case_owner}}</td>
               <td>{{drilldown.sts_changed_on}}</td>
-              <td>{{drilldown.NSS_Aging==null?'_':drilldown.NSS_Aging}}</td>
+              <td>{{drilldown.nss_aging==null?'_':drilldown.nss_aging}}</td>
               <td>{{drilldown.case_creation_date}}</td>
             </tr>
                 

@@ -129,7 +129,7 @@ export class ScNewCasesComponent implements OnInit {
       }
       console.log("the res is:"+JSON.stringify(res));
       //console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(this.drillDown));
-      //this.drillDownData = res;
+      this.drillDownData = res;
 
     }, error => {
       console.log("error getTerritories " + error);
@@ -347,6 +347,7 @@ export class ScNewCasesComponent implements OnInit {
               }
             }
             //array.push({ 'item_id': territories[i].territory, 'item_text': territories[i].territory });
+           if(territories.length>0)
             array.push(otherTerritory);
             resolve(array);
           }
@@ -373,9 +374,9 @@ export class ScNewCasesComponent implements OnInit {
       // data=[];
       console.log("the data rec is :"+JSON.stringify(data.length));
       // let array =[['Months','Cases Counts'],['Jan',data[0]],['Feb',data[1]],['Mar',data[2]],['Apr',data[3]],['May',data[4]],['Jun',data[5]],['Jul',data[6]],['Aug',data[7]],['Sep',data[8]],['Oct',data[9]],['Nov',data[10]],['Dec',data[11]]];
-      for(let i in data){
+      // for(let i in data){
 
-        if(data[i]==0){
+        if(data.length==0){
           console.log("the if of check for length");
           this.checkDataSCNC=true;
           array =[['Months','Cases Counts'],['Jan 17',0],['Feb 17',0],['Mar 17',0],['Apr 17',0],['May 17',0],['Jun 17',0],['Jul 17',0],['Aug 17',0],['Sep 17',0],['Oct 17',0],['Nov 17',0],['Dec 17',0],['Jan 18',0],['Feb 18',0],['Mar 18',0],['Apr 18',0],['May 18',0],['Jun 18',0],['Jul 18',0],['Aug 18',0],['Sep 18',0],['Oct 18',0],['Nov 18',0],['Dec 18',0]];
@@ -384,13 +385,15 @@ export class ScNewCasesComponent implements OnInit {
         }else {
           console.log("the else if of check for length");
           array=[['Months','Cases Counts'],['Jan 17',data[0]],['Feb 17',data[1]],['Mar 17',data[2]],['Apr 17',data[3]],['May 17',data[4]],['Jun 17',data[5]],['Jul 17',data[6]],['Aug 17',data[7]],['Sep 17',data[8]],['Oct 17',data[9]],['Nov 17',data[10]],['Dec 17',data[11]],['Jan 18',data[12]],['Feb 18',data[13]],['Mar 18',data[14]],['Apr 18',data[15]],['May 18',data[16]],['Jun 18',data[17]],['Jul 18',data[18]],['Aug 18',data[19]],['Sep 18',data[20]],['Oct 18',data[21]],['Nov 18',data[22]],['Dec 18',data[23]]];
+          console.log("the data to be binded to charts is: "+JSON.stringify(array));
           this.drawChart(array);
           this.checkDataSCNC= false;
   
         }
         
 
-      }
+      //}
+      data=[];
       
       //this.drawChart(array);
     }
@@ -462,6 +465,8 @@ export class ScNewCasesComponent implements OnInit {
           // console.log("the result returned is as under:"+JSON.stringify(result));
           // console.log("the result is as under:"+JSON.stringify(result.length));
           this.makeChartData(result);
+          //this.drawChart(result);
+
         
       }else {
         for (let j in this.territoriesArr) {
@@ -481,9 +486,12 @@ export class ScNewCasesComponent implements OnInit {
         // console.log("the resultant array to be bind to the graph length is:"+JSON.stringify(finalArr.length));
         // console.log("the resultant array to be bind to the graph is:"+JSON.stringify(finalArr));
         this.makeChartData(finalArr);
+        //this.drawChart(finalArr);
+
         
       
       }
+
     }
       
       
