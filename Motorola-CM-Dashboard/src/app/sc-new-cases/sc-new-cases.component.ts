@@ -127,6 +127,7 @@ export class ScNewCasesComponent implements OnInit {
         res[i].sts_changed_on = moment(res[i].sts_changed_on).format('YYYY-MM-DD');
 
       }
+      console.log("the res is:"+JSON.stringify(res));
       //console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(this.drillDown));
       //this.drillDownData = res;
 
@@ -174,7 +175,7 @@ export class ScNewCasesComponent implements OnInit {
       }, err => console.error(err),
         // the third argument is a function which runs on completion
         () => {
-          console.log("the drilldown data recived is:"+this.drillDown);
+          console.log("the drilldown data recived is:"+JSON.stringify(this.drillDown));
           resolve(this.drillDown);
         }
       )
