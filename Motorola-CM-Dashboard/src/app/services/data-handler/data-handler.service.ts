@@ -6,7 +6,8 @@ import { Subject } from 'rxjs';
 export class DataHandlerService {
   public sideViewDropDownData = new Subject<any>();
   public dataFromSideView = new Subject<any>();
-  public dataForMainLayout = new Subject<any>()
+  public dataForMainLayout = new Subject<any>();
+  public resetDropdowns = new Subject<any>()
   constructor() { }
 
   /**
@@ -45,5 +46,8 @@ export class DataHandlerService {
       (rv[x[k]] = rv[x[k]] || []).push(x);
       return rv;
     }, {});
+  }
+  resetAllDropDowns(data) {
+    this.resetDropdowns.next(data);
   }
 }

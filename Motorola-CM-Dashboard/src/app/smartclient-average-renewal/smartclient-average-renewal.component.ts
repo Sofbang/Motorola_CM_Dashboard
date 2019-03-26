@@ -22,13 +22,14 @@ import * as moment from 'moment';
   styleUrls: ['./smartclient-average-renewal.component.css']
 })
 export class SmartclientAverageRenewalComponent implements OnInit {
-  public drillDownData:any;
+  public drillDownData: any;
 
   public barChartData: any;
-  public Total:any;
-  public drillDown:any;
+  public Total: any;
+  public drillDown: any;
   public territoriesArr: any = [];
   public workFlowStatusArr: any = [];
+  public arrivalTypesArr: any = [];
   public caseData = [];
   public dateFilteredDataResults = [];
   public dateData = [];
@@ -38,14 +39,14 @@ export class SmartclientAverageRenewalComponent implements OnInit {
   public selectedFrom = {};
   public data: any;
   public final = [];
-  public newModelCounts:any;
-  public checkDataSC:any=false;
+  public newModelCounts: any;
+  public checkDataSC: any = false;
   public sideViewDropDowns = new SideViewDropDowns();
   public restUrlFilterYr: string = 'sc_case_status_med_yr';
   @ViewChild('openSCModal') openScModel: ElementRef;
   @ViewChild('FromTo') FromTo;
 
-  constructor(private _smartclientService: SmartclientService, private _dataHandlerService: DataHandlerService,private _excelService:ExcelServiceService) {
+  constructor(private _smartclientService: SmartclientService, private _dataHandlerService: DataHandlerService, private _excelService: ExcelServiceService) {
     this._dataHandlerService.dataFromSideView
       .subscribe(res => {
         //console.log("suc smartclient avg-ren" + JSON.stringify(res));
@@ -72,67 +73,67 @@ export class SmartclientAverageRenewalComponent implements OnInit {
 
     this.openScModel.nativeElement.click();
 
-    let drillDownStatusnew='' ; let status: any;let letters = /^[0-9a-zA-Z]\s+$/;
-    let statusStr='',j=0;
+    let drillDownStatusnew = ''; let status: any; let letters = /^[0-9a-zA-Z]\s+$/;
+    let statusStr = '', j = 0;
     drillDownStatusnew = (event.selectedRowValues[0]).split(' ');
     status = drillDownStatusnew[0];
-   // console.log("the drilldown status is:" + JSON.stringify(status));
-    for(let i=event.selectedRowValues[0].length;i>0;i--){
-      if(event.selectedRowValues[0][i]==' '){
-        j=i;
+    // console.log("the drilldown status is:" + JSON.stringify(status));
+    for (let i = event.selectedRowValues[0].length; i > 0; i--) {
+      if (event.selectedRowValues[0][i] == ' ') {
+        j = i;
         //console.log("i---"+j)
         break;
       }
       //console.log("hhh--"+event.selectedRowValues[0][i].match(/^[a-zA-Z]\s+$/));
     }
-    status = event.selectedRowValues[0].substring(0,j);
-    if(event.message=='select'){
+    status = event.selectedRowValues[0].substring(0, j);
+    if (event.message == 'select') {
 
 
-    this.newModelCounts = event.selectedRowValues[2];
-    this.data = event.selectedRowValues[0];
-    console.log("the data is:", this.data);
-    $('.modal .modal-dialog').css('width', $(window).width() * 0.95);//fixed
-    $('.modal .modal-body').css('height', $(window).height() * 0.77);//fixed
-    $('tbody.SCModlTbody').css('max-height', $(window).height() * 0.69);
-    $('tbody.SCModlTbody').css('overflow-y', 'scroll');
-    $('tbody.SCModlTbody').css('overflow-x', 'hidden');
-    // $('tbody.SCModlTbody').css('display', 'block');
-    $('tbody.SCModlTbody').css('width', '100%');
+      this.newModelCounts = event.selectedRowValues[2];
+      this.data = event.selectedRowValues[0];
+      //console.log("the data is:", this.data);
+      $('.modal .modal-dialog').css('width', $(window).width() * 0.95);//fixed
+      $('.modal .modal-body').css('height', $(window).height() * 0.77);//fixed
+      $('tbody.SCModlTbody').css('max-height', $(window).height() * 0.69);
+      $('tbody.SCModlTbody').css('overflow-y', 'scroll');
+      $('tbody.SCModlTbody').css('overflow-x', 'hidden');
+      // $('tbody.SCModlTbody').css('display', 'block');
+      $('tbody.SCModlTbody').css('width', '100%');
 
-    this.getSCDrillDownData(status)
-    .then((res:any) => {
-      var dat = new Date();
-      //console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(res.length));
-      for(let i in res){
-         
-        res[i].case_creation_date=moment(res[i].case_creation_date).format('YYYY-MM-DD');
-        res[i].sts_changed_on=moment(res[i].sts_changed_on).format('YYYY-MM-DD');
+      this.getSCDrillDownData(status)
+        .then((res: any) => {
+          var dat = new Date();
+          //console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(res.length));
+          for (let i in res) {
 
-      }
-      console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(this.drillDown));
-      this.drillDownData = res;
-    }, error => {
-      console.log("error getTerritories " + error);
-    });
-    this.drillDown=[];
+            res[i].case_creation_date = moment(res[i].case_creation_date).format('YYYY-MM-DD');
+            res[i].sts_changed_on = moment(res[i].sts_changed_on).format('YYYY-MM-DD');
+
+          }
+          //console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(this.drillDown));
+          this.drillDownData = res;
+        }, error => {
+          console.log("error getTerritories " + error);
+        });
+      this.drillDown = [];
 
     }
   }
 
-  public exportToExcel(){
+  public exportToExcel() {
 
 
     this._excelService.exportAsExcelFile(this.drillDownData, 'Smart Client Cases');
 
   }
 
-  public calculatePerc(cases){
-    for(let i in cases){
+  public calculatePerc(cases) {
+    for (let i in cases) {
 
-      console.log("the cases are as under:"+JSON.stringify(cases));
-      let calcPer=((cases[i].contractscount/this.Total)*100).toFixed(2)
-      cases[i]['status_percent']=calcPer+'%';
+      //console.log("the cases are as under:"+JSON.stringify(cases));
+      let calcPer = ((cases[i].contractscount / this.Total) * 100).toFixed(2)
+      cases[i]['status_percent'] = calcPer + '%';
       //console.log("the values are :"+JSON.stringify(value));
 
     }
@@ -145,24 +146,24 @@ export class SmartclientAverageRenewalComponent implements OnInit {
   }
 
 
- public getSCDrillDownData(status){
-  return new Promise((resolve, reject) => {
-    this._smartclientService.getScDrillDown(status).subscribe(data => {
-      this.drillDown = data;
-      // console.log("territories" + this.territories)
-    }, err => console.error(err),
-      // the third argument is a function which runs on completion
-      () => {
-        console.log("the drilldown data recived is:"+this.drillDown);
-        resolve(this.drillDown);
-      }
-    )
-  }).catch((error) => {
-    reject(error);
-    console.log('errorin getting data :', error);
-  })
+  public getSCDrillDownData(status) {
+    return new Promise((resolve, reject) => {
+      this._smartclientService.getScDrillDown(status).subscribe(data => {
+        this.drillDown = data;
+        // console.log("territories" + this.territories)
+      }, err => console.error(err),
+        // the third argument is a function which runs on completion
+        () => {
+          //console.log("the drilldown data recived is:"+this.drillDown);
+          resolve(this.drillDown);
+        }
+      )
+    }).catch((error) => {
+      reject(error);
+      console.log('errorin getting data :', error);
+    })
 
-}
+  }
 
 
   /**
@@ -170,19 +171,21 @@ export class SmartclientAverageRenewalComponent implements OnInit {
    */
   public getCaseData() {
     return new Promise((resolve, reject) => {
-      let cases;
+      let cases = [];
       this._smartclientService.getSCCases().
         subscribe(data => {
-          cases = this.makeChartData(data);
-          console.log("contracts" + JSON.stringify(cases));
-          let arr = [];
-          for(let i in cases){
-            arr.push(cases[i].contractscount)
+          if (data.length > 0) {
+            cases = this.makeChartData(data);
+            //console.log("contracts" + JSON.stringify(cases));
+            let arr = [];
+            for (let i in cases) {
+              arr.push(cases[i].contractscount)
+            }
+            this.Total = arr.reduce(this.SUM);
+            //console.log("the total contracts are as under:"+JSON.stringify(this.Total)); 
+            this.caseData = data;
+            cases = this.calculatePerc(cases);
           }
-          this.Total = arr.reduce(this.SUM);
-          console.log("the total contracts are as under:"+JSON.stringify(this.Total)); 
-          this.caseData = data;
-          cases=this.calculatePerc(cases);
         }, err => console.error(err),
           // the third argument is a function which runs on completion
           () => {
@@ -194,22 +197,24 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       reject(error);
     })
   }
-  
+
   public getCaseDataAvg() {
     return new Promise((resolve, reject) => {
-      let cases;
+      let cases = [];
       this._smartclientService.getSCCasesAvg().
         subscribe(data => {
-          cases = this.makeChartDataAvg(data);
-          let arr = [];
-          for(let i in cases){
-            arr.push(cases[i].contractscount)
+          if (data.length > 0) {
+            cases = this.makeChartDataAvg(data);
+            let arr = [];
+            for (let i in cases) {
+              arr.push(cases[i].contractscount)
+            }
+            this.Total = arr.reduce(this.SUM);
+            //console.log("the total contracts are as under:"+JSON.stringify(this.Total)); 
+            this.caseData = data;
+            cases = this.calculatePerc(cases);
+            this.caseData = data;
           }
-          this.Total = arr.reduce(this.SUM);
-          console.log("the total contracts are as under:"+JSON.stringify(this.Total)); 
-          this.caseData = data;
-          cases=this.calculatePerc(cases);
-          this.caseData = data;
           //console.log("contracts" + cases)
         }, err => console.error(err),
           // the third argument is a function which runs on completion
@@ -260,7 +265,8 @@ export class SmartclientAverageRenewalComponent implements OnInit {
               }
             }
             //array.push({ 'item_id': territories[i].territory, 'item_text': territories[i].territory });
-            array.push(otherTerritory);
+            if (territories.length > 0)
+              array.push(otherTerritory);
             resolve(array);
           }
         )
@@ -293,7 +299,8 @@ export class SmartclientAverageRenewalComponent implements OnInit {
                 array.push({ 'item_id': workflowStatus[i].to_status, 'item_text': workflowStatus[i].to_status });
               }
             }
-            array.push(otherStatus);
+            if (workflowStatus.length > 0)
+              array.push(otherStatus);
             // console.log("workflowStatus" + JSON.stringify(array));
             resolve(array);
           }
@@ -318,8 +325,8 @@ export class SmartclientAverageRenewalComponent implements OnInit {
           bold: true,    // true or false
           italic: false
         },
-        width: 800, height: 500,        
-        chartArea:{left:225,top:20,width:'50%'},
+        width: 800, height: 500,
+        chartArea: { left: 225, top: 20, width: '50%' },
         legend: { position: 'bottom', textStyle: { color: '#444444' } },
         backgroundColor: '#FFFFFF',
         hAxis: {
@@ -327,15 +334,16 @@ export class SmartclientAverageRenewalComponent implements OnInit {
         },
         vAxis: {
           textStyle: { color: '#444444' },
-          title:'Smart Client Status',
-          titleTextStyle:{italic: false}
+          title: 'Smart Client Status',
+          titleTextStyle: { italic: false }
         },
         series: {
           0: { color: '#93C0F6' },
         },
         tooltip: { isHtml: false },
         annotations: {
-          alwaysOutside:true}
+          alwaysOutside: true
+        }
       }
     };
   }
@@ -343,7 +351,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
   public fromMedOrAvg = 'median';
   // ng multiselect events implemented by Vishal Sehgal 12/2/2019
   onItemSelect(item, from) {
-    console.log("the data is:"+item+" item was"+"from is: "+from);
+    console.log("the data is:" + item + " item was" + "from is: " + from);
     if (from == 'territory') {
       this.territoriesArr.push(item);
       this.filterChartData();
@@ -351,9 +359,13 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       this.workFlowStatusArr.push(item);
       this.filterChartData();
     } else if (from == 'casetime') {
-      console.log("casetime selected Median" + from);
-      if (item== 'Median') {
-        console.log("in the If of Medain Days" );
+      this._dataHandlerService.resetAllDropDowns(true);
+      this.territoriesArr = [];
+      this.workFlowStatusArr = [];
+      this.arrivalTypesArr = [];
+      // console.log("casetime selected Median" + from);
+      if (item == 'Median') {
+        console.log("in the If of Medain Days");
         this.restUrlFilterYr = 'sc_case_status_med_yr';
         this.fromMedOrAvg = 'median';
         //console.log("casetime selected Median" + this.restUrlFilterYr);
@@ -365,7 +377,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
             console.log("error getCaseData " + error);
           });
       } else if (item == 'Average') {
-        console.log("in the else if of Medain Days" );
+        //console.log("in the else if of Medain Days" );
         this.restUrlFilterYr = 'sc_case_status_avg_yr';
         this.fromMedOrAvg = 'average';
         //console.log("casetime selected Averaage" + this.restUrlFilterYr);
@@ -378,6 +390,9 @@ export class SmartclientAverageRenewalComponent implements OnInit {
             console.log("error getCaseDataAvg " + error);
           });
       }
+    } else if (from == 'arrivalType') {
+      this.arrivalTypesArr.push(item);
+      this.filterChartData();
     }
     // this.filterChartData();
     // console.log("territory" + JSON.stringify(this.territoriesArr));
@@ -390,6 +405,8 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       this.territoriesArr = this.removeElementArr(this.territoriesArr, item);
     } else if (from == 'workflow') {
       this.workFlowStatusArr = this.removeElementArr(this.workFlowStatusArr, item);;
+    } else if (from == 'arrivalType') {
+      this.arrivalTypesArr = this.removeElementArr(this.arrivalTypesArr, item);
     }
     // console.log("territory" + JSON.stringify(this.territoriesArr));
     // console.log("workflow" + JSON.stringify(this.workFlowStatusArr));
@@ -403,12 +420,19 @@ export class SmartclientAverageRenewalComponent implements OnInit {
     } else if (from == 'workflow') {
       this.workFlowStatusArr = [];
       this.workFlowStatusArr = item;
+    } else if (from == 'arrivalType') {
+      this.arrivalTypesArr = [];
+      this.arrivalTypesArr = item;
     }
     this.filterChartData();
     // console.log("territory" + JSON.stringify(this.territoriesArr));
     // console.log("workflow" + JSON.stringify(this.workFlowStatusArr));
   }
 
+  /**
+   * Calls when to dropdown change have both from and to date
+   * @param item 
+   */
   onToYearChange(item) {
     //  console.log("the item is:", item);
     this.datesData = [];
@@ -419,253 +443,276 @@ export class SmartclientAverageRenewalComponent implements OnInit {
   }
 
   onDeSelectAll(item, from) {
-    this.territoriesArr = [];
-    this.workFlowStatusArr = [];
+    if (from == 'territory') {
+      this.territoriesArr = [];
+    } else if (from == 'workflow') {
+      this.workFlowStatusArr = [];
+    } else if (from == 'arrivalType') {
+      this.arrivalTypesArr = [];
+    }
+    // 
     // console.log("onDeSelectAll" + JSON.stringify(item));
     this.filterChartData();
   }
 
+  /**
+   * This method check if From and to dropdown selected.
+   */
+  checkDateDropdownSelected(datesData, restUrlFilterYr): any {
+    return new Promise((resolve, reject) => {
+      if (datesData.length > 0) {
+        this.getCaseDataYearly(datesData, restUrlFilterYr)
+          .then((res: any) => {
+            resolve(res);
+          }, error => {
+            console.log("error getCaseData " + error);
+            reject(error);
+          });
+      } else {
+        resolve('nodateselected');
+      }
+    })
+  }
+
+
+
   public filterChartData() {
     let finalArr = [];
     //console.log("case data" + JSON.stringify(this.caseData));
-    if (this.territoriesArr.length == 0 && this.workFlowStatusArr.length > 0) {
-      //console.log("t0 s>0");
-      // for (let j in this.workFlowStatusArr) {
-      //   let workflowItem = this.workFlowStatusArr[j];
-      //   let workflowFilterarr = this.caseData.filter(item => {
-      //     return (item.status.toLowerCase() == workflowItem.toLowerCase() || item.status_order.toLowerCase() == workflowItem.toLowerCase());
-      //   });
-      //   for (let i = 0; i < workflowFilterarr.length; i++) {
-      //     finalArr.push(workflowFilterarr[i]);
-      //   }
-      //   //finalArr.push(workflowFilterarr);
-      //   //finalArr = workflowFilterarr;
-      // }
-
-      if (this.datesData.length > 0) {
-        // call API for dates 
-        //console.log("in the if of dates check")
-        this.getCaseDataYearly(this.datesData, this.restUrlFilterYr)
-          .then((res: any) => {
-            //console.log("the res of dates are :" + JSON.stringify(res));
-            this.caseData = res;
-            for (let j in this.workFlowStatusArr) {
-              let workflowItem = this.workFlowStatusArr[j];
-              let workflowFilterarr = this.caseData.filter(item => {
-                return (item.status.toLowerCase() == workflowItem.toLowerCase() || item.status_order.toLowerCase() == workflowItem.toLowerCase());
-              });
-              for (let i = 0; i < workflowFilterarr.length; i++) {
-                finalArr.push(workflowFilterarr[i]);
-              }
-            }
-            let cases = this.fromMedOrAvg == 'median' ? this.makeChartData(finalArr) : this.makeChartDataAvg(finalArr);
-            cases = this.calculatePerc(cases);
-            let chartArr = this.makeChartArr(cases);
-            this.drawChart(chartArr);
-          }, error => {
-            console.log("error getCaseData " + error);
-          });
-      } else {
-        for (let j in this.workFlowStatusArr) {
-          let workflowItem = this.workFlowStatusArr[j];
-          let workflowFilterarr = this.caseData.filter(item => {
-            return (item.status.toLowerCase() == workflowItem.toLowerCase() || item.status_order.toLowerCase() == workflowItem.toLowerCase());
-          });
-          for (let i = 0; i < workflowFilterarr.length; i++) {
-            finalArr.push(workflowFilterarr[i]);
+    if (this.territoriesArr.length == 0 && this.workFlowStatusArr.length > 0 && this.arrivalTypesArr.length == 0) {
+      console.log("t0 ws>0 a0");
+      this.checkDateDropdownSelected(this.datesData, this.restUrlFilterYr)
+        .then(result => {
+          if (result != 'nodateselected') {
+            this.caseData = result;
           }
-        }
-        // let cases = this.makeChartData(finalArr);
-       // console.log("the final arr is:"+JSON.stringify(finalArr));
-        ////finalArr = this.calculatePerc(finalArr);
-        console.log("the data is :"+JSON.stringify(finalArr));
-        let cases = this.fromMedOrAvg == 'median' ? this.makeChartData(finalArr) : this.makeChartDataAvg(finalArr);
-        cases = this.calculatePerc(cases);
-        console.log("the cases are :"+JSON.stringify(cases));
-        let chartArr = this.makeChartArr(cases)
-        this.drawChart(chartArr);
-        // let cases = this.makeChartData(this.caseData);
-        // let chartArr = this.makeChartArr(cases)
-        // this.drawChart(chartArr);
-      }
-
-    } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length > 0) {
-      //console.log("t>1 s0");
-      // for (let i in this.territoriesArr) {
-      //   let territoryItem = this.territoriesArr[i];
-      //   let territoryFilterarr = this.caseData.filter(item => {
-      //     console.log("territoryItem" + territoryItem);
-      //     return item.territory == territoryItem;
-      //   });
-      //   for (let i = 0; i < territoryFilterarr.length; i++) {
-      //     finalArr.push(territoryFilterarr[i]);
-      //   }
-      //   //finalArr.push(territoryFilterarr);
-      //   //finalArr = territoryFilterarr;
-      // }
-      // else{
-      //   console.log("in the else of dates check:")
-      // }
-      if (this.datesData.length > 0) {
-        this.getCaseDataYearly(this.datesData, this.restUrlFilterYr)
-          .then((res: any) => {
-            //console.log("the res of dates are :" + JSON.stringify(res));
-            this.caseData = res;
-            for (let i in this.territoriesArr) {
-              let territoryItem = this.territoriesArr[i];
-              let territoryFilterarr = this.caseData.filter(item => {
-                // console.log("territoryItem" + territoryItem);
-                return item.territory == territoryItem;
-              });
-              for (let i = 0; i < territoryFilterarr.length; i++) {
-                finalArr.push(territoryFilterarr[i]);
-              }
-              //finalArr.push(territoryFilterarr);
-              //finalArr = territoryFilterarr;
-            }
-            // let cases = this.makeChartData(finalArr);
-            let cases = this.fromMedOrAvg == 'median' ? this.makeChartData(finalArr) : this.makeChartDataAvg(finalArr);
-            cases = this.calculatePerc(cases);
-            let chartArr = this.makeChartArr(cases)
-            this.drawChart(chartArr);
-          }, error => {
-            console.log("error getCaseData " + error);
-          });
-      } else {
-        for (let i in this.territoriesArr) {
-          let territoryItem = this.territoriesArr[i];
-          let territoryFilterarr = this.caseData.filter(item => {
-            //console.log("territoryItem" + territoryItem);
-            return item.territory == territoryItem;
-          });
-          for (let i = 0; i < territoryFilterarr.length; i++) {
-            finalArr.push(territoryFilterarr[i]);
-          }
-          //finalArr.push(territoryFilterarr);
-          //finalArr = territoryFilterarr;
-        }
-        // let cases = this.makeChartData(finalArr);
-        let cases = this.fromMedOrAvg == 'median' ? this.makeChartData(finalArr) : this.makeChartDataAvg(finalArr);
-        cases = this.calculatePerc(cases);
-        let chartArr = this.makeChartArr(cases)
-        this.drawChart(chartArr);
-      }
-
-
-    } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length == 0) {
-      //console.log("t0 s0");
-      if (this.datesData.length > 0) {
-        // call API for dates 
-        console.log("in the if of dates check")
-        this.getCaseDataYearly(this.datesData, this.restUrlFilterYr)
-          .then((res: any) => {
-            //console.log("the res of dates are :" + JSON.stringify(res));
-            this.caseData = res;
-            // let cases = this.makeChartData(this.caseData);
-            let cases = this.fromMedOrAvg == 'median' ? this.makeChartData(this.caseData) : this.makeChartDataAvg(this.caseData);
-            cases = this.calculatePerc(cases);
-            let chartArr = this.makeChartArr(cases)
-            this.drawChart(chartArr);
-          }, error => {
-            console.log("error getCaseData " + error);
-          });
-      } else {
-        // let cases = this.makeChartData(this.caseData);
-        let cases = this.fromMedOrAvg == 'median' ? this.makeChartData(this.caseData) : this.makeChartDataAvg(this.caseData);
-        cases = this.calculatePerc(cases);
-        let chartArr = this.makeChartArr(cases)
-        this.drawChart(chartArr);
-      }
-      // return;
-    }
-    else if (this.workFlowStatusArr.length > 0 && this.territoriesArr.length > 0) {
-      //console.log("t>0 s>0");
-      // for (let i in this.territoriesArr) {
-      //   let territoryItem = this.territoriesArr[i];
-      //   let territoryFilterarr = this.caseData.filter(item => {
-      //     return item.territory.toLowerCase() == territoryItem.toLowerCase();
-      //   });
-      //   //console.log("territoryFilterarr" + JSON.stringify(territoryFilterarr));
-      //   //finalArr = territoryFilterarr;
-      //   for (let j in this.workFlowStatusArr) {
-      //     let workflowItem = this.workFlowStatusArr[j];
-      //     let workflowFilterarr = territoryFilterarr.filter(item => {
-      //       return (item.status.toLowerCase() == workflowItem.toLowerCase() || item.status_order.toLowerCase() == workflowItem.toLowerCase());
-      //     });
-      //     for (let i = 0; i < workflowFilterarr.length; i++) {
-      //       finalArr.push(workflowFilterarr[i]);
-      //     }
-      //     //console.log("workflowFilterarr" + JSON.stringify(workflowFilterarr));
-      //     //finalArr = workflowFilterarr;
-      //   }
-      // }
-      if (this.datesData.length > 0) {
-        this.getCaseDataYearly(this.datesData, this.restUrlFilterYr)
-          .then((res: any) => {
-            //console.log("the res of dates are :" + JSON.stringify(res));
-            for (let i in this.territoriesArr) {
-              let territoryItem = this.territoriesArr[i];
-              let territoryFilterarr = this.caseData.filter(item => {
-                return item.territory.toLowerCase() == territoryItem.toLowerCase();
-              });
-              //console.log("territoryFilterarr" + JSON.stringify(territoryFilterarr));
-              //finalArr = territoryFilterarr;
-              for (let j in this.workFlowStatusArr) {
-                let workflowItem = this.workFlowStatusArr[j];
-                let workflowFilterarr = territoryFilterarr.filter(item => {
-                  return (item.status.toLowerCase() == workflowItem.toLowerCase() || item.status_order.toLowerCase() == workflowItem.toLowerCase());
-                });
-                for (let i = 0; i < workflowFilterarr.length; i++) {
-                  finalArr.push(workflowFilterarr[i]);
-                }
-                //console.log("workflowFilterarr" + JSON.stringify(workflowFilterarr));
-                //finalArr = workflowFilterarr;
-              }
-            }
-            // let cases = this.makeChartData(finalArr);
-            let cases = this.fromMedOrAvg == 'median' ? this.makeChartData(finalArr) : this.makeChartDataAvg(finalArr);
-            cases = this.calculatePerc(cases);
-            let chartArr = this.makeChartArr(cases)
-            this.drawChart(chartArr);
-          }, error => {
-            console.log("error getCaseData " + error);
-          });
-      } else {
-        for (let i in this.territoriesArr) {
-          let territoryItem = this.territoriesArr[i];
-          let territoryFilterarr = this.caseData.filter(item => {
-            return item.territory.toLowerCase() == territoryItem.toLowerCase();
-          });
-          //console.log("territoryFilterarr" + JSON.stringify(territoryFilterarr));
-          //finalArr = territoryFilterarr;
           for (let j in this.workFlowStatusArr) {
             let workflowItem = this.workFlowStatusArr[j];
-            let workflowFilterarr = territoryFilterarr.filter(item => {
+            let workflowFilterarr = this.caseData.filter(item => {
               return (item.status.toLowerCase() == workflowItem.toLowerCase() || item.status_order.toLowerCase() == workflowItem.toLowerCase());
             });
             for (let i = 0; i < workflowFilterarr.length; i++) {
               finalArr.push(workflowFilterarr[i]);
             }
+          }
+          let cases = this.fromMedOrAvg == 'median' ? this.makeChartData(finalArr) : this.makeChartDataAvg(finalArr);
+          cases = this.calculatePerc(cases);
+          let chartArr = this.makeChartArr(cases);
+          this.drawChart(chartArr);
+        }).catch(error => {
+          console.log("error in dateDropdownSelected " + error);
+        });
+
+    } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length > 0 && this.arrivalTypesArr.length == 0) {
+      console.log("t>1 ws0 a0");
+      this.checkDateDropdownSelected(this.datesData, this.restUrlFilterYr)
+        .then(result => {
+          if (result != 'nodateselected') {
+            this.caseData = result;
+          }
+          for (let i in this.territoriesArr) {
+            let territoryItem = this.territoriesArr[i];
+            let territoryFilterarr = this.caseData.filter(item => {
+              // console.log("territoryItem" + territoryItem);
+              return item.territory == territoryItem;
+            });
+            for (let i = 0; i < territoryFilterarr.length; i++) {
+              finalArr.push(territoryFilterarr[i]);
+            }
+            //finalArr.push(territoryFilterarr);
+            //finalArr = territoryFilterarr;
+          }
+          // let cases = this.makeChartData(finalArr);
+          let cases = this.fromMedOrAvg == 'median' ? this.makeChartData(finalArr) : this.makeChartDataAvg(finalArr);
+          cases = this.calculatePerc(cases);
+          let chartArr = this.makeChartArr(cases)
+          this.drawChart(chartArr);
+        }).catch(error => {
+          console.log("error in dateDropdownSelected " + error);
+        });
+    } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length == 0 && this.arrivalTypesArr.length == 0) {
+      console.log("t0 s0 a0");
+      this.checkDateDropdownSelected(this.datesData, this.restUrlFilterYr)
+        .then(result => {
+          if (result != 'nodateselected') {
+            this.caseData = result;
+          }
+          let cases = this.fromMedOrAvg == 'median' ? this.makeChartData(this.caseData) : this.makeChartDataAvg(this.caseData);
+          cases = this.calculatePerc(cases);
+          let chartArr = this.makeChartArr(cases)
+          this.drawChart(chartArr);
+        }).catch(error => {
+          console.log("error in dateDropdownSelected " + error);
+        });
+    } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length > 0 && this.arrivalTypesArr.length > 0) {
+      console.log("t>0 s0 a>0");
+      this.checkDateDropdownSelected(this.datesData, this.restUrlFilterYr)
+        .then(result => {
+          if (result != 'nodateselected') {
+            this.caseData = result;
+          }
+          for (let i in this.territoriesArr) {
+            let territoryItem = this.territoriesArr[i];
+            let territoryFilterarr = this.caseData.filter(item => {
+              return item.territory.toLowerCase() == territoryItem.toLowerCase();
+            });
+            //console.log("territoryFilterarr" + JSON.stringify(territoryFilterarr));
+            //finalArr = territoryFilterarr;
+            for (let j in this.arrivalTypesArr) {
+              let arrivalTypeItem = this.arrivalTypesArr[j];
+              let arrrTypeFilterAarr = territoryFilterarr.filter(item => {
+                return (item.status.toLowerCase() == arrivalTypeItem.toLowerCase() || item.status_order.toLowerCase() == arrivalTypeItem.toLowerCase());
+              });
+              for (let i = 0; i < arrrTypeFilterAarr.length; i++) {
+                finalArr.push(arrrTypeFilterAarr[i]);
+              }
+
+            }
+          }
+          let cases = this.fromMedOrAvg == 'median' ? this.makeChartData(finalArr) : this.makeChartDataAvg(finalArr);
+          cases = this.calculatePerc(cases);
+          let chartArr = this.makeChartArr(cases)
+          this.drawChart(chartArr);
+        }).catch(error => {
+          console.log("error in dateDropdownSelected " + error);
+        });
+    } else if (this.workFlowStatusArr.length > 0 && this.territoriesArr.length == 0 && this.arrivalTypesArr.length > 0) {
+      console.log("t0 s>0 a>0");
+      this.checkDateDropdownSelected(this.datesData, this.restUrlFilterYr)
+        .then(result => {
+          if (result != 'nodateselected') {
+            this.caseData = result;
+          }
+          for (let j in this.workFlowStatusArr) {
+            let workflowItem = this.workFlowStatusArr[j];
+            let workflowFilterarr = this.caseData.filter(item => {
+              return (item.status.toLowerCase() == workflowItem.toLowerCase() || item.status_order.toLowerCase() == workflowItem.toLowerCase());
+            });
+            for (let i in this.arrivalTypesArr) {
+              let arrivalTypeItem = this.arrivalTypesArr[i];
+              let arrivalTypeFilterarr = workflowFilterarr.filter(item => {
+                return item.arrival_type == arrivalTypeItem;
+              });
+              for (let i = 0; i < arrivalTypeFilterarr.length; i++) {
+                finalArr.push(arrivalTypeFilterarr[i]);
+              }
+            }
+          }
+          let cases = this.fromMedOrAvg == 'median' ? this.makeChartData(finalArr) : this.makeChartDataAvg(finalArr);
+          cases = this.calculatePerc(cases);
+          let chartArr = this.makeChartArr(cases)
+          this.drawChart(chartArr);
+        }).catch(error => {
+          console.log("error in dateDropdownSelected " + error);
+        });
+
+    } else if (this.workFlowStatusArr.length > 0 && this.territoriesArr.length > 0 && this.arrivalTypesArr.length == 0) {
+      console.log("t>0 s>0 a0");
+      this.checkDateDropdownSelected(this.datesData, this.restUrlFilterYr)
+        .then(result => {
+          if (result != 'nodateselected') {
+            this.caseData = result;
+          }
+          for (let i in this.territoriesArr) {
+            let territoryItem = this.territoriesArr[i];
+            let territoryFilterarr = this.caseData.filter(item => {
+              return item.territory == territoryItem;
+            });
+            //console.log("territoryFilterarr" + JSON.stringify(territoryFilterarr));
+            //finalArr = territoryFilterarr;
+            for (let j in this.workFlowStatusArr) {
+              let workflowItem = this.workFlowStatusArr[j];
+              let workflowFilterarr = territoryFilterarr.filter(item => {
+                return (item.status == workflowItem);
+              });
+              for (let i = 0; i < workflowFilterarr.length; i++) {
+                finalArr.push(workflowFilterarr[i]);
+              }
+            }
             //console.log("workflowFilterarr" + JSON.stringify(workflowFilterarr));
             //finalArr = workflowFilterarr;
           }
-        }
-        // let cases = this.makeChartData(finalArr);
-        let cases = this.fromMedOrAvg == 'median' ? this.makeChartData(finalArr) : this.makeChartDataAvg(finalArr);
-        cases = this.calculatePerc(cases);
-        let chartArr = this.makeChartArr(cases)
-        this.drawChart(chartArr);
-      }
+          let cases = this.fromMedOrAvg == 'median' ? this.makeChartData(finalArr) : this.makeChartDataAvg(finalArr);
+          cases = this.calculatePerc(cases);
+          let chartArr = this.makeChartArr(cases)
+          this.drawChart(chartArr);
+        }).catch(error => {
+          console.log("error in dateDropdownSelected " + error);
+        });
 
+    } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length == 0 && this.arrivalTypesArr.length > 0) {
+      console.log("t0 s0 a>0");
+      this.checkDateDropdownSelected(this.datesData, this.restUrlFilterYr)
+        .then(result => {
+          if (result != 'nodateselected') {
+            this.caseData = result;
+          }
+          for (let i in this.arrivalTypesArr) {
+            let arrivalTypeItem = this.arrivalTypesArr[i];
+            let arrivalTypeFilterarr = this.caseData.filter(item => {
+
+              return item.arrival_type == arrivalTypeItem;
+            });
+            for (let i = 0; i < arrivalTypeFilterarr.length; i++) {
+              finalArr.push(arrivalTypeFilterarr[i]);
+            }
+          }
+          //console.log("workflowFilterarr" + JSON.stringify(workflowFilterarr));
+          //finalArr = workflowFilterarr;
+
+          let cases = this.fromMedOrAvg == 'median' ? this.makeChartData(finalArr) : this.makeChartDataAvg(finalArr);
+          cases = this.calculatePerc(cases);
+          let chartArr = this.makeChartArr(cases)
+          this.drawChart(chartArr);
+        }).catch(error => {
+          console.log("error in dateDropdownSelected " + error);
+        });
     }
-    // let cases = this.makeChartData(finalArr);
-    // let chartArr = this.makeChartArr(cases)
-    // this.drawChart(chartArr);
-    // console.log("chartArr"+JSON.stringify(chartArr));
-    // console.log("final arr" + JSON.stringify(finalArr));
-    // console.log("group by arr" + JSON.stringify(cases));
+    else if (this.workFlowStatusArr.length > 0 && this.territoriesArr.length > 0 && this.arrivalTypesArr.length > 0) {
+      console.log("t>0 s>0 a>0");
+      this.checkDateDropdownSelected(this.datesData, this.restUrlFilterYr)
+        .then(result => {
+          if (result != 'nodateselected') {
+            this.caseData = result;
+          }
+          for (let i in this.territoriesArr) {
+            let territoryItem = this.territoriesArr[i];
+            let territoryFilterarr = this.caseData.filter(item => {
+              return item.territory.toLowerCase() == territoryItem.toLowerCase();
+            });
+            //console.log("territoryFilterarr" + JSON.stringify(territoryFilterarr));
+            //finalArr = territoryFilterarr;
+            for (let j in this.workFlowStatusArr) {
+              let workflowItem = this.workFlowStatusArr[j];
+              let workflowFilterarr = territoryFilterarr.filter(item => {
+                return (item.status.toLowerCase() == workflowItem.toLowerCase() || item.status_order.toLowerCase() == workflowItem.toLowerCase());
+              });
+              for (let i in this.arrivalTypesArr) {
+                let arrivalTypeItem = this.arrivalTypesArr[i];
+                let arrivalTypeFilterarr = workflowFilterarr.filter(item => {
+                  return item.arrival_type == arrivalTypeItem;
+                });
+                for (let i = 0; i < arrivalTypeFilterarr.length; i++) {
+                  finalArr.push(arrivalTypeFilterarr[i]);
+                }
+              }
+              // for (let i = 0; i < workflowFilterarr.length; i++) {
+              //   finalArr.push(workflowFilterarr[i]);
+              // }
+              //console.log("workflowFilterarr" + JSON.stringify(workflowFilterarr));
+              //finalArr = workflowFilterarr;
+            }
+          }
+          // let cases = this.makeChartData(finalArr);
+          let cases = this.fromMedOrAvg == 'median' ? this.makeChartData(finalArr) : this.makeChartDataAvg(finalArr);
+          cases = this.calculatePerc(cases);
+          let chartArr = this.makeChartArr(cases)
+          this.drawChart(chartArr);
+        }).catch(error => {
+          console.log("error in dateDropdownSelected " + error);
+        });
+    }
   }
-
   /**
 * Array reduce function
 * @param accumulator-array item summed value
@@ -735,53 +782,48 @@ export class SmartclientAverageRenewalComponent implements OnInit {
  * @param cases -Case data.
  */
   public makeChartArr(cases) {
-    console.log("the data is :" + JSON.stringify(cases.length));
+    //console.log("the data is :" + JSON.stringify(cases.length));
     // cases=[];
     let array = [];
-    array.push(['Status', this.fromMedOrAvg == 'median'? 'No. of Median Days':'No. Of Average Days', { role: "annotation" }, { role: "style" }]);
+    array.push(['Status', this.fromMedOrAvg == 'median' ? 'No. of Median Days' : 'No. Of Average Days', { role: "annotation" }, { role: "style" }]);
     if (cases.length > 0) {
       this.drawChart(cases);
-      this.checkDataSC= false;
-      let barColor=null;
-    // console.log("the color new array for cases are as under:"+JSON.stringify(cases));
-    for (let i in cases) {
-      // let index=parseInt(i);
-     // if(cases[i].status=='Insufficient Data' || cases[i].status =='InProg Awt 3PS' || cases[i].status =='InProg Awt SSC' || cases[i].status =='InProg Awt Credit' || cases[i].status == 'InProg Awt Resource'){
-        barColor='#4A90E2';
-      // }else if(cases[i].status =='InProg Awt 3PS'){
-      //   barColor='#93C0F6';
-      // }else if(cases[i].status =='InProg Awt SSC'){
-      //   barColor='#4A90E2';
-      // }else if(cases[i].status =='InProg Awt Credit'){
-      //   barColor='#618CF7';
-      // }else if(cases[i].status == 'InProg Awt Resource'){
-      //   barColor='#164985';
-      // }else{
-      //   barColor='#3274C2';
-      // }
-      //console.log(i);
-      // Create new array above and push every object in
-      //array.push([cases[i].status+"  "+cases[i].status_percent,  this.fromMedOrAvg == 'median' ? "Median Days - " + parseInt(cases[i].mediandays) : "Average Days - " + parseInt(cases[i].averagedays),parseInt(cases[i].contractscount), '0B91E2']);
-      array.push([cases[i].status+"  "+cases[i].status_percent,  this.fromMedOrAvg == 'median' ? parseInt(cases[i].mediandays) :parseInt(cases[i].averagedays)," No. Of Cases - "+parseInt(cases[i].contractscount), barColor]);
+      this.checkDataSC = false;
+      let barColor = null;
+      // console.log("the color new array for cases are as under:"+JSON.stringify(cases));
+      for (let i in cases) {
+        // let index=parseInt(i);
+        // if(cases[i].status=='Insufficient Data' || cases[i].status =='InProg Awt 3PS' || cases[i].status =='InProg Awt SSC' || cases[i].status =='InProg Awt Credit' || cases[i].status == 'InProg Awt Resource'){
+        barColor = '#4A90E2';
+        // }else if(cases[i].status =='InProg Awt 3PS'){
+        //   barColor='#93C0F6';
+        // }else if(cases[i].status =='InProg Awt SSC'){
+        //   barColor='#4A90E2';
+        // }else if(cases[i].status =='InProg Awt Credit'){
+        //   barColor='#618CF7';
+        // }else if(cases[i].status == 'InProg Awt Resource'){
+        //   barColor='#164985';
+        // }else{
+        //   barColor='#3274C2';
+        // }
+        //console.log(i);
+        // Create new array above and push every object in
+        //array.push([cases[i].status+"  "+cases[i].status_percent,  this.fromMedOrAvg == 'median' ? "Median Days - " + parseInt(cases[i].mediandays) : "Average Days - " + parseInt(cases[i].averagedays),parseInt(cases[i].contractscount), '0B91E2']);
+        array.push([cases[i].status + "  " + cases[i].status_percent, this.fromMedOrAvg == 'median' ? parseInt(cases[i].mediandays) : parseInt(cases[i].averagedays), " No. Of Cases - " + parseInt(cases[i].contractscount), barColor]);
 
-    }
-    //console.log("the array is :", array);
-    return array;
+      }
+      //console.log("the array is :", array);
+      return array;
 
-    }else if (cases.length == 0){
+    } else if (cases.length == 0) {
       this.drawChart(cases);
       this.checkDataSC = true;
-      array.push(['', 0,'','']);
+      array.push(['', 0, '', '']);
       return array;
-    }else {
+    } else {
 
-      this.checkDataSC = true;  
+      this.checkDataSC = true;
     }
-    // let array = [];
-    // array.push(['Status', 'No. of Contracts', { role: "annotation" }, { role: "style" }]);
-    // ARRAY OF OBJECTS
-    
-
   }
 
 
@@ -801,24 +843,24 @@ export class SmartclientAverageRenewalComponent implements OnInit {
   ngOnInit() {
     this.getCaseData()
       .then((res: any) => {
-        if(res.length>0){
+        if (res.length > 0) {
           this.drawChart(res);
           // this.checkData = false;
-        }else if(res.length==0){
+        } else if (res.length == 0) {
           // alert("there is no data to bind to chart");
-          res = [['Status','Cases'],['No Status',0],['No Status',0],['No Status',0]];
+          res = [['Status', 'Cases'], ['No Status', 0], ['No Status', 0], ['No Status', 0]];
           this.drawChart(res);
           // this.checkData = true;
 
-        }else{
+        } else {
           // this.checkData = true;
-       }
+        }
 
         this.drawChart(res);
       }, error => {
         console.log("error getCaseData " + error);
       });
-  
+
     this.getTerritories()
       .then((res: any) => {
         //this.drawChart(res);
@@ -838,22 +880,17 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       }, error => {
         console.log("error getWorkflowStatus " + error);
       });
-    
-    let caseTimeData = [{ 'item_id': 1, 'item_text': 'Median' },
-    { 'item_id': 2, 'item_text': 'Average' }]
-    
-   
 
-    this.sideViewDropDowns.showArrivalType = true;
-    // this.sideViewDropDowns.arrivalTypeData = ['SAOF', 'CPQ', 'Q2SC', 'Other'];
-    this.sideViewDropDowns.showYearDD = true;
+    let caseTimeData = [{ 'item_id': 1, 'item_text': 'Median' },
+    { 'item_id': 2, 'item_text': 'Average' }];
+    //let caseTimeData = ['Median' , 'Average' ];
     this.sideViewDropDowns.showCaseTime = true;
     this.sideViewDropDowns.caseTimeData = caseTimeData;
+    this.sideViewDropDowns.showArrivalType = true;
+    this.sideViewDropDowns.arrivalTypeData = ['SAOF', 'CPQ', 'Q2SC'];
+    this.sideViewDropDowns.showYearDD = true;
     this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
-
     this.sideViewDropDowns.compHeading = appheading.graph5;
-
-      
   }
 
 }

@@ -1,30 +1,30 @@
-
 <h3 class="page-heading">{{sideViewDDObj.compHeading}}</h3>
 <div class="navbar">
   <div class="dropdown" *ngIf="sideViewDDObj.showWorkFlow">
     <label for="options">Workflow
-          Status</label>
+      Status</label>
     <ng-multiselect-dropdown [placeholder]="'Workflow
             Status'" [data]="sideViewDDObj.workFlowData" [settings]="dropdownSettings"
       (onSelect)="onItemSelect($event,'workflow')" (onSelectAll)="onSelectAll($event,'workflow')"
-      (onDeSelect)="onItemDeSelect($event,'workflow')" (onDeSelectAll)="onDeSelectAll($event,'workflow')">
+      (onDeSelect)="onItemDeSelect($event,'workflow')" [(ngModel)]="workflowModel"
+      (onDeSelectAll)="onDeSelectAll($event,'workflow')">
     </ng-multiselect-dropdown>
   </div>
   <div class="dropdown" *ngIf="sideViewDDObj.showCaseCategory">
     <label for="options">Case
-          Category</label>
+      Category</label>
     <ng-multiselect-dropdown [placeholder]="'Case Category'" [data]="sideViewDDObj.caseCatData"
       [settings]="dropdownSettings" (onSelect)="onItemSelect($event,'caseType')"
-      (onSelectAll)="onSelectAll($event,'caseType')" (onDeSelect)="onItemDeSelect($event,'caseType')"
+      (onSelectAll)="onSelectAll($event,'caseType')"  [(ngModel)]="caseTypeModel" (onDeSelect)="onItemDeSelect($event,'caseType')"
       (onDeSelectAll)="onDeSelectAll($event,'caseType')">
     </ng-multiselect-dropdown>
   </div>
   <div class="dropdown" *ngIf="sideViewDDObj.showContracType">
     <label for="options">Contract
-          Type</label>
+      Type</label>
     <ng-multiselect-dropdown [placeholder]="'Contract Type'" [data]="sideViewDDObj.contractTypeData"
       [settings]="dropdownSettings" (onSelect)="onItemSelect($event,'contractType')"
-      (onSelectAll)="onSelectAll($event,'contractType')" (onDeSelect)="onItemDeSelect($event,'contractType')"
+      (onSelectAll)="onSelectAll($event,'contractType')"  [(ngModel)]="contractTypeModel" (onDeSelect)="onItemDeSelect($event,'contractType')"
       (onDeSelectAll)="onDeSelectAll($event,'contractType')">
     </ng-multiselect-dropdown>
   </div>
@@ -32,7 +32,7 @@
     <label for="options">Territory</label>
     <ng-multiselect-dropdown [placeholder]="'Territory'" [data]="sideViewDDObj.territoryData"
       [settings]="dropdownSettings" (onSelect)="onItemSelect($event,'territory')"
-      (onSelectAll)="onSelectAll($event,'territory')" (onDeSelect)="onItemDeSelect($event,'territory')"
+      (onSelectAll)="onSelectAll($event,'territory')"  [(ngModel)]="territoryModel" (onDeSelect)="onItemDeSelect($event,'territory')"
       (onDeSelectAll)="onDeSelectAll($event,'territory')">
     </ng-multiselect-dropdown>
   </div>
@@ -41,52 +41,50 @@
     <label for="options">Arrival Type</label>
     <ng-multiselect-dropdown [placeholder]="'Arrival Type'" [data]="sideViewDDObj.arrivalTypeData"
       [settings]="dropdownSettings" (onSelect)="onItemSelect($event,'arrivalType')"
-      (onSelectAll)="onSelectAll($event,'arrivalType')" (onDeSelect)="onItemDeSelect($event,'arrivalType')"
+      (onSelectAll)="onSelectAll($event,'arrivalType')"  [(ngModel)]="arrivalTypeModel" (onDeSelect)="onItemDeSelect($event,'arrivalType')"
       (onDeSelectAll)="onDeSelectAll($event,'arrivalType')">
     </ng-multiselect-dropdown>
   </div>
-  
-  <div class="dropdown" *ngIf="sideViewDDObj.showContractTime"> 
+
+  <div class="dropdown" *ngIf="sideViewDDObj.showContractTime">
     <label for="options">Contract
-          Time</label>
+      Time</label>
     <ng-multiselect-dropdown [placeholder]="'Contract Time'" [data]="sideViewDDObj.contractTimeData"
       [settings]="dropdownSettings" (onSelect)="onItemSelect($event,'contractTime')"
       (onSelectAll)="onSelectAll($event,'contractTime')" (onDeSelect)="onItemDeSelect($event,'contractTime')"
-      (onDeSelectAll)="onDeSelectAll($event,'contractTime')">
+      (onDeSelectAll)="onDeSelectAll($event,'contractTime')"  [(ngModel)]="contractTimeModel">
     </ng-multiselect-dropdown>
 
   </div>
- 
-
-    <form #ngFormDate="ngForm" class="inline">
-        <div class="dropdown hello-me" *ngIf="sideViewDDObj.showCaseTime">
-            <label for="options" id="caseTime">Case Time</label>
-            <!-- <ng-multiselect-dropdown [placeholder]="'Case Time'" [data]="sideViewDDObj.caseTimeData"
+  <form #ngFormDate="ngForm" class="inline">
+    <div class="dropdown hello-me" *ngIf="sideViewDDObj.showCaseTime">
+      <label for="options" id="caseTime">Case Time</label>
+      <!-- <ng-multiselect-dropdown [placeholder]="'Case Time'" [data]="sideViewDDObj.caseTimeData"
               [settings]="dropdownSettingsCaseTime" (onSelect)="onItemSelect($event,'casetime')"
               [(ngModel)]='selectedItemsCaseTime'>
             </ng-multiselect-dropdown> -->
-            <select class="form-control" id="casetime" name="casetime" [(ngModel)]="casetime" (click)="onItemSelect($event.target.value,'casetime')"  >
-              <option [value]="null">Select</option>
-              <option *ngFor="let caseData of sideViewDDObj.caseTimeData" >{{caseData.item_text}}</option>
-              </select>
-          </div>
-        <div class="dropdown hello-me" *ngIf="sideViewDDObj.showYearDD">
-         <label for="options" id="fromLabel">From
-            </label>
-            <select class="form-control" id="from" name="from" [(ngModel)]="from" (change)="onChangeFrom($event.target.value)" >
-                <option [value]="null">Select </option>
-                <option *ngFor="let datesFormed of fianldates" >{{datesFormed}}</option>
- 
-                </select>
-        </div>
-       <div class="dropdown hello-men" *ngIf="sideViewDDObj.showYearDD">
-        <label for="options" id="toLabel">To
-              </label>
-              <select class="form-control" id="to" name="to" [(ngModel)]="to" (change)="onChangeTo($event.target.value)">
-                  <option [value]="null">Select </option>
-                 <option *ngFor="let dates of toYear" >{{dates}}</option>
-               </select>
-        </div>
-     </form>
-
+      <select class="form-control" id="casetime" name="casetime" [(ngModel)]="casetimeModel"
+        (change)="onItemSelect($event.target.value,'casetime')">
+        <!-- <option [value]="null">Select</option> -->
+        <option *ngFor="let caseData of sideViewDDObj.caseTimeData" [ngValue]="caseData">{{caseData.item_text}}</option>
+      </select>
+    </div>
+    <div class="dropdown hello-me" *ngIf="sideViewDDObj.showYearDD">
+      <label for="options" id="fromLabel">From
+      </label>
+      <select class="form-control" id="from" name="from" [(ngModel)]="fromModel"
+        (change)="onChangeFrom($event.target.value)">
+        <option [value]="null">Select </option>
+        <option *ngFor="let datesFormed of fianldates">{{datesFormed}}</option>
+      </select>
+    </div>
+    <div class="dropdown hello-men" *ngIf="sideViewDDObj.showYearDD">
+      <label for="options" id="toLabel">To
+      </label>
+      <select class="form-control" id="to" name="to" [(ngModel)]="toModel" (change)="onChangeTo($event.target.value)">
+        <option [value]="null">Select </option>
+        <option *ngFor="let dates of toYear">{{dates}}</option>
+      </select>
+    </div>
+  </form>
 </div>

@@ -20,7 +20,7 @@ export class EbsContractByStatusComponent implements OnInit {
   public contractsData: any = [];
   // public selectedTerritories: any = 'all';
   public ebscolumnChartData: any;
-  public drillDownData:any;
+  public drillDownData: any;
   public territories: any;
   public drillDown: any;
   public checkDataEBS: any = false;
@@ -34,7 +34,7 @@ export class EbsContractByStatusComponent implements OnInit {
   public sideViewDropDowns = new SideViewDropDowns();
   @ViewChild('openSCModal') openScModel: ElementRef;
 
-  constructor(private _ebsService: EbsService, private _dataHandlerService: DataHandlerService,private _excelService:ExcelServiceService) {
+  constructor(private _ebsService: EbsService, private _dataHandlerService: DataHandlerService, private _excelService: ExcelServiceService) {
     this._dataHandlerService.dataFromSideView
       .subscribe(res => {
         //console.log("sub ebs" + JSON.stringify(res));
@@ -53,7 +53,7 @@ export class EbsContractByStatusComponent implements OnInit {
     this._dataHandlerService.setDataForMainLayout(true);
   }
 
-  
+
 
   public selectBar(event: ChartSelectEvent) {
     this.openScModel.nativeElement.click();
@@ -93,7 +93,7 @@ export class EbsContractByStatusComponent implements OnInit {
 
     }
   }
-  public exportToExcel(){
+  public exportToExcel() {
 
     // console.log("the excel data is :"+JSON.stringify(this.drillDownData));
     this._excelService.exportAsExcelFile(this.drillDownData, 'EBS Contracts By Status');
@@ -119,7 +119,7 @@ export class EbsContractByStatusComponent implements OnInit {
    */
   public getContractData() {
     return new Promise((resolve, reject) => {
-      let contractData=[];
+      let contractData = [];
       this._ebsService.getEBSContractState().subscribe(data => {
         if (data.length > 0) {
           this.contractsData = data;
@@ -188,7 +188,7 @@ export class EbsContractByStatusComponent implements OnInit {
             }
           }
           if (territories.length > 0)
-          array.push(otherTerritory);
+            array.push(otherTerritory);
           resolve(array);
         }
       )
@@ -272,7 +272,7 @@ export class EbsContractByStatusComponent implements OnInit {
         vAxis: {
           textStyle: { color: '#444444' },
           title: 'R12 Status',
-          titleTextStyle:{italic: false}
+          titleTextStyle: { italic: false }
         },
         series: {
           0: { color: '0B91E2' }
@@ -326,9 +326,14 @@ export class EbsContractByStatusComponent implements OnInit {
   }
 
   onDeSelectAll(item, from) {
-    this.territoriesArr = [];
-    this.workFlowStatusArr = [];
-    this.arrivalTypesArr = [];
+    if (from == 'territory') {
+      this.territoriesArr = [];
+    } else if (from == 'workflow') {
+      this.workFlowStatusArr = [];
+    } else if (from == 'arrivalType') {
+      this.arrivalTypesArr = [];
+    }
+    // 
     this.filterChartData();
   }
 
@@ -531,7 +536,7 @@ export class EbsContractByStatusComponent implements OnInit {
       for (let i in cases) {
         //let index=parseInt(i);
         // if(index % 2 == 0){
-          barColor='#4A90E2';
+        barColor = '#4A90E2';
         //}
         // else{
         //   barColor='#93C0F6';
@@ -616,7 +621,7 @@ export class EbsContractByStatusComponent implements OnInit {
     this.sideViewDropDowns.showYearDD = false;
     this.sideViewDropDowns.compHeading = appheading.graph2;
     this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
-             
+
   }
 }
 

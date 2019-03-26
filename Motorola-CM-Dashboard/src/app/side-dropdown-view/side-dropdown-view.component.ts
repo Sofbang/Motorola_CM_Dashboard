@@ -12,7 +12,7 @@ import { ViewChild, ElementRef } from '@angular/core';
   templateUrl: './side-dropdown-view.component.html',
   styleUrls: ['./side-dropdown-view.component.css']
 })
-export class SideDropdownViewComponent implements OnInit { 
+export class SideDropdownViewComponent implements OnInit {
   public sideViewDDObj = new SideViewDropDowns();
   public dropdownSettings = {};
   public selectedFrom: any;
@@ -21,34 +21,35 @@ export class SideDropdownViewComponent implements OnInit {
 
 
   public selectedItemsCaseTime = [
-    {'item_id':1,'item_text':'Median'},
+    { 'item_id': 1, 'item_text': 'Median' },
   ];
-  @ViewChild ('ngFormDate') ngFormDate:NgForm;
-
-
-  // public selectedItemsTerritory = [
-  //   {'item_id':1,'item_text':'Median'},
-  // ];
-  // public selectedItemsWorkflowStatus = [
-  //   {'item_id':1,'item_text':'Median'},
-  // ];
-  // public selectedItemsArrivalType = [
-  //   {'item_id':1,'item_text':'Median'},
-  // ];
-
+  @ViewChild('ngFormDate') ngFormDate: NgForm;
   public n: number;
-  public dropdownSettingsCaseTime={};
+  public dropdownSettingsCaseTime = {};
+  workflowModel: any;
+  caseTypeModel: any;
+  contractTypeModel: any;
+  territoryModel: any;
+  arrivalTypeModel: any;
+  contractTimemodel: any;
   screenHeight: any;
   screenWidth: any;
+  fromModel: any;
+  toModel: any;
   constructor(private _dataHandlerService: DataHandlerService) {
     this._dataHandlerService.sideViewDropDownData
       .subscribe(res => {
-        this.sideViewDDObj=new SideViewDropDowns();
+        this.sideViewDDObj = new SideViewDropDowns();
         this.sideViewDDObj = res;
         // console.log("subscribe inside sideview" + JSON.stringify(this.sideViewDDObj));
         this.ngFormDate.reset();
       });
+    this._dataHandlerService.resetDropdowns
+      .subscribe(result => {
+        this.resetDropDowns();
+      })
     this.getScreenSize();
+   
   }
 
   @HostListener('window:resize', ['$event'])
@@ -79,15 +80,27 @@ export class SideDropdownViewComponent implements OnInit {
     this._dataHandlerService.setDataFromSideView(jsonObj);
   }
 
+  resetDropDowns() {
+    this.workflowModel = [];
+    this.caseTypeModel = [];
+    this.contractTypeModel = [];
+    this.territoryModel = [];
+    this.arrivalTypeModel = [];
+    this.contractTimemodel = [];
+    this.fromModel = null;
+    this.toModel = null;
+  }
+
+
   public makeDate() {
-    var startDate = '2017-01-01';
-    var endDate = '2019-12-01';
-    var starting = new Date(startDate);
-    var ending = new Date(endDate);
-    var dates = [];
-    for (var i = starting.getFullYear(); i < ending.getFullYear() + 1; i++) {
+    let startDate = '2017-01-01';
+    let endDate = '2019-12-01';
+    let starting = new Date(startDate);
+    let ending = new Date(endDate);
+    let dates = [];
+    for (let i = starting.getFullYear(); i < ending.getFullYear() + 1; i++) {
       // console.log("the getFullYear is:" + JSON.stringify(starting.getFullYear()) + "the ith index is" + JSON.stringify(i));
-      for (var j = 1; j <= 12; j++) {
+      for (let j = 1; j <= 12; j++) {
         // console.log("inside the jth loop:" + j)
         if (i === ending.getFullYear() && j === ending.getMonth() + 3) {
           // console.log("inside the first if" + JSON.stringify(ending.getFullYear()))
@@ -99,12 +112,12 @@ export class SideDropdownViewComponent implements OnInit {
         }
         else if (j < 10) {
           // console.log("the else if second time is:")
-          var dateString = [i, '-', '0' + j, '-', '01'].join('');
+          let dateString = [i, '-', '0' + j, '-', '01'].join('');
           dates.push(dateString)
         }
         else {
           // console.log("the else part is:")
-          var dateString = [i, '-', j, '-', '01'].join('');
+          let dateString = [i, '-', j, '-', '01'].join('');
           dates.push(dateString);
         }
       }
@@ -116,24 +129,16 @@ export class SideDropdownViewComponent implements OnInit {
   }
 
   public makeDateFormat(arr) {
-    
     // this.fianldates=[];
     // console.log("inside the makeDateFormat Method:" + JSON.stringify(arr));
     for (let i in arr) {
       // console.log("in the for loop", +i)
-      var event = new Date(arr[i]);
-      // console.log("the event var data is :" + event);
-      var options = { year: 'numeric', month: 'short' };
+      let event = new Date(arr[i]);
+      // console.log("the event let data is :" + event);
+      let options = { year: 'numeric', month: 'short' };
       this.fianldates.push(event.toLocaleString('en', options));
-      // console.log("the dates are as under:" + this.fianldates);
-
 
     }
-    
-    // this.makeDate();
-    // console.log("the final one is :" + JSON.stringify(this.fianldates));
-    // this.fianldates=[];
-
   }
 
   public onChangeFrom(filterVal: any) {
@@ -150,57 +155,37 @@ export class SideDropdownViewComponent implements OnInit {
       this.toYear.push(this.fianldates[i]);
       //  console.log("after the push is done"+JSON.stringify(this.toYear));
       //  this.toYear=[];
-
-
     }
-    //  console.log("the final to year is:"+JSON.stringify(this.toYear));
-
-    //  this.makeDate();
-
-
-
-
   }
 
 
   public onChangeTo(filterVal: any) {
     // console.log("hey hi "+filterVal);
     // console.log("the values is "+this.selectedFrom);
-    var v = filterVal.split(' ');
+    let v = filterVal.split(' ');
     // console.log("the v is:"+v);
-    var newone = v[0] + ' 1, '
-    var newtwo = v[1];
-    var newthree = newone + newtwo;
+    let newone = v[0] + ' 1, '
+    let newtwo = v[1];
+    let newthree = newone + newtwo;
     // console.log("the three is :"+newthree);
-    var newModDate = new Date(newthree);
+    let newModDate = new Date(newthree);
     // console.log("",v.push(this.selectedFrom));
-    var tb = this.selectedFrom.split(' ');
-    var one = tb[0] + ' 1, ';
-    var two = tb[1];
-    var three = one + two;
+    let tb = this.selectedFrom.split(' ');
+    let one = tb[0] + ' 1, ';
+    let two = tb[1];
+    let three = one + two;
     // console.log("the three is :"+three);
-    var modDate = new Date(three);
-    var FirstDay = new Date(modDate.getFullYear(), modDate.getMonth(), 1).toLocaleDateString();
-    var LastDay = new Date(newModDate.getFullYear(), newModDate.getMonth() + 1, 0).toLocaleDateString();
-
-
-    var fd = moment(FirstDay).format('YYYY-MM-DD');
-    var ld = moment(LastDay).format('YYYY-MM-DD');
-    // console.log("the first one is:"+fd);
-    // console.log("the last is:"+ld);
-    // console.log("the d is :",d)
-    // console.log("the moment is:",temp);
-
-    //console.log("the first day is:",FirstDay);
-    //console.log("last :",LastDay);
+    let modDate = new Date(three);
+    let FirstDay = new Date(modDate.getFullYear(), modDate.getMonth(), 1).toLocaleDateString();
+    let LastDay = new Date(newModDate.getFullYear(), newModDate.getMonth() + 1, 0).toLocaleDateString();
+    let fd = moment(FirstDay).format('YYYY-MM-DD');
+    let ld = moment(LastDay).format('YYYY-MM-DD');
     let jsonObj = { 'event': 'onChangeTo', 'from': 'yeardropdown', 'data': { 'firstDay': fd, 'lastDay': ld } }
     this._dataHandlerService.setDataFromSideView(jsonObj);
     //this.getDateFilteredResults(FirstDay,LastDay);
 
   }
 
-
-  
   // public getDateFilteredResults(startDate, endDate){
   //   return new Promise((resolve,reject) => {
   //     let dateFilteredData;
@@ -220,7 +205,7 @@ export class SideDropdownViewComponent implements OnInit {
   //   })
   // }
 
-  
+
   ngOnInit() {
     //dropdown settings
     // this.fianldates=[];
@@ -234,19 +219,9 @@ export class SideDropdownViewComponent implements OnInit {
       allowSearchFilter: true,
       dir: 'asc'
     };
-    this.dropdownSettingsCaseTime = {
-      singleSelection: true,
-      idField: 'item_id',
-      textField: 'item_text',
-      itemsShowLimit: 1,
-     dir: 'asc'
-    };
-
     this.makeDate();
     
+   
     //$('.side-view-dropDowns').css('height', this.screenHeight);//to make side dropdown view to screen height
   }
-    
-
-
 }
