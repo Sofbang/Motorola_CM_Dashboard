@@ -549,8 +549,7 @@ export class ScNewCasesComponent implements OnInit {
         vAxis: {
           textStyle: { color: '#444444' },
           title:'Number Of New Cases/Renewals',
-          slantedText: true,  
-          slantedTextAngle: 90 
+          titleTextStyle:{italic: false}
         },
         series: {
           0: { color: '0B91E2' },
