@@ -328,8 +328,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
         vAxis: {
           textStyle: { color: '#444444' },
           title:'Smart Client Status',
-          slantedText: true,  
-          slantedTextAngle: 90 
+          titleTextStyle:{italic: false}
         },
         series: {
           0: { color: '#93C0F6' },

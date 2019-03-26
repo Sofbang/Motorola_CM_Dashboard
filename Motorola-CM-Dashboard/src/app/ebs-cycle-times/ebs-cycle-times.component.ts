@@ -309,8 +309,7 @@ export class EbsCycleTimesComponent implements OnInit {
         vAxis: {
           textStyle: { color: '#444444' },
           title:'Median Days',
-          slantedText: false,  
-          slantedTextAngle: 90,
+          titleTextStyle:{italic: false}
           
         },
         series: {

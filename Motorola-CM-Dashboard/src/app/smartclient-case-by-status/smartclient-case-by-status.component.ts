@@ -305,8 +305,8 @@ export class SmartclientCaseByStatusComponent implements OnInit {
           bold: true,    // true or false
           italic: false
         },
-        width: 1100, height: 500,
-        chartArea: { left: 223, top: 20, width: '50%' },
+        width: 1100, height: 400,
+        chartArea: { left: 223, top: 20,  width: '50%' },
         legend: { position: 'none'},
         backgroundColor: '#FFFFFF',
         hAxis: {
@@ -315,8 +315,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
         vAxis: {
           textStyle: { color: '#444444' },
           title: 'Smart Client Status',
-          slantedText: true,
-          slantedTextAngle: 90
+          titleTextStyle:{italic: false}
         },
         series: {
           0: { color: '#93C0F6' }

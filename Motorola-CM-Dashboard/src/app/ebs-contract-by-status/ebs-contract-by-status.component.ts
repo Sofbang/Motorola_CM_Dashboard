@@ -272,8 +272,7 @@ export class EbsContractByStatusComponent implements OnInit {
         vAxis: {
           textStyle: { color: '#444444' },
           title: 'R12 Status',
-          slantedText: true,
-          slantedTextAngle: 90
+          titleTextStyle:{italic: false}
         },
         series: {
           0: { color: '0B91E2' }
