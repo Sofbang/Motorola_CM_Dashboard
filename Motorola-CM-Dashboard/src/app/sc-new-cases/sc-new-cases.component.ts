@@ -12,6 +12,7 @@ import * as moment from 'moment';
 import { sep } from 'path';
 import { Title } from '@angular/platform-browser';
 import { ExcelServiceService } from '../services/convert_to_excel/excel-service.service';
+import { jsonpFactory } from '@angular/http/src/http_module';
 
 
 @Component({
@@ -240,77 +241,93 @@ export class ScNewCasesComponent implements OnInit {
     console.log("the last date is:"+JSON.stringify(lastDate));
     let firstDate = (moment(date).subtract(1, 'years'))
     console.log("the first date is: "+JSON.stringify(moment(firstDate).format('YYYY-MM-DD')));
-
+    let countArr=[];
     json = this.dateRange(moment(firstDate).format('YYYY-MM-DD'),lastDate);
     console.log("the json returned is:"+JSON.stringify(json));
     //console.log("the data is:"+JSON.stringify(data));
     //console.log("the array is:"+JSON.stringify(this.arrr))
-      // for(let j in data){
-    //     console.log("1")
-      //   if(moment(data[j].case_creation_date).format('MMM-YY')=='Jan-'+moment(firstDate).format('YY')){
-      //     // console.log("2")
-          
-      //     this.jancount17++;
-      //   }
-      //    else if(moment(data[j].case_creation_date).format('MMM-YY')=='Feb-'+moment(firstDate).format('YY')){
-      //     // console.log("3")
-          
-      //     this.febcount17++;
-      //   }
-      //    else if(moment(data[j].case_creation_date).format('MMM-YY')=='Mar-'+moment(firstDate).format('YY')){
-      //     // console.log("4")
-         
-      //     this.marcount17++;
-      //   }
-      //   else if(moment(data[j].case_creation_date).format('MMM-YY')=='Apr-'+moment(firstDate).format('YY')){
-      //     // console.log("5")
-      
-      //     this.aprcount17++;
-      //   }
-      //    else if(moment(data[j].case_creation_date).format('MMM-YY')=='May-'+moment(firstDate).format('YY')){
-      //     // console.log("6")
+      for(let j in data){
+        console.log("1")
+        for(let k in json){
+
         
-      //     this.maycount17++;
-      //   }
-      //     else if(moment(data[j].case_creation_date).format('MMM-YY')=='Jun-'+moment(firstDate).format('YY')){
-      //     // console.log("7")
+        if(moment(data[j].case_creation_date).format('MMM-YY')>=json[k]){
+          // console.log("2")
+          
+          countArr.push(this.jancount17);
+          this.jancount17=0
+        }
+         else if(moment(data[j].case_creation_date).format('MMM-YY')>=json[k]){
+          // console.log("3")
+          
+          countArr.push(this.jancount17);
+          this.jancount17=0
+        }
+         else if(moment(data[j].case_creation_date).format('MMM-YY')>=json[k]){
+          // console.log("4")
          
-      //     this.juncount17++;
-      //   }
-      //      else if(moment(data[j].case_creation_date).format('MMM-YY')=='Jul-'+moment(firstDate).format('YY')){
-      //     // console.log("8")
+          countArr.push(this.jancount17);
+          this.jancount17=0
+        }
+        else if(moment(data[j].case_creation_date).format('MMM-YY')>=json[k]){
+          // console.log("5")
+      
+          countArr.push(this.jancount17);
+          this.jancount17=0
+        }
+         else if(moment(data[j].case_creation_date).format('MMM-YY')>=json[k]){
+          // console.log("6")
+        
+          countArr.push(this.jancount17);
+          this.jancount17=0
+        }
+          else if(moment(data[j].case_creation_date).format('MMM-YY')>=json[k]){
+          // console.log("7")
+         
+          countArr.push(this.jancount17);
+          this.jancount17=0
+        }
+           else if(moment(data[j].case_creation_date).format('MMM-YY')>=json[k]){
+          // console.log("8")
           
-      //     this.julcount17++;
-      //   }
-      //     else if(moment(data[j].case_creation_date).format('MMM-YY')=='Aug-'+moment(firstDate).format('YY')){
-      //     // console.log("9")
+          countArr.push(this.jancount17);
+          this.jancount17=0
+        }
+          else if(moment(data[j].case_creation_date).format('MMM-YY')>=json[k]){
+          // console.log("9")
           
-      //     this.augcount17++;
-      //   }
-      //    else if(moment(data[j].case_creation_date).format('MMM-YY')=='Sep-'+moment(firstDate).format('YY')){
-      //     // console.log("10")
+          countArr.push(this.jancount17);
+          this.jancount17=0
+        }
+         else if(moment(data[j].case_creation_date).format('MMM-YY')>=json[k]){
+          // console.log("10")
           
-      //     this.sepcount17++;
-      //   }
-      //      else if(moment(data[j].case_creation_date).format('MMM-YY')=='Oct-'+moment(firstDate).format('YY')){
-      //     // console.log("11")
+          countArr.push(this.jancount17);
+          this.jancount17=0
+        }
+           else if(moment(data[j].case_creation_date).format('MMM-YY')>=json[k]){
+          // console.log("11")
           
-      //     this.octcount17++;
-      //   }
-      //      else if(moment(data[j].case_creation_date).format('MMM-YY')=='Nov-'+moment(firstDate).format('YY')){
-      //     // console.log("12")
+          countArr.push(this.jancount17);
+          this.jancount17=0
+        }
+           else if(moment(data[j].case_creation_date).format('MMM-YY')>=json[k]){
+          // console.log("12")
           
-      //     this.novcount17++;
-      //   }
-      //      else if(moment(data[j].case_creation_date).format('MMM-YY')=='Dec-'+moment(firstDate).format('YY')){
-      //     // console.log("13");
+          countArr.push(this.jancount17);
+          this.jancount17=0
+        }
+           else if(moment(data[j].case_creation_date).format('MMM-YY')>=json[k]){
+          // console.log("13");
           
-      //     this.deccount17++;
-      //   }
-      //   else{
+          countArr.push(this.jancount17);
+          this.jancount17=0
+        }
+        else{
           
-      //   }
-      // }
+        }
+      }
+    }
 
      // json = [['Jan '+moment(firstDate).format('YY')+" :"+this.jancount17],['Feb '+moment(firstDate).format('YY')+" :"+this.febcount17],['Mar '+moment(firstDate).format('YY')+" :"+this.marcount17]];
       //console.log("the data is:"+JSON.stringify(json));
