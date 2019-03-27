@@ -17,6 +17,8 @@ import * as moment from 'moment';
 })
 export class EbsCycleTimesComponent implements OnInit {
   public cycleTimesData: any = [];
+  public arrivalTypesArr: any = [];
+  public minmaxdates:any;
   public ebscolumnChartData: any;
   public drillDown:any;
   public territories: any;
@@ -26,6 +28,12 @@ export class EbsCycleTimesComponent implements OnInit {
   public workFlowStatusArr: any = [];
   public sideViewDropDowns = new SideViewDropDowns();
   public checkData:Boolean=false;
+  public status: any;
+  public drillDownData: any;
+  public restUrlFilterYr: string = 'sc_case_status_med_yr';
+
+  public monthArr = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
   @ViewChild('openSCModal') openScModel: ElementRef;
 
   constructor(private _ebsService: EbsService, private _dataHandlerService: DataHandlerService, private _excelService:ExcelServiceService) {
@@ -42,6 +50,8 @@ export class EbsCycleTimesComponent implements OnInit {
         }
         else if (event == 'ondeselectall') {
           this.onDeSelectAll(incomingData, from);
+        } else if (event == 'onchangeto') {
+          this.onToYearChange(incomingData);
         }
       });
       this._dataHandlerService.setDataForMainLayout(true);
@@ -50,16 +60,18 @@ export class EbsCycleTimesComponent implements OnInit {
    public selectBar(event: ChartSelectEvent) {
     this.openScModel.nativeElement.click();
 
-    let drillDownStatusnew =[];let status:any;
-    drillDownStatusnew = (event.selectedRowValues[0]).split(' ');
-    status = drillDownStatusnew[0];
-    console.log("the drilldown status is:"+JSON.stringify(status));
-    console.log("in the selectBar"+JSON.stringify(event.selectedRowValues[0]));
+    // let drillDownStatusnew =[];let status:any;
+    // drillDownStatusnew = (event.selectedRowValues[0]).split(' ');
+    // status = drillDownStatusnew[0];
+    // console.log("the drilldown status is:"+JSON.stringify(status));
+    // console.log("in the selectBar"+JSON.stringify(event.selectedRowValues[0]));
     if(event.message=='select'){
-
-    this.newModelCounts = event.selectedRowValues[1]
-    this.data = event.selectedRowValues[0];
-    console.log("the data is:",this.data);
+      this.newModelCounts = event.selectedRowValues[1];
+      this.data = event.selectedRowValues[0];
+      //console.log("the data is:" + JSON.stringify(this.data));
+      this.status = this.fdld(this.data);
+    
+    // console.log("the data is:",this.data);
     $('.modal .modal-dialog').css('width', $(window).width() * 0.95);//fixed
     $('.modal .modal-body').css('height', $(window).height() * 0.77);//fixed
     $('tbody.SCModlTbody').css('max-height', $(window).height() * 0.69);
@@ -68,217 +80,155 @@ export class EbsCycleTimesComponent implements OnInit {
     // $('tbody.SCModlTbody').css('display', 'block');
     $('tbody.SCModlTbody').css('width', '100%');
 
-    this.getDrillDownData(status)
+    this.getDrillDownData(moment(status[0]).format('YYYY-MM-DD'), moment(status[1]).format('YYYY-MM-DD'))
     .then((res:any) => {
-      //console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(res.length));
-      // for(let i in res){
-         
-      //    this.drillDown.push({'NSS_Aging': moment(res[i].contract_creation_date).format('YYY-MM-DD')});
+      
+      //console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(res));
 
-      // }
-      console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(this.drillDown));
+      for (let i in res) {
+        //res[i].
+        res[i].contract_creation_date = moment(res[i].case_creation_date).format('YYYY-MM-DD');
+        res[i].sts_changed_on = moment(res[i].sts_changed_on).format('YYYY-MM-DD');
+        //this.drillDown(moment(res[i].contract_creation_date).format('YYY-MM-DD'));
+      }
+      console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(this.drillDown));
+      this.drillDownData = res;
 
     }, error => {
-      console.log("error getTerritories " + error);
+      //console.log("error getTerritories " + error);
     });
     this.drillDown=[];
     }
   }
-
   public exportToExcel(){
-    let data: any = [{
-      Customer: 'John',
-      Status: 'Doe',
-      Owner: 'john@example.com',
-      OpenDate:'05/03/2019',
-      NSSAging:'11 Days',
-      Contract_Start_Date:'05/03/2019'
-    },
+   
+  
+    this._excelService.exportAsExcelFile(this.drillDownData, 'EBS Cycle Times');
 
-    {
+  }
 
-      Customer: 'Mary',
-      Status: 'Moe',
-      Owner: 'mary@example.com',
-      OpenDate:'05/03/2019',
-      NSSAging:'3 Days',
-      Contract_Start_Date:'05/03/2019'
-
-
-    },
-
-    {
-
-      Customer: 'July',
-      Status: 'Dooley',
-      Owner: 'july@example.com',
-      OpenDate:'05/03/2019',
-      NSSAging:'5 Days',
-      Contract_Start_Date:'05/03/2019'
-
-
-    },
-    {
-    
-      Customer: 'July',
-      Status: 'Dooley',
-      Owner: 'july@example.com',
-      OpenDate:'05/03/2019',
-      NSSAging:'6 Days',
-      Contract_Start_Date:'05/03/2019'
-    },
-
-    {
-      Customer: 'July',
-      Status: 'Dooley',
-      Owner: 'july@example.com',
-      OpenDate:'05/03/2019',
-      NSSAging:'7 Days',
-      Contract_Start_Date:'05/03/2019'
-    },
-    
-    {
-      
-      Customer: 'July',
-      Status: 'Dooley',
-      Owner: 'july@example.com',
-      OpenDate:'05/03/2019',
-      NSSAging:'9 Days',
-      Contract_Start_Date:'05/03/2019'
-   },
-    
-    {
-      
-      Customer: 'July',
-      Status: 'Dooley',
-      Owner: 'july@example.com',
-      OpenDate:'05/03/2019',
-      NSSAging:'8 Days',
-      Contract_Start_Date:'05/03/2019'
-   },
-     {
-      Customer: 'July',
-      Status: 'Dooley',
-      Owner: 'july@example.com',
-      OpenDate:'05/03/2019',
-      NSSAging:'10 Days',
-      Contract_Start_Date:'05/03/2019'
-
-     },
-     {
-      Customer: 'July',
-      Status: 'Dooley',
-      Owner: 'july@example.com',
-      OpenDate:'05/03/2019',
-      NSSAging:'15 Days',
-      Contract_Start_Date:'05/03/2019'
-     },
-    {
-      Customer: 'July',
-      Status: 'Dooley',
-      Owner: 'july@example.com',
-      OpenDate:'05/03/2019',
-      NSSAging:'14 Days',
-      Contract_Start_Date:'05/03/2019'
-    },
-   {
-    Customer: 'July',
-    Status: 'Dooley',
-    Owner: 'july@example.com',
-    OpenDate:'05/03/2019',
-    NSSAging:'12 Days',
-    Contract_Start_Date:'05/03/2019'
-   },
-   {
-    Customer: 'July',
-    Status: 'Dooley',
-    Owner: 'july@example.com',
-    OpenDate:'05/03/2019',
-    NSSAging:'1 Days',
-    Contract_Start_Date:'05/03/2019'
-   }];
-
-    this._excelService.exportAsExcelFile(data, 'EBS Cycle Times');
+  
+  public fdld(data) {
+    var v = data.split(' ');
+    let arr = [];
+    var newone = v[0] + ' 1, '
+    var newtwo = v[1];
+    var newthree = newone + newtwo;
+    var newModDate = new Date(newthree);
+    var FirstDay = new Date(newModDate.getFullYear(), newModDate.getMonth(), 1).toLocaleDateString();
+    var LastDay = new Date(newModDate.getFullYear(), newModDate.getMonth() + 1, 0).toLocaleDateString();
+    var fd = moment(FirstDay).format('YYYY-MM-DD');
+    var ld = moment(LastDay).format('YYYY-MM-DD');
+    arr.push(fd);
+    arr.push(ld);
+    return arr;
 
   }
 
 
+  public scNewCaseAllData: any;
+  public datesData = [];
 
-  // public getCycleTimesData() {
-  //   return new Promise((resolve, reject) => {
-  //     let cycleTimesData;
-  //     this._ebsService.getEBSCycleTimes().subscribe(data => {
-  //       this.cycleTimesData = data;
-  //       cycleTimesData = this.makeChartData(data);
-  //       //console.log("contracts" + this.contracts)
-  //     }, err => console.error(err),
-  //       // the third argument is a function which runs on completion
-  //       () => {
-  //         resolve(this.makeChartArr(cycleTimesData));
-  //       }
-  //     )
-  //   }).catch((error) => {
-  //     reject(error);
-  //     console.log('errorin getting data :', error);
-  //   })
-  // }
+  public getCycleTimes() {
+      let json:any;
+      let date = new Date();
+      let lastDate = (moment(date).format('YYYY-MM-DD'));
+      console.log("the last date is:"+JSON.stringify(lastDate));
+      let firstDate = (moment(date).subtract(1, 'years'))
+      console.log("the first date is: "+JSON.stringify(moment(firstDate).format('YYYY-MM-DD')));
+      let countEnd=[];
+      json={ 'first':moment(firstDate).format('YYYY-MM-DD'),'last':lastDate}
+      return new Promise((resolve, reject) => {
+      this._ebsService.getEBSCycleTimes(json).subscribe(data => {
+        this.cycleTimesData = data;
+        console.log("the data is:"+JSON.stringify(this.cycleTimesData)); 
+        this.datesData=[];
+        this.datesData.push(firstDate);
+        this.datesData.push(lastDate);
+        resolve(this.makeCount(this.datesData,data));
+        
+      }, error => {
+        reject(error);
+      })
+  });
+}
 
+  public makeCount(datesData,scNewCaseAllData) {
+    let datejsonArr: any = [];
+    let lastDate = datesData[1];
+    let firstDate = datesData[0];
+    datejsonArr = this.dateRange(moment(firstDate).format('YYYY-MM-DD'), lastDate);
+    
+    return this.getDataFilterByDate(datejsonArr,scNewCaseAllData);
+  }
+
+  getDataFilterByDate(datejsonArr,scNewCaseAllData) {
+    let filterSCByDate = [],arr,filterScData
+    for (let i in datejsonArr) {
+       arr = [],filterScData=[];
+       filterScData = scNewCaseAllData.filter(item => {
+        return this.convertDateMoment(item.contract_creation_date) >= datejsonArr[i] && this.convertDateMoment(item.contract_creation_date) <= this.calcLastDayMonth(datejsonArr[i]);
+      })
+      arr.push(this.getMonthYrByDate(datejsonArr[i]));
+      arr.push(filterScData.length);
+      filterSCByDate.push(arr);
+    }
+    return filterSCByDate;
+  }
+
+
+  calcLastDayMonth(incominDate) {
+    let date = new Date(incominDate);
+    var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    return this.convertDateMoment(lastDay);
+  }
+
+  getMonthYrByDate(incominDate) {
+   
+    var dt = new Date(incominDate);
+  
+    return this.monthArr[dt.getMonth()] + ' ' + dt.getFullYear();
+  }
+
+  convertDateMoment(incominDate) {
+    return moment(incominDate).format('YYYY-MM-DD');
+  }
+
+
+ 
   public getebsTerritoriesData() {
     return new Promise((resolve, reject) => {
       let territories;
       this._ebsService.getEBSTerritories().subscribe(data => {
         territories = data;
-        // console.log("territories" + this.territories)
+        
       }, err => console.error(err),
-        // the third argument is a function which runs on completion
+        
         () => {
           let array = [];
           let count = 0;
           let otherTerritory;
           for (let i in territories) {
             if (territories[i].territory == 'OTHER') {
-              //console.log("The other territory " + territories[i].territory)
-              // otherTerritory = territories[i].territory
+             
               otherTerritory = { 'item_id': territories[i].territory, 'item_text': territories[i].territory };
             } else {
               array.push({ 'item_id': territories[i].territory, 'item_text': territories[i].territory });
             }
           }
           array.push(otherTerritory);
-          console.log(array);
+         
           resolve(array);
         }
       )
     }).catch((error) => {
       reject(error);
-      console.log('errorin getting data :', error);
+     
     })
   }
 
-  public getWorkflowStatus() {
-    return new Promise((resolve, reject) => {
-      let workflowStatus;
-      this._ebsService.getEBSWorkflowStatus()
-        .subscribe(data => {
-          workflowStatus = data;
-          //console.log("territories" + territories)
-        }, err => console.error(err),
-          // the third argument is a function which runs on completion
-          () => {
-            let array = [];
-            let count = 0;
-            let otherStatus, otherFlag = false;
-            for (let i in workflowStatus) {
-              array.push({ 'item_id': workflowStatus[i].to_status, 'item_text': workflowStatus[i].to_status });
-            }
-            resolve(array);
-          }
-        )
-    }).catch((error) => {
-      console.log('errorin getting data :', error);
-      reject(error);
-    })
-  }
+ 
+ 
 
 
 
@@ -303,7 +253,9 @@ export class EbsCycleTimesComponent implements OnInit {
         backgroundColor: '#FFFFFF',
         hAxis: {
           textStyle: { color: '#444444' },
-          slantedText: false,  
+            
+          slantedText: true,
+          slantedTextAngle: 90
           
         },
         vAxis: {
@@ -313,8 +265,8 @@ export class EbsCycleTimesComponent implements OnInit {
           
         },
         series: {
-          0: { color: '#93C0F6' },
-          1: { color: '#3274C2' }
+          0: { color: '#3274C2' },
+          
 
         },
         tooltip: { isHtml: false, type: 'string' }
@@ -322,17 +274,52 @@ export class EbsCycleTimesComponent implements OnInit {
     }
   }
 
+  public fromMedOrAvg = 'median';
+
     // ng multiselect events implemented by Vishal Sehgal 12/2/2019
     onItemSelect(item, from) {
       if (from == 'territory') {
         this.territoriesArr.push(item)
-      } else if (from == 'workflow') {
-        this.workFlowStatusArr.push(item);
+      } else if (from == 'arrivalType') {
+        this.arrivalTypesArr.push(item);
       }
-      console.log("territory" + JSON.stringify(this.territoriesArr));
-      console.log("workflow" + JSON.stringify(this.workFlowStatusArr));
+      else if (from == 'casetime') {
+        this._dataHandlerService.resetAllDropDowns(true);
+        this.territoriesArr = [];
+        this.workFlowStatusArr = [];
+        this.arrivalTypesArr = [];
+        // console.log("casetime selected Median" + from);
+        if (item == 'Median') {
+          console.log("in the If of Medain Days");
+          this.restUrlFilterYr = 'sc_case_status_med_yr';
+          this.fromMedOrAvg = 'median';
+          //console.log("casetime selected Median" + this.restUrlFilterYr);
+          this.getCycleTimes()
+            .then((res: any) => {
+              this.drawchart(res);
+              // this.filterChartData();
+            }, error => {
+              console.log("error getCaseData " + error);
+            });
+        } else if (item == 'Average') {
+          //console.log("in the else if of Medain Days" );
+          this.restUrlFilterYr = 'sc_case_status_avg_yr';
+          this.fromMedOrAvg = 'average';
+          //console.log("casetime selected Averaage" + this.restUrlFilterYr);
+          // this.getCaseDataAvg()
+          //   .then((res: any) => {
+  
+          //     this.drawchart(res);
+          //     //this.filterChartData();
+          //   }, error => {
+          //     console.log("error getCaseDataAvg " + error);
+          //   });
+        }
+      //console.log("territory" + JSON.stringify(this.territoriesArr));
+     // console.log("workflow" + JSON.stringify(this.workFlowStatusArr));
       this.filterChartData();
-    }
+      }
+     }
   
     onItemDeSelect(item, from) {
       if (from == 'territory') {
@@ -364,6 +351,16 @@ export class EbsCycleTimesComponent implements OnInit {
       // console.log("onDeSelectAll" + JSON.stringify(item));
       this.filterChartData();
     }
+
+
+    onToYearChange(item) {
+      //  console.log("the item is:", item);
+      this.datesData = [];
+      this.datesData.push(item.firstDay);
+      this.datesData.push(item.lastDay);
+      //console.log("the dates data is:" + JSON.stringify(this.datesData));
+      this.filterChartData();
+    }
   
     /**
      * This method filters the data according selected territories and workflowstatus
@@ -371,10 +368,10 @@ export class EbsCycleTimesComponent implements OnInit {
     public filterChartData() {
       let finalArr = [];
       //console.log("case data" + JSON.stringify(this.caseData));
-      if (this.territoriesArr.length == 0 && this.workFlowStatusArr.length > 0) {
+      if (this.territoriesArr.length == 0 && this.arrivalTypesArr.length > 0) {
         //console.log("t0 s>0");
-        for (let j in this.workFlowStatusArr) {
-          let workflowItem = this.workFlowStatusArr[j];
+        for (let j in this.arrivalTypesArr) {
+          let workflowItem = this.arrivalTypesArr[j];
           let workflowFilterarr = this.cycleTimesData.filter(item => {
             return (item.status == workflowItem);
           });
@@ -384,7 +381,7 @@ export class EbsCycleTimesComponent implements OnInit {
           //finalArr.push(workflowFilterarr);
           //finalArr = workflowFilterarr;
         }
-      } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length > 0) {
+      } else if (this.arrivalTypesArr.length == 0 && this.territoriesArr.length > 0) {
         //console.log("t>1 s0");
         for (let i in this.territoriesArr) {
           let territoryItem = this.territoriesArr[i];
@@ -398,7 +395,7 @@ export class EbsCycleTimesComponent implements OnInit {
           //finalArr.push(territoryFilterarr);
           //finalArr = territoryFilterarr;
         }
-      } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length == 0) {
+      } else if (this.arrivalTypesArr.length == 0 && this.territoriesArr.length == 0) {
         //console.log("t0 s0");
         let cases = this.makeChartData(this.cycleTimesData);
         let chartArr = this.makeChartArr(cases)
@@ -414,8 +411,8 @@ export class EbsCycleTimesComponent implements OnInit {
           });
           //console.log("territoryFilterarr" + JSON.stringify(territoryFilterarr));
           //finalArr = territoryFilterarr;
-          for (let j in this.workFlowStatusArr) {
-            let workflowItem = this.workFlowStatusArr[j];
+          for (let j in this.arrivalTypesArr) {
+            let workflowItem = this.arrivalTypesArr[j];
             let workflowFilterarr = territoryFilterarr.filter(item => {
               return (item.status == workflowItem);
             });
@@ -444,33 +441,43 @@ export class EbsCycleTimesComponent implements OnInit {
       return accumulator + num;
     }
   
-    /**
-     * This method make chart data by doing groupby them as we are getting whole data from service.
-     * @param data-ungrouped data it has data like open many rows of data,inprog many rows of data 
-     */
-    public makeChartData(data) {
-      let tempArr = [];
-      let finalArr = [];
-      tempArr.push(this._dataHandlerService.groupBySameKeyValues(data, 'status'));
-      //this.caseDataGrpBy=tempArr;//using in filter data
-      for (let k in tempArr[0]) {
-        let elmData = tempArr[0][k]
-        let medianDays = [], contractsCount = [], json = {}, statusName;
-        //console.log("--hello"+JSON.stringify(tempArr[k]));
-        for (let i = 0; i < elmData.length; i++) {
-          //console.log("--hello1"+JSON.stringify(tempArr[k][i]));
-          let elem = elmData[i];
-          medianDays.push(parseInt(elem.mediandays));
-          contractsCount.push(parseInt(elem.contractscount));
-          statusName = elmData[0].status
-        }
-        json = { status: statusName, mediandays: medianDays.reduce(this.sum), contractscount: contractsCount.reduce(this.sum) };
-        finalArr.push(json);
-      }
-      //console.log("makeChartData" + JSON.stringify(finalArr));
-      return finalArr;
-    }
+   
   
+    public makeChartData(data) {
+      let array = [];
+      if (data.length == 0) {
+        console.log("the if of check for length");
+        this.checkData = true;
+        array = [['Months', 'Cases Counts'], ['Jan 17', 0], ['Feb 17', 0], ['Mar 17', 0], ['Apr 17', 0], ['May 17', 0], ['Jun 17', 0], ['Jul 17', 0], ['Aug 17', 0], ['Sep 17', 0], ['Oct 17', 0], ['Nov 17', 0], ['Dec 17', 0], ['Jan 18', 0], ['Feb 18', 0], ['Mar 18', 0], ['Apr 18', 0], ['May 18', 0], ['Jun 18', 0], ['Jul 18', 0], ['Aug 18', 0], ['Sep 18', 0], ['Oct 18', 0], ['Nov 18', 0], ['Dec 18', 0]];
+        this.drawchart(array);
+  
+      } else {
+        array.push(['Months', 'Cases Counts']);
+        for (let i in data) {
+          array.push(data[i]);
+        }
+      }
+      return array;
+    }
+
+    public dateRange(startDate, endDate) {
+      let start      = startDate.split('-');
+      let end        = endDate.split('-');
+      let startYear  = parseInt(start[0]);
+      let endYear    = parseInt(end[0]);
+      let dates      = [];
+    
+      for(var i = startYear; i <= endYear; i++) {
+        var endMonth = i != endYear ? 11 : parseInt(end[1]) - 1;
+        var startMon = i === startYear ? parseInt(start[1])-1 : 0;
+        for(var j = startMon; j <= endMonth; j = j > 12 ? j % 12 || 11 : j+1) {
+          var month = j+1;
+          var displayMonth = month < 10 ? '0'+month : month;
+          dates.push([i, displayMonth, '01'].join('-'));
+        }
+      }
+      return dates;
+    }
   
     /**
      * Common method to create google chart array structure.
@@ -523,83 +530,77 @@ export class EbsCycleTimesComponent implements OnInit {
       return array;
     }
 
-    public getDrillDownData(status){
+    public getDrillDownData(first,last){
       return new Promise((resolve, reject) => {
-        this._ebsService.getEBSDrillDown(status).subscribe(data => {
+        let jsonObj = { 'first': this.status[0], 'last': this.status[1] };
+        this._ebsService.getEBSDrillDown(jsonObj).subscribe(data => {
           this.drillDown = data;
           // console.log("territories" + this.territories)
         }, err => console.error(err),
           // the third argument is a function which runs on completion
           () => {
-            console.log("the drilldown data recived is:"+this.drillDown);
+          //  console.log("the drilldown data recived is:"+this.drillDown);
             resolve(this.drillDown);
           }
         )
       }).catch((error) => {
         reject(error);
-        console.log('errorin getting data :', error);
+        //console.log('errorin getting data :', error);
       })
   
     }
+
+    public getMinMaxDates(){
+      return new Promise((resolve, reject) => {
+         this._ebsService.getEBSMinMaxDates().subscribe(data => {
+           this.minmaxdates = data;
+           // console.log("territories" + this.territories)
+         }, err => console.error(err),
+           // the third argument is a function which runs on completion
+           () => {
+             //console.log("the drilldown data recived is:"+JSON.stringify(this.drillDown));
+             resolve(this.minmaxdates);
+           }
+         )
+       }).catch((error) => {
+         reject(error);
+         //console.log('errorin getting data :', error);
+       })
+     }
   
 
     
 
 
   ngOnInit() {
-
-     let res2 =[['Month Names', 'Contracts In', 'Contracts In' ],
-     [ 'Jan 17/18' ,  165,      938 ],
-     ['Feb 17/18',  135,      1120 ],
-     ['Mar 17/18',  157,      1167 ],
-     ['Apr 17/18',  139,      1110 ],
-     ['May 17/18',  136,      691  ],
-     ['Jun 17/18',  122,      155 ],
-     ['Jul 17/18',  544,       787 ],
-     ['Aug 17/18',  999,       900 ],
-     ['Sep 17/18', 667,       989],
-     ['Oct 17/18',  136,      691  ],
-     ['Nov 17/18',  136,      691  ],
-     ['Dec 17/18',  136,      691  ]    ];
-     //res2=[];
-     //let res2:any=[{'Jan 17':11,'Jan 18':111},{'Feb 17':1111,'Feb 18':22122},{'Mar 17':99900000,'Mar 18':9090}];
-     if (res2.length > 0) {
-      this.drawchart(res2);
-      this.checkData = false;
-    } else if (res2.length == 0) {
-      // alert("there is no data to bind to chart");
-      res2 = [['Month Names', 'Contracts In','Contracts In'], ['Jan 17', 0,0], ['Jan 18', 0,0], ['', 0,0]];
-      this.checkData = true;
-      this.drawchart(res2);
-
-    } else {
-      this.checkData = true;
-    }
+    this.getCycleTimes()
+      .then((res: any) => {
+        if (res.length == 0) {
+          res = [['Months', 'No. Of Cases'], ['', ], ['', 0], ['', 0]];
+          this.drawchart(res);
+          this.checkData = true;
+       } else if (res.length > 0) {
+          // alert("there is no data to bind to chart");
+          //res=[['Months','Cases Counts'],['Jan 2017',res[0]],['Feb 2017',res[1]],['Mar 2017',res[2]],['Apr 2017',res[3]],['May 2017',res[4]],['Jun 2017',res[5]],['Jul 2017',res[6]],['Aug 2017',res[7]],['Sep 2017',this.arrr[8]],['Oct 2017',this.arrr[9]],['Nov 2017',this.arrr[10]],['Dec 2017',this.arrr[11]]];
+          this.drawchart(res);
+          this.checkData = false;
+       } else {
+          this.checkData = true;
+        }
+        console.log("th ebs cycle times data is:"+JSON.stringify(res));
+        res.splice(0,0,['Months','No. Of Contracts']);
+        this.drawchart(res);
+      }, error => {
+        console.log("error getCaseData " + error);
+      });
 
 
-     this.drawchart(res2);
-    //  this.checkData = false;
+       this.getMinMaxDates().then((res:any)=>{
+        console.log("the dates are :"+JSON.stringify(res));
+        let resnew:any=res;
+        this._dataHandlerService.setMinMaxDate(resnew);
 
-
-
-    // if(this.ebscolumnChartData.dataTable.length>0){
-    //   console.log("inside the if of check for no data"+JSON.stringify(this.ebscolumnChartData.dataTable));
-    //   this.checkData = false;
- 
-    // }else{
-    //   console.log("inside the else of no data");
-    //   this.checkData = true;
-
-    // }
-
-
-    // this.getCycleTimesData()
-    //   .then((res: any) => {
-    //     this.drawchart(res);
-    //   }, error => {
-    //     console.log("error getCaseData " + error);
-    //   });
-
+       })
     this.getebsTerritoriesData()
       .then((res: any) => {
         // if(res.length>=0){
@@ -626,7 +627,7 @@ export class EbsCycleTimesComponent implements OnInit {
     //   }, error => {
     //     console.log("error getWorkflowStatus " + error);
     //   });
-      this.sideViewDropDowns.showContracType=true;
+      //this.sideViewDropDowns.showContracType=true;
       this.sideViewDropDowns.showArrivalType=true;
       this.sideViewDropDowns.showContractTime=true;
       this.sideViewDropDowns.showYearDD=true;
@@ -635,6 +636,12 @@ export class EbsCycleTimesComponent implements OnInit {
 
 
       this.sideViewDropDowns.compHeading=appheading.garph4;
+      let caseTimeData = [{ 'item_id': 1, 'item_text': 'Median' },
+      { 'item_id': 2, 'item_text': 'Average' }];
+      //let caseTimeData = ['Median' , 'Average' ];
+      this.sideViewDropDowns.contractTimeData = caseTimeData;
+      this.sideViewDropDowns.arrivalTypeData = ['SAOF', 'CPQ', 'Q2SC'];
+
   }
      
 }

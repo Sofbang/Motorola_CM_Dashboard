@@ -102,7 +102,7 @@ export class SideDropdownViewComponent implements OnInit {
 
 
   public makeDate(data) {
-    //console.log("the res is:"+JSON.stringify(data));
+    console.log("the res is:"+JSON.stringify(data));
     let startDate = data[0].min_date_cases;
     let endDate = data[0].max_date_cases;
     let starting = new Date(startDate);

@@ -37,11 +37,16 @@ export class EbsService {
 
   // New REST SERVICES FOR EBS CYCLE TIMES (to be Used)
   // drilldowmn service
-  getEBSDrillDown(status){
-    return this.http.get('api/ebs_contracts_drilldown?contractstatus='+status)
+  getEBSDrillDown(jsonobj){
+    return this.http.post('api/ebs_contracts_drilldown',JSON.stringify(jsonobj),this.options)
     .map(result => this.result = result.json().data);
   }
   
+  getEBSCycleTimes(jsonObj){
+    
+    return this.http.post('api/ebs_cycle_times',JSON.stringify(jsonObj),this.options)
+    .map(result => this.result = result.json().data);
+  }
 
   getEBSMinMaxDates(){
     return this.http.get("api/ebs_dates_max_min")
