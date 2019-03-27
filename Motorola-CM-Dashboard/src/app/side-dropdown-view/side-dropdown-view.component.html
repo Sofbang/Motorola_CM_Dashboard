@@ -50,9 +50,9 @@
     <label for="options">Contract
       Time</label>
     <ng-multiselect-dropdown [placeholder]="'Contract Time'" [data]="sideViewDDObj.contractTimeData"
-      [settings]="dropdownSettings" (onSelect)="onItemSelect($event,'contractTime')"
-      (onSelectAll)="onSelectAll($event,'contractTime')" (onDeSelect)="onItemDeSelect($event,'contractTime')"
-      (onDeSelectAll)="onDeSelectAll($event,'contractTime')"  [(ngModel)]="contractTimeModel">
+      [settings]="dropdownSettingsCaseTime" (onSelect)="onItemSelect($event,'contractTime')"
+      (onDeSelect)="onItemDeSelect($event,'contractTime')"
+       [(ngModel)]="contractTimeModel">
     </ng-multiselect-dropdown>
 
   </div>
