@@ -195,10 +195,10 @@ export class ScNewCasesComponent implements OnInit {
           this.scNewCaseAllData = res;//to use in only territoy or arival type filter
           // let lastDate = (moment(new Date()).format('YYYY-MM-DD'));//current date
           // let firstDate = (moment(new Date()).subtract(1, 'years'));//earlier date
-          let datesData = [];
-          datesData.push(this.convertDateMoment(firstDate));
-          datesData.push(lastDate);
-          resolve(this.makeCount(datesData, res));
+          
+          this.datesData.push(this.convertDateMoment(firstDate));
+          this.datesData.push(lastDate);
+          resolve(this.makeCount(this.datesData, res));
         }, error => {
           reject(error);
         })

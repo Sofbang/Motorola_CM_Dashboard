@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { SideViewDropDowns } from '../beans/sideBarDropdown';
 import { DataHandlerService } from '../services/data-handler/data-handler.service';
 import * as $ from 'jquery';
@@ -9,7 +9,6 @@ import { ViewChild, ElementRef } from '@angular/core';
 
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-side-dropdown-view',
   templateUrl: './side-dropdown-view.component.html',
   styleUrls: ['./side-dropdown-view.component.css']
