@@ -483,7 +483,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
     let finalArr = [];
     //console.log("case data" + JSON.stringify(this.caseData));
     if (this.territoriesArr.length == 0 && this.workFlowStatusArr.length > 0 && this.arrivalTypesArr.length == 0) {
-      console.log("t0 ws>0 a0");
+      //console.log("t0 ws>0 a0");
       this.checkDateDropdownSelected(this.datesData, this.restUrlFilterYr)
         .then(result => {
           if (result != 'nodateselected') {
@@ -507,7 +507,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
         });
 
     } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length > 0 && this.arrivalTypesArr.length == 0) {
-      console.log("t>1 ws0 a0");
+      //console.log("t>1 ws0 a0");
       this.checkDateDropdownSelected(this.datesData, this.restUrlFilterYr)
         .then(result => {
           if (result != 'nodateselected') {
@@ -534,7 +534,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
           console.log("error in dateDropdownSelected " + error);
         });
     } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length == 0 && this.arrivalTypesArr.length == 0) {
-      console.log("t0 s0 a0");
+      //console.log("t0 s0 a0");
       this.checkDateDropdownSelected(this.datesData, this.restUrlFilterYr)
         .then(result => {
           if (result != 'nodateselected') {
@@ -548,7 +548,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
           console.log("error in dateDropdownSelected " + error);
         });
     } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length > 0 && this.arrivalTypesArr.length > 0) {
-      console.log("t>0 s0 a>0");
+      //console.log("t>0 s0 a>0");
       this.checkDateDropdownSelected(this.datesData, this.restUrlFilterYr)
         .then(result => {
           if (result != 'nodateselected') {
@@ -580,7 +580,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
           console.log("error in dateDropdownSelected " + error);
         });
     } else if (this.workFlowStatusArr.length > 0 && this.territoriesArr.length == 0 && this.arrivalTypesArr.length > 0) {
-      console.log("t0 s>0 a>0");
+      //console.log("t0 s>0 a>0");
       this.checkDateDropdownSelected(this.datesData, this.restUrlFilterYr)
         .then(result => {
           if (result != 'nodateselected') {
@@ -610,7 +610,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
         });
 
     } else if (this.workFlowStatusArr.length > 0 && this.territoriesArr.length > 0 && this.arrivalTypesArr.length == 0) {
-      console.log("t>0 s>0 a0");
+      //console.log("t>0 s>0 a0");
       this.checkDateDropdownSelected(this.datesData, this.restUrlFilterYr)
         .then(result => {
           if (result != 'nodateselected') {
@@ -644,7 +644,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
         });
 
     } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length == 0 && this.arrivalTypesArr.length > 0) {
-      console.log("t0 s0 a>0");
+      //console.log("t0 s0 a>0");
       this.checkDateDropdownSelected(this.datesData, this.restUrlFilterYr)
         .then(result => {
           if (result != 'nodateselected') {
@@ -672,7 +672,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
         });
     }
     else if (this.workFlowStatusArr.length > 0 && this.territoriesArr.length > 0 && this.arrivalTypesArr.length > 0) {
-      console.log("t>0 s>0 a>0");
+      //console.log("t>0 s>0 a>0");
       this.checkDateDropdownSelected(this.datesData, this.restUrlFilterYr)
         .then(result => {
           if (result != 'nodateselected') {

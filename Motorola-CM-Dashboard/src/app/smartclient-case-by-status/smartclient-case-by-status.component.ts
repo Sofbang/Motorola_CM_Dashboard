@@ -254,8 +254,8 @@ export class SmartclientCaseByStatusComponent implements OnInit {
                 array.push({ 'item_id': workflowStatus[i].to_status, 'item_text': workflowStatus[i].to_status });
               }
             }
-            if(workflowStatus.length>0)
-            array.push(otherStatus);
+            if (workflowStatus.length > 0)
+              array.push(otherStatus);
             // console.log("workflowStatus" + JSON.stringify(array));
             resolve(array);
           }
@@ -330,11 +330,11 @@ export class SmartclientCaseByStatusComponent implements OnInit {
   }
   // ng multiselect events implemented by Vishal Sehgal 12/2/2019
   onItemSelect(item, from) {
-    console.log("the item returned is :" + JSON.stringify(item));
+    //onsole.log("the item returned is :" + JSON.stringify(item));
     if (from == 'territory') {
       console.log("inside the if of territory check:" + JSON.stringify(item));
       this.territoriesArr.push(item)
-      console.log("the terr is:" + JSON.stringify(this.territoriesArr));
+      //console.log("the terr is:" + JSON.stringify(this.territoriesArr));
     } else if (from == 'workflow') {
       this.workFlowStatusArr.push(item);
     } else if (from == 'arrivalType') {
@@ -411,7 +411,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
       for (let i in this.territoriesArr) {
         let territoryItem = this.territoriesArr[i];
         let territoryFilterarr = this.caseData.filter(item => {
-          console.log("territoryItem" + territoryItem);
+          //console.log("territoryItem" + territoryItem);
           return item.territory == territoryItem;
         });
         for (let i = 0; i < territoryFilterarr.length; i++) {
@@ -460,7 +460,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
         }
       }
     } else if (this.workFlowStatusArr.length > 0 && this.territoriesArr.length == 0 && this.arrivalTypesArr.length > 0) {
-      console.log("t0 s>0 a>0");
+      //console.log("t0 s>0 a>0");
       for (let j in this.workFlowStatusArr) {
         let workflowItem = this.workFlowStatusArr[j];
         let workflowFilterarr = this.caseData.filter(item => {
@@ -499,7 +499,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
       }
     }
     else {
-      // console.log("t>0 s>0 a>0");
+      //console.log("t>0 s>0 a>0");
       for (let i in this.territoriesArr) {
         let territoryItem = this.territoriesArr[i];
         let territoryFilterarr = this.caseData.filter(item => {
@@ -512,7 +512,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
           let workflowFilterarr = territoryFilterarr.filter(item => {
             return (item.status.toLowerCase() == workflowItem.toLowerCase() || item.status_order.toLowerCase() == workflowItem.toLowerCase());
           });
-          console.log("workflowFilterarr" + JSON.stringify(workflowFilterarr));
+          //console.log("workflowFilterarr" + JSON.stringify(workflowFilterarr));
 
           for (let i in this.arrivalTypesArr) {
             let arrivalTypeItem = this.arrivalTypesArr[i];

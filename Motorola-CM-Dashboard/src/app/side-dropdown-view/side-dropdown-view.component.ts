@@ -36,15 +36,17 @@ export class SideDropdownViewComponent implements OnInit {
   screenWidth: any;
   fromModel: any;
   toModel: any;
-  casetimeModel:any
+  casetimeModel:any;
   constructor(private _dataHandlerService: DataHandlerService) {
     this._dataHandlerService.sideViewDropDownData
       .subscribe(res => {
         this.sideViewDDObj = new SideViewDropDowns();
         this.sideViewDDObj = res;
         this.casetimeModel='Median';
+        this.fromModel = null;
+        this.toModel = null;
         // console.log("subscribe inside sideview" + JSON.stringify(this.sideViewDDObj));
-        this.ngFormDate.reset();
+       // this.ngFormDate.reset();
       });
     this._dataHandlerService.resetDropdowns
       .subscribe(result => {

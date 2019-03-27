@@ -239,6 +239,7 @@ router.get('/ebs_cycle_times', (req, res, next) => {
       ELSE current_date::date-contract_creation_date::date
       END as days
       from ebs_contracts_state_master)q
+      WHERE  to_status IN ( 'GENERATE_PO', 'PO_ISSUED', 'QA_HOLD', 'MODIFY_PO' ) 
       group by to_status,territory`, [],
       function (err, result) {
         if (err) {
