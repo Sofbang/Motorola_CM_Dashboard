@@ -162,6 +162,30 @@ router.get('/ebs_dates_max_min', (req, res, next) => {
 
 
 
+// API for ebs_workflow_status
+router.get('/ebs_contracts_status_avg', (req, res, next) => {
+  //call doConnect method in db_operations
+  conn.doConnect((err, dbConn) => {
+    if (err) { return next(err); }
+    //execute query using using connection instance returned by doConnect method
+    conn.doExecute(dbConn,
+      "Select TO_CHAR(MAX(contract_creation_date), 'yyyy-mm-dd') as max_date_cases, TO_CHAR(MIN(contract_creation_date), 'yyyy-mm-dd')  as min_date_cases from ebs_contracts_state_master", [],
+      function (err, result) {
+        if (err) {
+          conn.doRelease(dbConn);
+          //call error handler
+          return next(err);
+        }
+        response.data = result.rows;
+        res.json(response);
+        //release connection back to pool
+        conn.doRelease(dbConn);
+      });
+  });
+});
+
+
+
 // // API for arrival_type
 router.get('/ebs_arrival_type', (req, res, next) => {
   //call doConnect method in db_operations
@@ -192,24 +216,7 @@ router.get('/ebs_contract_state_avg', (req, res, next) => {
     if (err) { return next(err); }
     //execute query using using connection instance returned by doConnect method
     conn.doExecute(dbConn,
-      `select to_status as Status, trim(to_char(avg(DaysInStatus)::interval, 'DD')) as AverageDays,   
-      count(contract_number) as contractPerStatus, TERRITORY  from
-        (
-          select contract_number, to_status, min(sts_changed_on), DateMoved,  
-          DateMoved - min(sts_changed_on) as DaysInStatus, TERRITORY    from 
-            (
-              select A2.contract_number, A2.to_status, A2.sts_changed_on,TERRITORY,
-              coalesce(
-                (
-                  select max(A1.sts_changed_on) from ebs_contracts_state_master A1 
-                  where A1.contract_number = A2.contract_number
-                  and A1.from_STATUS = A2.to_status),
-                  current_date
-                 ) as DateMoved 
-              from ebs_contracts_state_master A2 order by contract_number, sts_changed_on  
-            ) resultset group by contract_number, to_status, DateMoved, TERRITORY
-        )R2 WHERE  to_status IN ( 'GENERATE_PO', 'PO_ISSUED', 'QA_HOLD', 'MODIFY_PO' ) 
-        group by to_status, TERRITORY ORDER BY TO_STATUS`, [],
+      `select to_status as status,count(contract_number) as contracts_count,Avg(q.days) median_days,territory,TO_CHAR(MAX(contract_creation_date), 'yyyy-mm-dd')  as Contract_creation_date  from(select contract_number,to_status,territory,contract_creation_date, date_signed, CASE WHEN date_signed is not null THEN date_signed::date-contract_creation_date::date ELSE current_date::date-contract_creation_date::date END as days from ebs_contracts_state_master)q   WHERE  to_status IN ( 'GENERATE_PO', 'PO_ISSUED', 'QA_HOLD', 'MODIFY_PO' )  AND  date_trunc('day',contract_creation_date) BETWEEN '"+req.body.first+"' AND '"+req.body.last+"' group by to_status,territory,contract_creation_date`, [],
       function (err, result) {
         if (err) {
           conn.doRelease(dbConn);
