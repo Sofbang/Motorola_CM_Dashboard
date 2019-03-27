@@ -185,6 +185,7 @@ export class ScNewCasesComponent implements OnInit {
 
 
   public scNewCaseAllData: any;
+  public datesInit=[]
   public getSCNewCases() {
     return new Promise((resolve, reject) => {
       let lastDate = this.convertDateMoment(new Date());//current date
@@ -196,9 +197,12 @@ export class ScNewCasesComponent implements OnInit {
           // let lastDate = (moment(new Date()).format('YYYY-MM-DD'));//current date
           // let firstDate = (moment(new Date()).subtract(1, 'years'));//earlier date
           
-          this.datesData.push(this.convertDateMoment(firstDate));
-          this.datesData.push(lastDate);
-          resolve(this.makeCount(this.datesData, res));
+          // this.datesData.push(this.convertDateMoment(firstDate));
+          // this.datesData.push(lastDate);
+          this.datesInit.push(this.convertDateMoment(firstDate));
+          this.datesInit.push(lastDate);
+          this.datesData=[];
+          resolve(this.makeCount(this.datesInit, res));
         }, error => {
           reject(error);
         })
@@ -407,6 +411,9 @@ export class ScNewCasesComponent implements OnInit {
     //console.log("case data" + JSON.stringify(this.caseData));
     if (this.territoriesArr.length > 0 && this.arrivalTypesArr.length == 0) {
       //console.log("t>1  a0");
+      if(this.datesData.length>1){
+        this.datesInit=this.datesData;
+      }
       this.checkDateDropdownSelected(this.datesData)
         .then(result => {
           if (result != 'nodateselected') {
@@ -425,7 +432,7 @@ export class ScNewCasesComponent implements OnInit {
             //finalArr = territoryFilterarr;
           }
 
-          let res = this.makeCount(this.datesData, finalArr);
+          let res = this.makeCount(this.datesInit, finalArr);
           let chartData = this.makeChartData(res);
           this.drawChart(chartData);
         }).catch(error => {
@@ -434,12 +441,15 @@ export class ScNewCasesComponent implements OnInit {
 
     } else if (this.territoriesArr.length == 0 && this.arrivalTypesArr.length == 0) {
       //console.log("t0  a0");
+      if(this.datesData.length>1){
+        this.datesInit=this.datesData;
+      }
       this.checkDateDropdownSelected(this.datesData)
         .then(result => {
           if (result != 'nodateselected') {
             this.scNewCaseAllData = result;
           }
-          let res = this.makeCount(this.datesData, this.scNewCaseAllData);
+          let res = this.makeCount(this.datesInit, this.scNewCaseAllData);
           let chartData = this.makeChartData(res);
           this.drawChart(chartData);
         }).catch(error => {
@@ -448,6 +458,9 @@ export class ScNewCasesComponent implements OnInit {
 
     } else if (this.territoriesArr.length == 0 && this.arrivalTypesArr.length > 0) {
       //console.log("t0 a>0");
+      if(this.datesData.length>1){
+        this.datesInit=this.datesData;
+      }
       this.checkDateDropdownSelected(this.datesData)
         .then(result => {
           if (result != 'nodateselected') {
@@ -464,7 +477,7 @@ export class ScNewCasesComponent implements OnInit {
             }
           }
 
-          let res = this.makeCount(this.datesData, finalArr);
+          let res = this.makeCount(this.datesInit, finalArr);
           let chartData = this.makeChartData(res);
           this.drawChart(chartData);
         }).catch(error => {
@@ -474,6 +487,9 @@ export class ScNewCasesComponent implements OnInit {
     }
     else if (this.territoriesArr.length > 0 && this.arrivalTypesArr.length > 0) {
       //console.log("t>0  a>0");
+      if(this.datesData.length>1){
+        this.datesInit=this.datesData;
+      }
       this.checkDateDropdownSelected(this.datesData)
         .then(result => {
           if (result != 'nodateselected') {
@@ -497,7 +513,7 @@ export class ScNewCasesComponent implements OnInit {
             }
           }
 
-          let res = this.makeCount(this.datesData, finalArr);
+          let res = this.makeCount(this.datesInit, finalArr);
           let chartData = this.makeChartData(res);
           this.drawChart(chartData);
         }).catch(error => {

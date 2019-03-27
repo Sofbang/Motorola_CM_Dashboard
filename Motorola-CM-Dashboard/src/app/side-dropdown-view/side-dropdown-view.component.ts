@@ -146,7 +146,7 @@ export class SideDropdownViewComponent implements OnInit {
       let options = { year: 'numeric', month: 'short' };
       this.fromDates.push(event.toLocaleString('en', options));
     }
-    console.log("lll"+JSON.stringify(this.fromDates));
+    //console.log("lll"+JSON.stringify(this.fromDates));
   }
   
    public sortDate(monthYear) {
