@@ -344,7 +344,7 @@ export class EbsContractByStatusComponent implements OnInit {
     let finalArr = [];
     //console.log("case data" + JSON.stringify(this.contractsData));
     if (this.territoriesArr.length == 0 && this.arrivalTypesArr.length == 0 && this.workFlowStatusArr.length > 0) {
-      console.log("t0 s>0 a0");
+     // console.log("t0 s>0 a0");
       for (let j in this.workFlowStatusArr) {
         let workflowItem = this.workFlowStatusArr[j];
         let workflowFilterarr = this.contractsData.filter(item => {
@@ -357,7 +357,7 @@ export class EbsContractByStatusComponent implements OnInit {
         //finalArr = workflowFilterarr;
       }
     } else if (this.workFlowStatusArr.length == 0 && this.arrivalTypesArr.length == 0 && this.territoriesArr.length > 0) {
-      console.log("t>1 s0 a0");
+      //console.log("t>1 s0 a0");
       for (let i in this.territoriesArr) {
         let territoryItem = this.territoriesArr[i];
         let territoryFilterarr = this.contractsData.filter(item => {
@@ -371,7 +371,7 @@ export class EbsContractByStatusComponent implements OnInit {
         //finalArr = territoryFilterarr;
       }
     } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length == 0 && this.arrivalTypesArr.length == 0) {
-      console.log("t0 s0 a0");
+      //console.log("t0 s0 a0");
       let cases = this.makeChartData(this.contractsData);
       this.calculatePerc(cases);
       let chartArr = this.makeChartArr(cases)
@@ -389,7 +389,7 @@ export class EbsContractByStatusComponent implements OnInit {
         }
       }
     } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length > 0 && this.arrivalTypesArr.length > 0) {
-      console.log("t>0 s0 a>0");
+      //console.log("t>0 s0 a>0");
       for (let i in this.territoriesArr) {
         let territoryItem = this.territoriesArr[i];
         let territoryFilterarr = this.contractsData.filter(item => {
@@ -409,7 +409,7 @@ export class EbsContractByStatusComponent implements OnInit {
         }
       }
     } else if (this.workFlowStatusArr.length > 0 && this.territoriesArr.length == 0 && this.arrivalTypesArr.length > 0) {
-      console.log("t0 s>0 a>0");
+      //console.log("t0 s>0 a>0");
       for (let j in this.workFlowStatusArr) {
         let workflowItem = this.workFlowStatusArr[j];
         let workflowFilterarr = this.contractsData.filter(item => {
@@ -426,7 +426,7 @@ export class EbsContractByStatusComponent implements OnInit {
         }
       }
     } else if (this.workFlowStatusArr.length > 0 && this.territoriesArr.length > 0 && this.arrivalTypesArr.length == 0) {
-      console.log("t>0 s>0 a0");
+     // console.log("t>0 s>0 a0");
       for (let i in this.territoriesArr) {
         let territoryItem = this.territoriesArr[i];
         let territoryFilterarr = this.contractsData.filter(item => {
@@ -448,7 +448,7 @@ export class EbsContractByStatusComponent implements OnInit {
       }
     }
     else {
-      console.log("t>0 s>0 a>0");
+      //console.log("t>0 s>0 a>0");
       for (let i in this.territoriesArr) {
         let territoryItem = this.territoriesArr[i];
         let territoryFilterarr = this.contractsData.filter(item => {
@@ -597,7 +597,7 @@ export class EbsContractByStatusComponent implements OnInit {
 
     this.getebsTerritoriesData()
       .then((res: any) => {
-        console.log("the res is:" + JSON.stringify(res));
+        //console.log("the res is:" + JSON.stringify(res));
         //this.drawChart(res);
         this.sideViewDropDowns.showTerritory = true;
         this.sideViewDropDowns.territoryData = res;
@@ -605,10 +605,6 @@ export class EbsContractByStatusComponent implements OnInit {
       }, error => {
         console.log("error getTerritories " + error);
       });
-
-
-
-
     this.getWorkflowStatus()
       .then((res: any) => {
         //this.drawChart(res);
@@ -618,6 +614,8 @@ export class EbsContractByStatusComponent implements OnInit {
       }, error => {
         console.log("error getWorkflowStatus " + error);
       });
+    this.sideViewDropDowns.showArrivalType = true;
+    this.sideViewDropDowns.arrivalTypeData = ['SAOF', 'CPQ', 'Q2SC'];
     this.sideViewDropDowns.showYearDD = false;
     this.sideViewDropDowns.compHeading = appheading.graph2;
     this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { SideViewDropDowns } from '../beans/sideBarDropdown';
 import { DataHandlerService } from '../services/data-handler/data-handler.service';
 import * as $ from 'jquery';
@@ -7,7 +7,9 @@ import { HostListener } from "@angular/core";
 import { NgForm } from '@angular/forms';
 import { ViewChild, ElementRef } from '@angular/core';
 
+
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-side-dropdown-view',
   templateUrl: './side-dropdown-view.component.html',
   styleUrls: ['./side-dropdown-view.component.css']
@@ -18,7 +20,7 @@ export class SideDropdownViewComponent implements OnInit {
   public selectedFrom: any;
   public fianldates = [];
   public toYear = [];
-  public selectedYear:any;
+  public selectedYear: any;
 
   public selectedItemsCaseTime = [
     { 'item_id': 1, 'item_text': 'Median' },
@@ -36,17 +38,16 @@ export class SideDropdownViewComponent implements OnInit {
   screenWidth: any;
   fromModel: any;
   toModel: any;
-  casetimeModel:any;
+  casetimeModel: any;
   constructor(private _dataHandlerService: DataHandlerService) {
     this._dataHandlerService.sideViewDropDownData
       .subscribe(res => {
         this.sideViewDDObj = new SideViewDropDowns();
         this.sideViewDDObj = res;
-        this.casetimeModel='Median';
-        this.fromModel = null;
-        this.toModel = null;
+        this.casetimeModel = 'Median';
+        this.resetDropDowns();
         // console.log("subscribe inside sideview" + JSON.stringify(this.sideViewDDObj));
-       // this.ngFormDate.reset();
+        // this.ngFormDate.reset();
       });
     this._dataHandlerService.resetDropdowns
       .subscribe(result => {
@@ -54,10 +55,10 @@ export class SideDropdownViewComponent implements OnInit {
       })
     this.getScreenSize();
     this._dataHandlerService.SCMinMaxDates
-    .subscribe(res=>{
-     this.makeDate(res);
-    });
-   
+      .subscribe(res => {
+        this.makeDate(res);
+      });
+
   }
 
   @HostListener('window:resize', ['$event'])
@@ -102,7 +103,7 @@ export class SideDropdownViewComponent implements OnInit {
 
 
   public makeDate(data) {
-    console.log("the res is:"+JSON.stringify(data));
+    //console.log("the res is:"+JSON.stringify(data));
     let startDate = data[0].min_date_cases;
     let endDate = data[0].max_date_cases;
     let starting = new Date(startDate);
@@ -152,9 +153,9 @@ export class SideDropdownViewComponent implements OnInit {
   }
 
   public onChangeFrom(filterVal: any) {
-    console.log(JSON.stringify("the event is:"+filterVal));
-    this.selectedYear=moment(filterVal).format('YY');
-    console.log("the year :"+JSON.stringify(this.selectedYear));
+    console.log(JSON.stringify("the event is:" + filterVal));
+    this.selectedYear = moment(filterVal).format('YY');
+    console.log("the year :" + JSON.stringify(this.selectedYear));
     this.toYear = [];
 
     // console.log("the value for newval is:" + JSON.stringify(filterVal));
@@ -163,7 +164,7 @@ export class SideDropdownViewComponent implements OnInit {
 
     this.n = this.fianldates.indexOf(this.selectedFrom);
     // console.log("the index is :" + this.n);
-    for (let i = this.n ; i <= this.n + 23; i++) {
+    for (let i = this.n; i <= this.n + 23; i++) {
       // console.log("inside the for loop :")
       this.toYear.push(this.fianldates[i]);
       //  console.log("after the push is done"+JSON.stringify(this.toYear));
@@ -232,9 +233,5 @@ export class SideDropdownViewComponent implements OnInit {
       allowSearchFilter: true,
       dir: 'asc'
     };
-   // this.makeDate();
-    
-   
-    //$('.side-view-dropDowns').css('height', this.screenHeight);//to make side dropdown view to screen height
   }
 }
