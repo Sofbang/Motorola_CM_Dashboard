@@ -17,7 +17,7 @@ export class SideDropdownViewComponent implements OnInit {
   public sideViewDDObj = new SideViewDropDowns();
   public dropdownSettings = {};
   public selectedFrom: any;
-  public fianldates = [];
+  public fromDates = [];
   public toYear = [];
   public selectedYear: any;
 
@@ -139,35 +139,36 @@ export class SideDropdownViewComponent implements OnInit {
   }
 
   public makeDateFormat(arr) {
-    // this.fianldates=[];
-    // console.log("inside the makeDateFormat Method:" + JSON.stringify(arr));
-    for (let i in arr) {
+    let dateArr = this.sortDate(arr)
+    for (let i = dateArr.length - 1; i > 0; i--) {
       // console.log("in the for loop", +i)
-      let event = new Date(arr[i]);
-      // console.log("the event let data is :" + event);
+      let event = new Date(dateArr[i]);
       let options = { year: 'numeric', month: 'short' };
-      this.fianldates.push(event.toLocaleString('en', options));
-
+      this.fromDates.push(event.toLocaleString('en', options));
     }
+    console.log("lll"+JSON.stringify(this.fromDates));
   }
-
-  public onChangeFrom(filterVal: any) {
-    //console.log(JSON.stringify("the event is:" + filterVal));
+  
+   public sortDate(monthYear) {
+    var sorted = monthYear.sort((a, b) => {
+      return a - b;
+    });
+    return sorted;
+  }
+public onChangeFrom(filterVal: any) {
+    let options = { year: 'numeric', month: 'short' };
+    let date=new Date();;
+    let dt=date.toLocaleString('en', options);
+    console.log("fff"+dt);
     this.selectedYear = moment(filterVal).format('YY');
     console.log("the year :" + JSON.stringify(this.selectedYear));
     this.toYear = [];
-
-    // console.log("the value for newval is:" + JSON.stringify(filterVal));
     this.selectedFrom = filterVal;
-    // console.log("the selectedFrom Value is:" + JSON.stringify(this.selectedFrom));
-
-    this.n = this.fianldates.indexOf(this.selectedFrom);
+    this.n = this.fromDates.indexOf(this.selectedFrom);
     // console.log("the index is :" + this.n);
     for (let i = this.n; i <= this.n + 23; i++) {
-      // console.log("inside the for loop :")
-      this.toYear.push(this.fianldates[i]);
-      //  console.log("after the push is done"+JSON.stringify(this.toYear));
-      //  this.toYear=[];
+      //if(this.fromDates[i]==dt)break;
+      this.toYear.push(this.fromDates[i]);
     }
   }
 
@@ -221,7 +222,7 @@ export class SideDropdownViewComponent implements OnInit {
 
   ngOnInit() {
     //dropdown settings
-    // this.fianldates=[];
+    // this.fromDates=[];
     this.dropdownSettings = {
       singleSelection: false,
       idField: 'item_id',

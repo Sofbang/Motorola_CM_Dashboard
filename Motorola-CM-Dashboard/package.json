@@ -20,10 +20,11 @@
     "@angular/platform-browser-dynamic": "~7.2.0",
     "@angular/router": "~7.2.0",
     "angular-http": "0.0.0",
+    "body-parser": "^1.18.3",
     "core-js": "^2.5.4",
     "dateformat": "^3.0.3",
-    "body-parser": "^1.18.3",
     "express": "^4.16.4",
+    "file-saver": "^2.0.1",
     "http": "0.0.0",
     "jquery": "^3.3.1",
     "moment": "^2.24.0",
@@ -31,13 +32,13 @@
     "ng2-google-charts": "^3.5.0",
     "path": "^0.12.7",
     "pg": "^7.8.0",
+    "properties-reader": "0.0.16",
     "rxjs": "~6.3.3",
     "rxjs-compat": "^6.4.0",
     "tslib": "^1.9.0",
     "winston": "^3.2.1",
-    "zone.js": "~0.8.26",
     "xlsx": "^0.14.1",
-    "file-saver": "^2.0.1"
+    "zone.js": "~0.8.26"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.13.0",

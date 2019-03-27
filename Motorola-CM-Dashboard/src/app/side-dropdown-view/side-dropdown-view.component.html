@@ -75,7 +75,7 @@
       <select class="form-control" id="from" name="from" [(ngModel)]="fromModel"
         (change)="onChangeFrom($event.target.value)">
         <option [value]="null">Select </option>
-        <option *ngFor="let datesFormed of fianldates">{{datesFormed}}</option>
+        <option *ngFor="let datesFormed of fromDates">{{datesFormed}}</option>
       </select>
     </div>
     <div class="dropdown hello-men" *ngIf="sideViewDDObj.showYearDD">
