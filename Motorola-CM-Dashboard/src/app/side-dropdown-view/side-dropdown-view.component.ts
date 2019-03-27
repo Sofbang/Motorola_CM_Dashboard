@@ -152,7 +152,7 @@ export class SideDropdownViewComponent implements OnInit {
   }
 
   public onChangeFrom(filterVal: any) {
-    console.log(JSON.stringify("the event is:" + filterVal));
+    //console.log(JSON.stringify("the event is:" + filterVal));
     this.selectedYear = moment(filterVal).format('YY');
     console.log("the year :" + JSON.stringify(this.selectedYear));
     this.toYear = [];

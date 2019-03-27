@@ -331,7 +331,9 @@ export class SmartclientAverageRenewalComponent implements OnInit {
         legend: { position: 'bottom', textStyle: { color: '#444444' } },
         backgroundColor: '#FFFFFF',
         hAxis: {
-          textStyle: { color: '#444444' }
+          textStyle: { color: '#444444' },
+          title: 'Number Of Median Days',
+          titleTextStyle: { italic: false }
         },
         vAxis: {
           textStyle: { color: '#444444' },

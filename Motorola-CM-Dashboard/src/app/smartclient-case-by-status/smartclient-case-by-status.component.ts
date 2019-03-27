@@ -311,7 +311,9 @@ export class SmartclientCaseByStatusComponent implements OnInit {
         legend: { position: 'none' },
         backgroundColor: '#FFFFFF',
         hAxis: {
-          textStyle: { color: '#444444' }
+          textStyle: { color: '#444444' },
+          title: 'Number Of Cases',
+          titleTextStyle: { italic: false }
         },
         vAxis: {
           textStyle: { color: '#444444' },

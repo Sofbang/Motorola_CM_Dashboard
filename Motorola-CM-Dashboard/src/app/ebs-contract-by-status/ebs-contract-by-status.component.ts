@@ -267,7 +267,9 @@ export class EbsContractByStatusComponent implements OnInit {
         legend: { position: 'bottom', textStyle: { color: '#444444' } },
         backgroundColor: '#FFFFFF',
         hAxis: {
-          textStyle: { color: '#444444' }
+          textStyle: { color: '#444444' },
+          title: 'Number Of Contracts',
+          titleTextStyle: { italic: false }
         },
         vAxis: {
           textStyle: { color: '#444444' },

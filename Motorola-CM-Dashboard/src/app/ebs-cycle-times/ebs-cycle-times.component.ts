@@ -9,7 +9,7 @@ import { ChartSelectEvent } from 'ng2-google-charts';
 import { appheading } from '../enums/enum';
 import { ExcelServiceService } from '../services/convert_to_excel/excel-service.service';
 import * as moment from 'moment';
-
+declare let google: any;
 @Component({
   selector: 'app-ebs-cycle-times',
   templateUrl: './ebs-cycle-times.component.html',
@@ -641,7 +641,28 @@ export class EbsCycleTimesComponent implements OnInit {
       //let caseTimeData = ['Median' , 'Average' ];
       this.sideViewDropDowns.contractTimeData = caseTimeData;
       this.sideViewDropDowns.arrivalTypeData = ['SAOF', 'CPQ', 'Q2SC'];
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
 
+      function drawChart() {
+        console.log("llll")
+          let data = google.visualization.arrayToDataTable([
+              ['Task', 'Hours per Day'],
+              ['Work',     11],
+              ['Eat',      2],
+              ['Commute',  2],
+              ['Watch TV', 2],
+              ['Sleep',    7]
+          ]);
+
+          let options = {
+              title: 'My Daily Activities'
+          };
+
+          let chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+          chart.draw(data, options);
+      }
   }
      
 }

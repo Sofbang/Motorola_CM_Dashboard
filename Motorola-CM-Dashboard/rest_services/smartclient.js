@@ -166,8 +166,9 @@ router.post('/sc_new_cases', (req, res, next) => {
 // // API for sc_case_territories
 router.get('/sc_cases_drilldown', (req, res, next) => {
   //call doConnect method in db_operations
-  var status = req.query; var postgreSql;
-  console.log("the status passed is:" + JSON.stringify(status));
+  var status = req.query;
+   var postgreSql;
+  //console.log("the status passed is:" + JSON.stringify(status));
   conn.doConnect((err, dbConn) => {
     if (err) { return next(err); }
     //execute body using using connection instance returned by doConnect method
@@ -197,7 +198,7 @@ router.get('/sc_cases_drilldown', (req, res, next) => {
 router.post('/sc_cases_drilldownfilter', (req, res, next) => {
   //call doConnect method in db_operations
   var status = req.query;
-  console.log("the status passed is:" + JSON.stringify(status));
+  //console.log("the status passed is:" + JSON.stringify(status));
   conn.doConnect((err, dbConn) => {
     if (err) { return next(err); }
     //execute body using using connection instance returned by doConnect method
@@ -353,7 +354,7 @@ router.post('/sc_case_status_med_yr', (req, res, next) => {
   //call doConnect method in db_operations
   conn.doConnect((err, dbConn) => {
     if (err) {
-      console.log("the error is:" + err)
+      //console.log("the error is:" + err)
       return next(err);
     }
     //execute body using using connection instance returned by doConnect method
