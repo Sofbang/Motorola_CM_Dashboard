@@ -34,6 +34,10 @@ export class EbsService {
       .map(result => this.result = result.json().data);
   }
 
+  getEBSContractsAvg(){
+    return this.http.get('api/ebs_contracts_status_avg')
+      .map(result => this.result = result.json().data);
+  }
 
   // New REST SERVICES FOR EBS CYCLE TIMES (to be Used)
   // drilldowmn service
