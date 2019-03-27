@@ -39,3 +39,43 @@ Error: listen EADDRINUSE: address already in use :::4000
     at tryModuleLoad (internal/modules/cjs/loader.js:538:12)
     at Function.Module._load (internal/modules/cjs/loader.js:530:3)
     at Function.Module.runMain (internal/modules/cjs/loader.js:742:12)
+2019-03-27T08:47:16.377Z [Info] error: uncaughtException: read ECONNRESET
+Error: read ECONNRESET
+    at _errnoException (util.js:992:11)
+    at TCP.onread (net.js:618:25)
+2019-03-27T08:47:16.493Z [Info] error: uncaughtException: read ECONNRESET
+Error: read ECONNRESET
+    at _errnoException (util.js:992:11)
+    at TCP.onread (net.js:618:25)
+2019-03-27T08:47:16.528Z [Info] error: uncaughtException: read ECONNRESET
+Error: read ECONNRESET
+    at _errnoException (util.js:992:11)
+    at TCP.onread (net.js:618:25)
+2019-03-27T08:47:16.582Z [Info] error: uncaughtException: read ECONNRESET
+Error: read ECONNRESET
+    at _errnoException (util.js:992:11)
+    at TCP.onread (net.js:618:25)
+2019-03-27T08:47:16.630Z [Info] error: uncaughtException: read ECONNRESET
+Error: read ECONNRESET
+    at _errnoException (util.js:992:11)
+    at TCP.onread (net.js:618:25)
+2019-03-27T08:47:16.674Z [Info] error: uncaughtException: read ECONNRESET
+Error: read ECONNRESET
+    at _errnoException (util.js:992:11)
+    at TCP.onread (net.js:618:25)
+2019-03-27T08:47:16.726Z [Info] error: uncaughtException: read ECONNRESET
+Error: read ECONNRESET
+    at _errnoException (util.js:992:11)
+    at TCP.onread (net.js:618:25)
+2019-03-27T08:47:16.761Z [Info] error: uncaughtException: read ECONNRESET
+Error: read ECONNRESET
+    at _errnoException (util.js:992:11)
+    at TCP.onread (net.js:618:25)
+2019-03-27T08:47:16.803Z [Info] error: uncaughtException: read ECONNRESET
+Error: read ECONNRESET
+    at _errnoException (util.js:992:11)
+    at TCP.onread (net.js:618:25)
+2019-03-27T08:47:16.895Z [Info] error: uncaughtException: read ECONNRESET
+Error: read ECONNRESET
+    at _errnoException (util.js:992:11)
+    at TCP.onread (net.js:618:25)

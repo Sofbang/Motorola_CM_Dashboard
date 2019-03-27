@@ -463,7 +463,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
    */
   checkDateDropdownSelected(datesData, restUrlFilterYr): any {
     return new Promise((resolve, reject) => {
-      if (datesData.length > 0) {
+      if (datesData.length > 1) {
         this.getCaseDataYearly(datesData, restUrlFilterYr)
           .then((res: any) => {
             resolve(res);
