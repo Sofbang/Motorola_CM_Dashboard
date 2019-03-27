@@ -232,5 +232,17 @@ export class SideDropdownViewComponent implements OnInit {
       allowSearchFilter: true,
       dir: 'asc'
     };
+    this.dropdownSettingsCaseTime={
+      singleSelection: false,
+      idField: 'item_id',
+      textField: 'item_text',
+      text:'Median',
+      selectAllText: 'All',
+      unSelectAllText: 'Clear All',
+      itemsShowLimit: 1,
+      allowSearchFilter: true,
+      dir: 'asc'
+     };
+     
   }
 }
