@@ -6,8 +6,8 @@ const app = express();
 //for app logging
 const logger = require('./app_configuration/logger');
 const { Pool } = require('pg')
-//const connectionString = 'postgresql://pgsvcuser:Pgsvcrds_2019@devsvcaws1.cab6kaidffre.us-east-1.rds.amazonaws.com:5432/DEVSVCAWS1';
-const connectionString = 'postgresql://sofbang_admin:Sofbang2019@sofbanginstance.cxbsn39rr5kp.us-east-2.rds.amazonaws.com/contract_dash';
+const connectionString = 'postgresql://pgsvcuser:Pgsvcrds_2019@devsvcaws1.cab6kaidffre.us-east-1.rds.amazonaws.com:5432/DEVSVCAWS1';
+//const connectionString = 'postgresql://sofbang_admin:Sofbang2019@sofbanginstance.cxbsn39rr5kp.us-east-2.rds.amazonaws.com/contract_dash';
 //const connectionString = 'postgresql://admin_user:Motorola@2019@dss-subm-postgresql-uat2.ci9ygz3u43cw.us-east-1.rds.amazonaws.com:5432/contract_dash';
 //create postgre sql connection pool
 const pool = new Pool({
@@ -21,8 +21,8 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }));
 //our rest services
 const lookupebs = require('./rest_services/ebs');
 const lookupsc = require('./rest_services/smartclient');
-app.use('/Motorola-CM-Dashboard/api', lookupebs);
-app.use('/Motorola-CM-Dashboard/api', lookupsc);
+app.use('/Motorola-CM-Dashboard/api', lookupebs,errorHandler);
+app.use('/Motorola-CM-Dashboard/api', lookupsc,errorHandler);
 
 
 /**
@@ -31,7 +31,7 @@ app.use('/Motorola-CM-Dashboard/api', lookupsc);
  * @param {*} req- req body 
  * @param {*} res -res body
  */
-function errorHandler(err, req, res) {
+function errorHandler(err, req, res,next) {
   //log error
   logger.log({
     level: 'error',

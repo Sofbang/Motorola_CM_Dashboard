@@ -142,7 +142,7 @@ export class ScNewCasesComponent implements OnInit {
         .subscribe(data => {
           territories = data;
           //console.log("territories" + territories)
-        }, err => console.error(err),
+        }, err => { console.log("getScTerritories error "+err)},
           // the third argument is a function which runs on completion
           () => {
             let array = [];
@@ -547,13 +547,14 @@ export class ScNewCasesComponent implements OnInit {
 
   public getMinMaxDates() {
     return new Promise((resolve, reject) => {
-      this._smartclientService.getScMinMaxDates().subscribe(data => {
-        this.minmaxdates = data;
-        resolve(this.minmaxdates);
-        // console.log("territories" + this.territories)
-      }, error => {
-        reject(error);
-      })
+      this._smartclientService.getScMinMaxDates()
+        .subscribe(data => {
+          this.minmaxdates = data;
+          resolve(this.minmaxdates);
+          // console.log("territories" + this.territories)
+        }, error => {
+          reject(error);
+        })
     })
   }
   public drawChart(data) {
@@ -605,22 +606,25 @@ export class ScNewCasesComponent implements OnInit {
       }, error => {
         console.log("error getSCNewCases " + error);
       });
-    this.getMinMaxDates().then((res: any) => {
-      //console.log("res is:"+JSON.stringify(res));
-      let resnew: any = res;
-      //console.log("the json to be sent is:"+JSON.stringify(resnew));
-      this._dataHandlerService.setMinMaxDate(resnew);
-      //console.log("the json is:"+JSON.stringify());
-    });
+    this.getMinMaxDates()
+      .then((res: any) => {
+        //console.log("res is:"+JSON.stringify(res));
+        let resnew: any = res;
+        //console.log("the json to be sent is:"+JSON.stringify(resnew));
+        this._dataHandlerService.setMinMaxDate(resnew);
+        //console.log("the json is:"+JSON.stringify());
+      }).catch(error => {
+        console.log("error getMinMaxDates " + error);
+      })
     this.getTerritories()
       .then((res: any) => {
         //this.drawChart(res);
         this.sideViewDropDowns.showTerritory = true;
         this.sideViewDropDowns.territoryData = res;
         this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
-      }, error => {
-        // console.log("error getTerritories " + error);
-      });
+      }).catch(error => {
+        console.log("error getMinMaxDates " + error);
+      })
 
     this.sideViewDropDowns.showArrivalType = true;
     this.sideViewDropDowns.arrivalTypeData = ['SAOF', 'CPQ', 'Q2SC'];
