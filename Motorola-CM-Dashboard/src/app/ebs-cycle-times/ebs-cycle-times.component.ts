@@ -9,7 +9,7 @@ import { ChartSelectEvent } from 'ng2-google-charts';
 import { appheading } from '../enums/enum';
 import { ExcelServiceService } from '../services/convert_to_excel/excel-service.service';
 import * as moment from 'moment';
-declare let google: any;
+
 @Component({
   selector: 'app-ebs-cycle-times',
   templateUrl: './ebs-cycle-times.component.html',
@@ -17,6 +17,8 @@ declare let google: any;
 })
 export class EbsCycleTimesComponent implements OnInit {
   public cycleTimesData: any = [];
+  public contractsData = [];
+
   public arrivalTypesArr: any = [];
   public minmaxdates:any;
   public ebscolumnChartData: any;
@@ -130,6 +132,7 @@ export class EbsCycleTimesComponent implements OnInit {
   public datesData = [];
 
   public getCycleTimes() {
+      this.datesData=[];
       let json:any;
       let date = new Date();
       let lastDate = (moment(date).format('YYYY-MM-DD'));
@@ -227,9 +230,61 @@ export class EbsCycleTimesComponent implements OnInit {
     })
   }
 
- 
+ public getContractsDataAvg(){
+  return new Promise((resolve, reject) => {
+    let cases = [];
+    this._ebsService.getEBSContractsAvg().
+      subscribe(data => {
+        if (data.length > 0) {
+          cases = this.makeChartDataAvg(data);
+          let arr = [];
+          // for (let i in cases) {
+          //   arr.push(cases[i].contractscount)
+          // }
+          // this.Total = arr.reduce(this.SUM);
+          //console.log("the total contracts are as under:"+JSON.stringify(this.Total)); 
+          this.contractsData = data;
+          cases = this.contractsData;
+          // cases = this.calculatePerc(cases);
+          //this.caseData = data;
+        }
+        //console.log("contracts" + cases)
+      }, err => console.error(err),
+        // the third argument is a function which runs on completion
+        () => {
+          resolve(this.makeChartArr(cases));
+        }
+      )
+  }).catch((error) => {
+    console.log('errorin getting data :', error);
+    reject(error);
+  })
+ }
  
 
+ public makeChartDataAvg(data) {
+  let tempArr = [];
+  let finalArr = [];
+  tempArr.push(this._dataHandlerService.groupBySameKeyValues(data, 'status_order'));
+  //this.caseDataGrpBy=tempArr;//using in filter data
+  for (let k in tempArr[0]) {
+    let elmData = tempArr[0][k]
+    let averageDays = [], contractsCount = [], json = {}, statusName;
+    //console.log("--hello"+JSON.stringify(tempArr[k]));
+    for (let i = 0; i < elmData.length; i++) {
+      //console.log("--hello1"+JSON.stringify(tempArr[k][i]));
+      let elem = elmData[i];
+      averageDays.push(parseInt(elem.averagedays));
+      contractsCount.push(parseInt(elem.contractperstatus));
+      statusName = elem.status_order == 'OTHER' ? 'Other' : elmData[0].status
+    }
+    //console.log("makeChartDataAvg "+statusName+"contractsCount "+contractsCount);
+    json = { status: statusName, averagedays: averageDays.reduce(this.sum), contractscount: contractsCount.reduce(this.sum) };
+    finalArr.push(json);
+  }
+  //console.log("makeChartDataAvg" + JSON.stringify(finalArr));
+  return finalArr;
+}
 
 
   public drawchart(res) {
@@ -278,12 +333,18 @@ export class EbsCycleTimesComponent implements OnInit {
 
     // ng multiselect events implemented by Vishal Sehgal 12/2/2019
     onItemSelect(item, from) {
+      console.log("the item is:"+JSON.stringify(item)+JSON.stringify(from));
       if (from == 'territory') {
         this.territoriesArr.push(item)
+        console.log("terrr is:"+JSON.stringify(this.territoriesArr));
+        this.filterChartData();
+
       } else if (from == 'arrivalType') {
         this.arrivalTypesArr.push(item);
+        console.log("terrr is:"+JSON.stringify(this.territoriesArr));
+
       }
-      else if (from == 'casetime') {
+      else if (from == 'contracttime') {
         this._dataHandlerService.resetAllDropDowns(true);
         this.territoriesArr = [];
         this.workFlowStatusArr = [];
@@ -306,14 +367,14 @@ export class EbsCycleTimesComponent implements OnInit {
           this.restUrlFilterYr = 'sc_case_status_avg_yr';
           this.fromMedOrAvg = 'average';
           //console.log("casetime selected Averaage" + this.restUrlFilterYr);
-          // this.getCaseDataAvg()
-          //   .then((res: any) => {
+          this.getContractsDataAvg()
+            .then((res: any) => {
   
-          //     this.drawchart(res);
-          //     //this.filterChartData();
-          //   }, error => {
-          //     console.log("error getCaseDataAvg " + error);
-          //   });
+              this.drawchart(res);
+              //this.filterChartData();
+            }, error => {
+              console.log("error getCaseDataAvg " + error);
+            });
         }
       //console.log("territory" + JSON.stringify(this.territoriesArr));
      // console.log("workflow" + JSON.stringify(this.workFlowStatusArr));
@@ -324,8 +385,10 @@ export class EbsCycleTimesComponent implements OnInit {
     onItemDeSelect(item, from) {
       if (from == 'territory') {
         this.territoriesArr = this.removeElementArr(this.territoriesArr, item);
-      } else if (from == 'workflow') {
-        this.workFlowStatusArr = this.removeElementArr(this.workFlowStatusArr, item);;
+        this.filterChartData();
+      } else if (from == 'arrivalType') {
+        this.workFlowStatusArr = this.removeElementArr(this.arrivalTypesArr, item);
+        this.filterChartData();
       }
       // console.log("territory" + JSON.stringify(this.territoriesArr));
       // console.log("workflow" + JSON.stringify(this.workFlowStatusArr));
@@ -335,26 +398,35 @@ export class EbsCycleTimesComponent implements OnInit {
     onSelectAll(item, from) {
       if (from == 'territory') {
         this.territoriesArr = [];
-        this.territoriesArr = item
-      } else if (from == 'workflow') {
-        this.workFlowStatusArr = [];
-        this.workFlowStatusArr = item;
+        this.territoriesArr = item;
+        this.filterChartData();
+
+      } else if (from == 'arrivalType') {
+        this.arrivalTypesArr = [];
+        this.arrivalTypesArr = item;
+        this.filterChartData();
+
       }
-      this.filterChartData();
+    
       // console.log("territory" + JSON.stringify(this.territoriesArr));
       // console.log("workflow" + JSON.stringify(this.workFlowStatusArr));
     }
   
     onDeSelectAll(item, from) {
-      this.territoriesArr = [];
-      this.workFlowStatusArr = [];
-      // console.log("onDeSelectAll" + JSON.stringify(item));
+      if (from == 'territory') {
+        this.territoriesArr = [];
+      } else if (from == 'arrivalType') {
+        this.arrivalTypesArr = [];
+      }
       this.filterChartData();
+      
+      // console.log("onDeSelectAll" + JSON.stringify(item));
+      
     }
 
 
     onToYearChange(item) {
-      //  console.log("the item is:", item);
+      console.log("the item is:", item);
       this.datesData = [];
       this.datesData.push(item.firstDay);
       this.datesData.push(item.lastDay);
@@ -369,38 +441,67 @@ export class EbsCycleTimesComponent implements OnInit {
       let finalArr = [];
       //console.log("case data" + JSON.stringify(this.caseData));
       if (this.territoriesArr.length == 0 && this.arrivalTypesArr.length > 0) {
-        //console.log("t0 s>0");
-        for (let j in this.arrivalTypesArr) {
-          let workflowItem = this.arrivalTypesArr[j];
-          let workflowFilterarr = this.cycleTimesData.filter(item => {
-            return (item.status == workflowItem);
-          });
-          for (let i = 0; i < workflowFilterarr.length; i++) {
-            finalArr.push(workflowFilterarr[i]);
+        console.log("t0 s>0");
+         this.checkDateDropdownSelected(this.datesData)
+        .then(result => {
+          if (result != 'nodateselected') {
+            this.scNewCaseAllData = result;
           }
-          //finalArr.push(workflowFilterarr);
-          //finalArr = workflowFilterarr;
-        }
+          for (let i in this.arrivalTypesArr) {
+            let arrivalTypeItem = this.arrivalTypesArr[i];
+            let arrivalTypeFilterarr = this.scNewCaseAllData.filter(item => {
+
+              return item.arrival_type == arrivalTypeItem;
+            });
+            for (let i = 0; i < arrivalTypeFilterarr.length; i++) {
+              finalArr.push(arrivalTypeFilterarr[i]);
+            }
+          }
+
+          let res = this.makeCount(this.datesData, finalArr);
+          let chartData = this.makeChartData(res);
+          this.drawchart(chartData);
+        }).catch(error => {
+          console.log("error in dateDropdownSelected " + error);
+        });
       } else if (this.arrivalTypesArr.length == 0 && this.territoriesArr.length > 0) {
-        //console.log("t>1 s0");
-        for (let i in this.territoriesArr) {
-          let territoryItem = this.territoriesArr[i];
-          let territoryFilterarr = this.cycleTimesData.filter(item => {
-            //console.log("territoryItem" + territoryItem);
-            return item.territory == territoryItem;
-          });
-          for (let i = 0; i < territoryFilterarr.length; i++) {
-            finalArr.push(territoryFilterarr[i]);
+        console.log("t>1 s0");
+        this.checkDateDropdownSelected(this.datesData)
+        .then(result => {
+          if (result != 'nodateselected') {
+            this.scNewCaseAllData = result;
           }
-          //finalArr.push(territoryFilterarr);
-          //finalArr = territoryFilterarr;
-        }
-      } else if (this.arrivalTypesArr.length == 0 && this.territoriesArr.length == 0) {
-        //console.log("t0 s0");
-        let cases = this.makeChartData(this.cycleTimesData);
-        let chartArr = this.makeChartArr(cases)
-        this.drawchart(chartArr);
-        return;
+          for (let i in this.territoriesArr) {
+            let territoryItem = this.territoriesArr[i];
+            let territoryFilterarr = this.scNewCaseAllData.filter(item => {
+              // console.log("territoryItem" + territoryItem);
+              return item.territory == territoryItem;
+            });
+            for (let i = 0; i < territoryFilterarr.length; i++) {
+              finalArr.push(territoryFilterarr[i]);
+            }
+            //finalArr.push(territoryFilterarr);
+            //finalArr = territoryFilterarr;
+          }
+
+          let res = this.makeCount(this.datesData, finalArr);
+          let chartData = this.makeChartData(res);
+          this.drawchart(chartData);
+        }).catch(error => {
+          console.log("error in dateDropdownSelected " + error);
+        });
+      }else if(this.territoriesArr.length == 0 && this.arrivalTypesArr.length == 0){
+        this.checkDateDropdownSelected(this.datesData)
+        .then(result => {
+          if (result != 'nodateselected') {
+            this.scNewCaseAllData = result;
+          }
+          let res = this.makeCount(this.datesData, this.scNewCaseAllData);
+          let chartData = this.makeChartData(res);
+          this.drawchart(chartData);
+        }).catch(error => {
+          console.log("error in dateDropdownSelected " + error);
+        });
       }
       else {
         //console.log("t>0 s>0");
@@ -487,7 +588,7 @@ export class EbsCycleTimesComponent implements OnInit {
       cases=[];
       //console.log("the make chart data is :" + JSON.stringify(cases));
       let array = [];
-      array.push(['Status', 'No. of Cases', { role: "annotation" }, { role: "style" }]);
+      array.push(['Status', 'No. of Contracts', { role: "annotation" }, { role: "style" }]);
       let barColor=null;
       if(cases.length==0){
         this.drawchart(cases);
@@ -567,6 +668,26 @@ export class EbsCycleTimesComponent implements OnInit {
          //console.log('errorin getting data :', error);
        })
      }
+
+     checkDateDropdownSelected(datesData): any {
+      return new Promise((resolve, reject) => {
+        console.log("length is:"+datesData);
+        if (datesData.length > 1) {
+          let lastDate = this.convertDateMoment(datesData[1]);//current date
+          let firstDate = this.convertDateMoment(datesData[0]);//earlier date
+          let dateJson = { from: firstDate, to: lastDate };
+          this._ebsService.getEBSCycleTimes(dateJson)
+            .subscribe(res => {
+              //this.scNewCaseAllData = res;//to use in only territoy or arival type filter
+              resolve(res);
+            }, error => {
+              reject(error);
+            })
+        } else {
+          resolve('nodateselected');
+        }
+      })
+    }
   
 
     
@@ -641,28 +762,11 @@ export class EbsCycleTimesComponent implements OnInit {
       //let caseTimeData = ['Median' , 'Average' ];
       this.sideViewDropDowns.contractTimeData = caseTimeData;
       this.sideViewDropDowns.arrivalTypeData = ['SAOF', 'CPQ', 'Q2SC'];
-      google.charts.load('current', {'packages':['corechart']});
-      google.charts.setOnLoadCallback(drawChart);
 
-      function drawChart() {
-        console.log("llll")
-          let data = google.visualization.arrayToDataTable([
-              ['Task', 'Hours per Day'],
-              ['Work',     11],
-              ['Eat',      2],
-              ['Commute',  2],
-              ['Watch TV', 2],
-              ['Sleep',    7]
-          ]);
-
-          let options = {
-              title: 'My Daily Activities'
-          };
-
-          let chart = new google.visualization.PieChart(document.getElementById('piechart'));
-
-          chart.draw(data, options);
-      }
   }
      
 }
+
+
+
+
