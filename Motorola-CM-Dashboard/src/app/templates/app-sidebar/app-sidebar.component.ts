@@ -39,7 +39,7 @@ export class AppSidebarComponent implements OnInit {
           $('.sidebar-elm-parent3').find('a.nav-link.nav-toggle ').find('span.arrow').addClass('open');
           $('.sidebar-elm-parent3').find('a.nav-link.nav-toggle').find('span.title-black').addClass('title-blue').removeClass('title-black');
         }
-        $('.slimScrollDiv').removeAttr('style');
+
       });
   }
 
@@ -49,7 +49,7 @@ export class AppSidebarComponent implements OnInit {
     // $('.slimScrollDiv').css('max-height', '100rem');
     // $('.page-sidebar-menu').css('height', '90rem');
     // $('.page-sidebar-menu').css('max-height', '100rem');
-    $('.slimScrollDiv').removeAttr('style');
+
     //close
     if ((this.elmClkCount % 2) == 0) {
       //check li has submenu ul
@@ -90,7 +90,7 @@ export class AppSidebarComponent implements OnInit {
     }
   }
   ngOnInit() {
-    $('.slimScrollDiv').removeAttr('style');
+
   }
 
 }

@@ -5,13 +5,12 @@ const http = require('http');
 const app = express();
 //for app logging
 const logger = require('./app_configuration/logger');
-const { Pool } = require('pg')
-const connectionString = 'postgresql://pgsvcuser:Pgsvcrds_2019@devsvcaws1.cab6kaidffre.us-east-1.rds.amazonaws.com:5432/DEVSVCAWS1';
-//const connectionString = 'postgresql://sofbang_admin:Sofbang2019@sofbanginstance.cxbsn39rr5kp.us-east-2.rds.amazonaws.com/contract_dash';
-//const connectionString = 'postgresql://admin_user:Motorola@2019@dss-subm-postgresql-uat2.ci9ygz3u43cw.us-east-1.rds.amazonaws.com:5432/contract_dash';
+const { Pool } = require('pg');
+const PropertiesReader = require('properties-reader');
+const properties = PropertiesReader('./app.properties');
 //create postgre sql connection pool
 const pool = new Pool({
-  connectionString: connectionString
+  connectionString: properties.get('database.postgres.connect')
 })
 //pass pool object to db_operations
 require('./app_configuration/db_operations')(pool);
@@ -63,7 +62,7 @@ app.get('*', (req, res) => {
 
 //Set Port
 // const port = process.env.PORT || '3000';
-const port = process.env.PORT || '4000';
+const port = process.env.PORT || properties.get('main.app.port');
 app.set('port', port);
 
 const server = http.createServer(app);
