@@ -56,8 +56,8 @@ export class SmartclientService {
     .map(response => this.result = response.json().data);
   }
 
-  getScNewCases(){
-    return this.http.get('api/sc_new_cases')
+  getScNewCases(dates){
+    return this.http.post('api/sc_new_cases',JSON.stringify(dates),this.options)
     .map(result => this.result = result.json().data);
   }
   getScArrivalType(){

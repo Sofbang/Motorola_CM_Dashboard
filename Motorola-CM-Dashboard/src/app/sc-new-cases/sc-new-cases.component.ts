@@ -119,16 +119,16 @@ export class ScNewCasesComponent implements OnInit {
 
 
   public fdld(data) {
-    var v = data.split(' ');
+    let v = data.split(' ');
     let arr = [];
-    var newone = v[0] + ' 1, '
-    var newtwo = v[1];
-    var newthree = newone + newtwo;
-    var newModDate = new Date(newthree);
-    var FirstDay = new Date(newModDate.getFullYear(), newModDate.getMonth(), 1).toLocaleDateString();
-    var LastDay = new Date(newModDate.getFullYear(), newModDate.getMonth() + 1, 0).toLocaleDateString();
-    var fd = moment(FirstDay).format('YYYY-MM-DD');
-    var ld = moment(LastDay).format('YYYY-MM-DD');
+    let newone = v[0] + ' 1, '
+    let newtwo = v[1];
+    let newthree = newone + newtwo;
+    let newModDate = new Date(newthree);
+    let FirstDay = new Date(newModDate.getFullYear(), newModDate.getMonth(), 1).toLocaleDateString();
+    let LastDay = new Date(newModDate.getFullYear(), newModDate.getMonth() + 1, 0).toLocaleDateString();
+    let fd = moment(FirstDay).format('YYYY-MM-DD');
+    let ld = moment(LastDay).format('YYYY-MM-DD');
     arr.push(fd);
     arr.push(ld);
     return arr;
@@ -187,36 +187,67 @@ export class ScNewCasesComponent implements OnInit {
   public scNewCaseAllData: any;
   public getSCNewCases() {
     return new Promise((resolve, reject) => {
-      this._smartclientService.getScNewCases()
+      let lastDate = this.convertDateMoment(new Date());//current date
+      let firstDate = moment(new Date()).subtract(1, 'years');//earlier date
+      let dateJson = { from: this.convertDateMoment(firstDate), to: lastDate };
+      this._smartclientService.getScNewCases(dateJson)
         .subscribe(res => {
           this.scNewCaseAllData = res;//to use in only territoy or arival type filter
-          let lastDate = (moment(new Date()).format('YYYY-MM-DD'));//current date
-          let firstDate = (moment(new Date()).subtract(1, 'years'));//earlier date
-          this.datesData=[];
-          this.datesData.push(firstDate);
-          this.datesData.push(lastDate);
-          resolve(this.makeCount(this.datesData,res));
+          // let lastDate = (moment(new Date()).format('YYYY-MM-DD'));//current date
+          // let firstDate = (moment(new Date()).subtract(1, 'years'));//earlier date
+          let datesData = [];
+          datesData.push(this.convertDateMoment(firstDate));
+          datesData.push(lastDate);
+          resolve(this.makeCount(datesData, res));
         }, error => {
           reject(error);
         })
     });
   }
-  public makeCount(datesData,scNewCaseAllData) {
+
+  /**
+ * This method check if From and to dropdown selected.
+ */
+  checkDateDropdownSelected(datesData): any {
+    return new Promise((resolve, reject) => {
+      if (datesData.length > 1) {
+        let lastDate = this.convertDateMoment(datesData[1]);//current date
+        let firstDate = this.convertDateMoment(datesData[0]);//earlier date
+        let dateJson = { from: firstDate, to: lastDate };
+        this._smartclientService.getScNewCases(dateJson)
+          .subscribe(res => {
+            //this.scNewCaseAllData = res;//to use in only territoy or arival type filter
+            resolve(res);
+          }, error => {
+            reject(error);
+          })
+      } else {
+        resolve('nodateselected');
+      }
+    })
+  }
+  public makeCount(dateArr, scNewCaseAllData) {
     let datejsonArr: any = [];
-    let lastDate = datesData[1];//lastDate date
-    let firstDate = datesData[0];//firstDate date
-    //console.log("make count fs"+firstDate+' lastdate'+lastDate)
-    datejsonArr = this.dateRange(moment(firstDate).format('YYYY-MM-DD'), lastDate);
-    // console.log("the json returned is:" + JSON.stringify(datejsonArr));
-    // console.log("filter data" + JSON.stringify(this.getDataFilterByDate(datejsonArr,scNewCaseAllData)));
-    return this.getDataFilterByDate(datejsonArr,scNewCaseAllData);
+    let lastDate = dateArr[1];//current date
+    let firstDate = dateArr[0];//earlier date
+    //console.log("make count fs" + firstDate + ' lastdate' + lastDate)
+    datejsonArr = this.dateRange(firstDate, lastDate);
+    //console.log("the json returned is:" + JSON.stringify(datejsonArr));
+    //console.log("filter data" + JSON.stringify(this.getDataFilterByDate(datejsonArr,scNewCaseAllData)));
+    return this.getDataFilterByDate(datejsonArr, scNewCaseAllData);
   }
 
-  getDataFilterByDate(datejsonArr,scNewCaseAllData) {
-    let filterSCByDate = [],arr,filterScData
+  /**
+   * Make data  according to contracts in particular month year.
+   * @param datejsonArr-Lowerdate and upper date 
+   * @param scNewCaseAllData -Array of data to be filtered
+   */
+  getDataFilterByDate(datejsonArr, scNewCaseAllData) {
+    //console.log("getDataFilterByDate" + scNewCaseAllData.length);
+    let filterSCByDate = [], arr, filterScData
     for (let i in datejsonArr) {
-       arr = [],filterScData=[];
-       filterScData = scNewCaseAllData.filter(item => {
+      arr = [], filterScData = [];
+      filterScData = scNewCaseAllData.filter(item => {
         return this.convertDateMoment(item.case_creation_date) >= datejsonArr[i] && this.convertDateMoment(item.case_creation_date) <= this.calcLastDayMonth(datejsonArr[i]);
       })
       arr.push(this.getMonthYrByDate(datejsonArr[i]));
@@ -227,24 +258,40 @@ export class ScNewCasesComponent implements OnInit {
   }
 
 
+  /**
+   * calculate last date of particular month by passing 
+   * @param incominDate:date in format yyyy-MM-dd 
+   */
   calcLastDayMonth(incominDate) {
     let date = new Date(incominDate);
-    var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    let lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
     return this.convertDateMoment(lastDay);
   }
 
+  /**
+   * Get month with year appended like Jan 2018,Feb 2019
+   * @param incominDate:date in format yyyy-MM-dd  
+   */
   getMonthYrByDate(incominDate) {
     //console.log("incoming date" + incominDate);
-    var dt = new Date(incominDate);
+    let dt = new Date(incominDate);
     // console.log("date" + dt.getMonth() + ' ' + dt.getFullYear());
     return this.monthArr[dt.getMonth()] + ' ' + dt.getFullYear();
   }
 
+  /**
+   * Common method to handle all date conversion format
+   * @param incominDate :date in format yyyy-MM-dd 
+   */
   convertDateMoment(incominDate) {
     return moment(incominDate).format('YYYY-MM-DD');
   }
 
-
+  /**
+   * return array of dates range from startdate to Enddate
+   * @param startDate:date in format yyyy-MM-dd 
+   * @param endDate :date in format yyyy-MM-dd
+   */
   public dateRange(startDate, endDate) {
     let start = startDate.split('-');
     let end = endDate.split('-');
@@ -252,12 +299,12 @@ export class ScNewCasesComponent implements OnInit {
     let endYear = parseInt(end[0]);
     let dates = [];
 
-    for (var i = startYear; i <= endYear; i++) {
-      var endMonth = i != endYear ? 11 : parseInt(end[1]) - 1;
-      var startMon = i === startYear ? parseInt(start[1]) - 1 : 0;
-      for (var j = startMon; j <= endMonth; j = j > 12 ? j % 12 || 11 : j + 1) {
-        var month = j + 1;
-        var displayMonth = month < 10 ? '0' + month : month;
+    for (let i = startYear; i <= endYear; i++) {
+      let endMonth = i != endYear ? 11 : parseInt(end[1]) - 1;
+      let startMon = i === startYear ? parseInt(start[1]) - 1 : 0;
+      for (let j = startMon; j <= endMonth; j = j > 12 ? j % 12 || 11 : j + 1) {
+        let month = j + 1;
+        let displayMonth = month < 10 ? '0' + month : month;
         dates.push([i, displayMonth, '01'].join('-'));
       }
     }
@@ -281,6 +328,10 @@ export class ScNewCasesComponent implements OnInit {
     return accumulator + num;
   }
 
+  /**
+   * Make data to be accepted by google chart
+   * @param data :Array of data in format[['jan 2019',2],['feb 2019',5]]
+   */
   public makeChartData(data) {
     let array = [];
     if (data.length == 0) {
@@ -335,16 +386,10 @@ export class ScNewCasesComponent implements OnInit {
 
   onToYearChange(item) {
     this.datesData = [];
-    // this.selectedYear = moment(item.firstDay).format('YY');
-    //console.log("ii  --" + this.selectedYear);
-    // this.firstDay = item.firstDay;
-    // this.lastDay = item.lastDay;
     this.datesData.push(item.firstDay);
     this.datesData.push(item.lastDay);
-    console.log("the item rec is:" + JSON.stringify(this.firstDay));
-    console.log("the last one is:" + JSON.stringify(this.lastDay));
     this.filterChartData();
-    // console.log("the added array is:"+JSON.stringify( this.datesData));
+    //console.log("the added array is:" + JSON.stringify(this.datesData));
 
   }
 
@@ -361,105 +406,129 @@ export class ScNewCasesComponent implements OnInit {
     let finalArr = [];
     //console.log("case data" + JSON.stringify(this.caseData));
     if (this.territoriesArr.length > 0 && this.arrivalTypesArr.length == 0) {
-      console.log("t>1  a0");
-      for (let i in this.territoriesArr) {
-        let territoryItem = this.territoriesArr[i];
-        let territoryFilterarr = this.scNewCaseAllData.filter(item => {
-          // console.log("territoryItem" + territoryItem);
-          return item.territory == territoryItem;
-        });
-        for (let i = 0; i < territoryFilterarr.length; i++) {
-          finalArr.push(territoryFilterarr[i]);
-        }
-        //finalArr.push(territoryFilterarr);
-        //finalArr = territoryFilterarr;
-      }
-     
-      let res = this.makeCount(this.datesData,finalArr);
-      let chartData = this.makeChartData(res);
-      this.drawChart(chartData);
-    } else if (this.territoriesArr.length == 0 && this.arrivalTypesArr.length == 0) {
-      console.log("t0 s0 a0");
-      let res = this.makeCount(this.datesData,this.scNewCaseAllData);
-      let chartData = this.makeChartData(res);
-      this.drawChart(chartData);
-    } else if (this.territoriesArr.length == 0 && this.arrivalTypesArr.length > 0) {
-      console.log("t0 a>0");
-      for (let i in this.arrivalTypesArr) {
-        let arrivalTypeItem = this.arrivalTypesArr[i];
-        let arrivalTypeFilterarr = this.scNewCaseAllData.filter(item => {
-
-          return item.arrival_type == arrivalTypeItem;
-        });
-        for (let i = 0; i < arrivalTypeFilterarr.length; i++) {
-          finalArr.push(arrivalTypeFilterarr[i]);
-        }
-      }
-     
-      let res = this.makeCount(this.datesData,finalArr);
-      let chartData = this.makeChartData(res);
-      this.drawChart(chartData);
-    } 
-    else if ( this.territoriesArr.length > 0 && this.arrivalTypesArr.length > 0) {
-      console.log("t>0  a>0");
-      for (let i in this.territoriesArr) {
-        let territoryItem = this.territoriesArr[i];
-        let territoryFilterarr = this.scNewCaseAllData.filter(item => {
-          return item.territory.toLowerCase() == territoryItem.toLowerCase();
-        });
-        //console.log("territoryFilterarr" + JSON.stringify(territoryFilterarr));
-        //finalArr = territoryFilterarr;
-        for (let i in this.arrivalTypesArr) {
-          let arrivalTypeItem = this.arrivalTypesArr[i];
-          let arrivalTypeFilterarr = territoryFilterarr.filter(item => {
-            return item.arrival_type == arrivalTypeItem;
-          });
-          for (let i = 0; i < arrivalTypeFilterarr.length; i++) {
-            finalArr.push(arrivalTypeFilterarr[i]);
+      //console.log("t>1  a0");
+      this.checkDateDropdownSelected(this.datesData)
+        .then(result => {
+          if (result != 'nodateselected') {
+            this.scNewCaseAllData = result;
           }
-        }
-      }
-     
-      let res = this.makeCount(this.datesData,finalArr);
-      let chartData = this.makeChartData(res);
-      this.drawChart(chartData);
+          for (let i in this.territoriesArr) {
+            let territoryItem = this.territoriesArr[i];
+            let territoryFilterarr = this.scNewCaseAllData.filter(item => {
+              // console.log("territoryItem" + territoryItem);
+              return item.territory == territoryItem;
+            });
+            for (let i = 0; i < territoryFilterarr.length; i++) {
+              finalArr.push(territoryFilterarr[i]);
+            }
+            //finalArr.push(territoryFilterarr);
+            //finalArr = territoryFilterarr;
+          }
+
+          let res = this.makeCount(this.datesData, finalArr);
+          let chartData = this.makeChartData(res);
+          this.drawChart(chartData);
+        }).catch(error => {
+          console.log("error in dateDropdownSelected " + error);
+        });
+
+    } else if (this.territoriesArr.length == 0 && this.arrivalTypesArr.length == 0) {
+      //console.log("t0  a0");
+      this.checkDateDropdownSelected(this.datesData)
+        .then(result => {
+          if (result != 'nodateselected') {
+            this.scNewCaseAllData = result;
+          }
+          let res = this.makeCount(this.datesData, this.scNewCaseAllData);
+          let chartData = this.makeChartData(res);
+          this.drawChart(chartData);
+        }).catch(error => {
+          console.log("error in dateDropdownSelected " + error);
+        });
+
+    } else if (this.territoriesArr.length == 0 && this.arrivalTypesArr.length > 0) {
+      //console.log("t0 a>0");
+      this.checkDateDropdownSelected(this.datesData)
+        .then(result => {
+          if (result != 'nodateselected') {
+            this.scNewCaseAllData = result;
+          }
+          for (let i in this.arrivalTypesArr) {
+            let arrivalTypeItem = this.arrivalTypesArr[i];
+            let arrivalTypeFilterarr = this.scNewCaseAllData.filter(item => {
+
+              return item.arrival_type == arrivalTypeItem;
+            });
+            for (let i = 0; i < arrivalTypeFilterarr.length; i++) {
+              finalArr.push(arrivalTypeFilterarr[i]);
+            }
+          }
+
+          let res = this.makeCount(this.datesData, finalArr);
+          let chartData = this.makeChartData(res);
+          this.drawChart(chartData);
+        }).catch(error => {
+          console.log("error in dateDropdownSelected " + error);
+        });
+
+    }
+    else if (this.territoriesArr.length > 0 && this.arrivalTypesArr.length > 0) {
+      //console.log("t>0  a>0");
+      this.checkDateDropdownSelected(this.datesData)
+        .then(result => {
+          if (result != 'nodateselected') {
+            this.scNewCaseAllData = result;
+          }
+          for (let i in this.territoriesArr) {
+            let territoryItem = this.territoriesArr[i];
+            let territoryFilterarr = this.scNewCaseAllData.filter(item => {
+              return item.territory.toLowerCase() == territoryItem.toLowerCase();
+            });
+            //console.log("territoryFilterarr" + JSON.stringify(territoryFilterarr));
+            //finalArr = territoryFilterarr;
+            for (let i in this.arrivalTypesArr) {
+              let arrivalTypeItem = this.arrivalTypesArr[i];
+              let arrivalTypeFilterarr = territoryFilterarr.filter(item => {
+                return item.arrival_type == arrivalTypeItem;
+              });
+              for (let i = 0; i < arrivalTypeFilterarr.length; i++) {
+                finalArr.push(arrivalTypeFilterarr[i]);
+              }
+            }
+          }
+
+          let res = this.makeCount(this.datesData, finalArr);
+          let chartData = this.makeChartData(res);
+          this.drawChart(chartData);
+        }).catch(error => {
+          console.log("error in dateDropdownSelected " + error);
+        });
+
     }
   }
 
   public onChangeTo(filterVal: any) {
-    // console.log("hey hi "+filterVal);
-    // console.log("the values is "+this.selectedFrom);
-    var v = filterVal.split(' ');
+    let v = filterVal.split(' ');
     // console.log("the v is:"+v);
-    var newone = v[0] + ' 1, '
-    var newtwo = v[1];
-    var newthree = newone + newtwo;
+    let newone = v[0] + ' 1, '
+    let newtwo = v[1];
+    let newthree = newone + newtwo;
     // console.log("the three is :"+newthree);
-    var newModDate = new Date(newthree);
+    let newModDate = new Date(newthree);
     // console.log("",v.push(this.selectedFrom));
-    var tb = this.selectedFrom.split(' ');
-    var one = tb[0] + ' 1, ';
-    var two = tb[1];
-    var three = one + two;
+    let tb = this.selectedFrom.split(' ');
+    let one = tb[0] + ' 1, ';
+    let two = tb[1];
+    let three = one + two;
     // console.log("the three is :"+three);
-    var modDate = new Date(three);
-    var FirstDay = new Date(modDate.getFullYear(), modDate.getMonth(), 1).toLocaleDateString();
-    var LastDay = new Date(newModDate.getFullYear(), newModDate.getMonth() + 1, 0).toLocaleDateString();
+    let modDate = new Date(three);
+    let FirstDay = new Date(modDate.getFullYear(), modDate.getMonth(), 1).toLocaleDateString();
+    let LastDay = new Date(newModDate.getFullYear(), newModDate.getMonth() + 1, 0).toLocaleDateString();
 
-
-    var fd = moment(FirstDay).format('YYYY-MM-DD');
-    var ld = moment(LastDay).format('YYYY-MM-DD');
-    // console.log("the first one is:"+fd);
-    // console.log("the last is:"+ld);
-    // console.log("the d is :",d)
-    // console.log("the moment is:",temp);
-
-    //console.log("the first day is:",FirstDay);
-    //console.log("last :",LastDay);
+    let fd = moment(FirstDay).format('YYYY-MM-DD');
+    let ld = moment(LastDay).format('YYYY-MM-DD');
     let jsonObj = { 'event': 'onChangeTo', 'from': 'yeardropdown', 'data': { 'firstDay': fd, 'lastDay': ld } }
     this._dataHandlerService.setDataFromSideView(jsonObj);
-    //this.getDateFilteredResults(FirstDay,LastDay);
-
   }
 
 
@@ -470,7 +539,7 @@ export class ScNewCasesComponent implements OnInit {
 * @param itemToRemove -Item to be removed like T1,T2,Open
 */
   public removeElementArr(array, itemToRemove) {
-    var index = array.indexOf(itemToRemove);
+    let index = array.indexOf(itemToRemove);
     if (index !== -1) array.splice(index, 1);
     return array;
   }

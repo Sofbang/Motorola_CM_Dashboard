@@ -125,8 +125,6 @@ export class SmartclientAverageRenewalComponent implements OnInit {
   }
 
   public exportToExcel() {
-
-
     this._excelService.exportAsExcelFile(this.drillDownData, 'Smart Client Cases');
 
   }

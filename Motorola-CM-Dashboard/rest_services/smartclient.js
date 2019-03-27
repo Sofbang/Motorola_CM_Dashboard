@@ -141,15 +141,13 @@ router.get('/sc_arrival_type', (req, res, next) => {
 });
 
 // // API for sc_case_territories
-router.get('/sc_new_cases', (req, res, next) => {
+router.post('/sc_new_cases', (req, res, next) => {
   //call doConnect method in db_operations
   conn.doConnect((err, dbConn) => {
     if (err) { return next(err); }
     //execute body using using connection instance returned by doConnect method
     conn.doExecute(dbConn,
-      `Select distinct case_number,case_title,current_status,from_status,to_status,
-       territory,case_creation_date,sts_changed_on,customer,case_owner,arrival_type  
-       FROM sc_case_state_master order by case_number asc `, [],
+      "Select distinct case_number,case_title,current_status,from_status,to_status,territory,case_creation_date,sts_changed_on,customer,       case_owner,arrival_type  FROM sc_case_state_master   where date_trunc('day',case_creation_date)>='" + req.body.from + "' AND date_trunc('day',case_creation_date)<='" + req.body.to +"' order by case_number asc ", [],
       function (err, result) {
         if (err) {
           conn.doRelease(dbConn);
