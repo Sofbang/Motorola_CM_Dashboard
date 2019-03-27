@@ -23,7 +23,7 @@ import * as moment from 'moment';
 })
 export class SmartclientAverageRenewalComponent implements OnInit {
   public drillDownData: any;
-
+  public minmaxdates:any;
   public barChartData: any;
   public Total: any;
   public drillDown: any;
@@ -837,6 +837,26 @@ export class SmartclientAverageRenewalComponent implements OnInit {
     if (index !== -1) array.splice(index, 1);
     return array;
   }
+
+
+  public getMinMaxDates(){
+    return new Promise((resolve, reject) => {
+       this._smartclientService.getScMinMaxDates().subscribe(data => {
+         this.minmaxdates = data;
+         // console.log("territories" + this.territories)
+       }, err => console.error(err),
+         // the third argument is a function which runs on completion
+         () => {
+           console.log("the drilldown data recived is:"+JSON.stringify(this.drillDown));
+           resolve(this.minmaxdates);
+         }
+       )
+     }).catch((error) => {
+       reject(error);
+       console.log('errorin getting data :', error);
+     })
+   }
+
   ngOnInit() {
     this.getCaseData()
       .then((res: any) => {
@@ -856,6 +876,14 @@ export class SmartclientAverageRenewalComponent implements OnInit {
         this.drawChart(res);
       }, error => {
         console.log("error getCaseData " + error);
+      });
+
+      this.getMinMaxDates().then((res:any) =>{
+        //console.log("res is:"+JSON.stringify(res));
+        let resnew:any=res;
+        //console.log("the json to be sent is:"+JSON.stringify(resnew));
+        this._dataHandlerService.setMinMaxDate(resnew);
+        //console.log("the json is:"+JSON.stringify());
       });
 
     this.getTerritories()
