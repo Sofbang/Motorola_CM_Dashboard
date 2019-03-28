@@ -420,7 +420,7 @@ export class EbsContractByStatusComponent implements OnInit {
       for (let i in this.territoriesArr) {
         let territoryItem = this.territoriesArr[i];
         let territoryFilterarr = this.contractsData.filter(item => {
-          return item.territory.toLowerCase() == territoryItem.toLowerCase();
+          return item.territory.toLowerCase() == territoryItem.toLowercase();
         });
         //console.log("territoryFilterarr" + JSON.stringify(territoryFilterarr));
         //finalArr = territoryFilterarr;
@@ -641,8 +641,17 @@ export class EbsContractByStatusComponent implements OnInit {
       }, error => {
         console.log("error getWorkflowStatus " + error);
       });
-    this.sideViewDropDowns.showArrivalType = true;
-    this.sideViewDropDowns.arrivalTypeData = ['SAOF', 'CPQ', 'Q2SC'];
+      this.getArrivalType()
+      .then((res: any) => {
+        //this.drawChart(res);
+        this.sideViewDropDowns.showArrivalType = true;
+        this.sideViewDropDowns.arrivalTypeData = res;
+        this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
+      }, error => {
+        console.log("error getArrivalType " + error);
+      });
+    // this.sideViewDropDowns.showArrivalType = true;
+    // this.sideViewDropDowns.arrivalTypeData = ['SAOF', 'CPQ', 'Q2SC'];
     this.sideViewDropDowns.showYearDD = false;
     this.sideViewDropDowns.compHeading = appheading.graph2;
     this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
