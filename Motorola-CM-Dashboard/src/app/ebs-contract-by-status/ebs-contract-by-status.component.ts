@@ -334,7 +334,7 @@ export class EbsContractByStatusComponent implements OnInit {
     else if (from == 'arrivalType') {
       this.arrivalTypesArr = this.removeElementArr(this.arrivalTypesArr, item);
     }
-    // this.filterChartData();
+     this.filterChartData();
   }
 
   onSelectAll(item, from) {
@@ -420,14 +420,14 @@ export class EbsContractByStatusComponent implements OnInit {
       for (let i in this.territoriesArr) {
         let territoryItem = this.territoriesArr[i];
         let territoryFilterarr = this.contractsData.filter(item => {
-          return item.territory.toLowerCase() == territoryItem.toLowerCase();
+          return item.territory == territoryItem;
         });
         //console.log("territoryFilterarr" + JSON.stringify(territoryFilterarr));
         //finalArr = territoryFilterarr;
         for (let j in this.arrivalTypesArr) {
           let arrivalTypeItem = this.arrivalTypesArr[j];
           let arrrTypeFilterAarr = territoryFilterarr.filter(item => {
-            return (item.status.toLowerCase() == arrivalTypeItem.toLowerCase() || item.status_order.toLowerCase() == arrivalTypeItem.toLowerCase());
+            return item.arrival_type == arrivalTypeItem;
           });
           for (let i = 0; i < arrrTypeFilterAarr.length; i++) {
             finalArr.push(arrrTypeFilterAarr[i]);
@@ -440,7 +440,7 @@ export class EbsContractByStatusComponent implements OnInit {
       for (let j in this.workFlowStatusArr) {
         let workflowItem = this.workFlowStatusArr[j];
         let workflowFilterarr = this.contractsData.filter(item => {
-          return (item.status.toLowerCase() == workflowItem.toLowerCase() || item.status_order.toLowerCase() == workflowItem.toLowerCase());
+          return (item.status == workflowItem || item.status_order == workflowItem);
         });
         for (let i in this.arrivalTypesArr) {
           let arrivalTypeItem = this.arrivalTypesArr[i];
@@ -641,8 +641,17 @@ export class EbsContractByStatusComponent implements OnInit {
       }, error => {
         console.log("error getWorkflowStatus " + error);
       });
-    this.sideViewDropDowns.showArrivalType = true;
-    this.sideViewDropDowns.arrivalTypeData = ['SAOF', 'CPQ', 'Q2SC'];
+      this.getArrivalType()
+      .then((res: any) => {
+        //this.drawChart(res);
+        this.sideViewDropDowns.showArrivalType = true;
+        this.sideViewDropDowns.arrivalTypeData = res;
+        this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
+      }, error => {
+        console.log("error getArrivalType " + error);
+      });
+    // this.sideViewDropDowns.showArrivalType = true;
+    // this.sideViewDropDowns.arrivalTypeData = ['SAOF', 'CPQ', 'Q2SC'];
     this.sideViewDropDowns.showYearDD = false;
     this.sideViewDropDowns.compHeading = appheading.graph2;
     this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
