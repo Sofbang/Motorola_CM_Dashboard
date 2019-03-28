@@ -88,6 +88,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
     }
     status = event.selectedRowValues[0].substring(0, j);
     if (event.message == 'select') {
+      this.drillDown = [];
 
 
       this.newModelCounts = event.selectedRowValues[2];
@@ -111,7 +112,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
             //console.log("diff----"+diffDays)
             res[i]['nss_aging'] = diffDays + ' days';
             res[i].case_creation_date = moment(res[i].case_creation_date).format('YYYY-MM-DD');
-            res[i].sts_changed_on = moment(res[i].sts_changed_on).format('YYYY-MM-DD');
+            res[i].contract_start_date = moment(res[i].contract_start_date).format('YYYY-MM-DD');
 
           }
           //console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(this.drillDown));
@@ -119,7 +120,6 @@ export class SmartclientAverageRenewalComponent implements OnInit {
         }, error => {
           console.log("error getTerritories " + error);
         });
-      this.drillDown = [];
 
     }
   }

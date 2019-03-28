@@ -159,12 +159,13 @@ export class SideDropdownViewComponent implements OnInit {
    */
   public makeDateFormat(arr) {
     let dateArr = this.sortDate(arr)
-    for (let i = dateArr.length - 1; i > 0; i--) {
+    for (let i = 0; i <=dateArr.length; i) {
       // console.log("in the for loop", +i)
       let event = new Date(dateArr[i]);
       let options = { year: 'numeric', month: 'short' };
       this.fromDates.push(event.toLocaleString('en', options));
     }
+    console.log("the dates are :"+JSON.stringify(this.fromDates));
   }
 
   /**

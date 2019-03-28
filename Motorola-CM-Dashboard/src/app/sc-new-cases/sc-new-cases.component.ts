@@ -68,6 +68,7 @@ export class ScNewCasesComponent implements OnInit {
 
   public selectBar(event: ChartSelectEvent) {
     this.openScModel.nativeElement.click();
+    this.drillDown = [];
 
     // let drillDownStatusnew =[];
     // drillDownStatusnew = (event.selectedRowValues[0]);
@@ -99,7 +100,7 @@ export class ScNewCasesComponent implements OnInit {
             //console.log("diff----"+diffDays)
             res[i]['nss_aging'] = diffDays + ' days';
             res[i].case_creation_date = moment(res[i].case_creation_date).format('YYYY-MM-DD');
-            res[i].sts_changed_on = moment(res[i].sts_changed_on).format('YYYY-MM-DD');
+            res[i].contract_start_date = moment(res[i].contract_start_date).format('YYYY-MM-DD');
 
           }
           //console.log("the res is:" + JSON.stringify(res));
@@ -109,7 +110,6 @@ export class ScNewCasesComponent implements OnInit {
         }, error => {
           console.log("error getTerritories " + error);
         });
-      this.drillDown = [];
 
     }
   }

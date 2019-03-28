@@ -68,6 +68,8 @@ export class EbsCycleTimesComponent implements OnInit {
     // console.log("the drilldown status is:"+JSON.stringify(status));
     // console.log("in the selectBar"+JSON.stringify(event.selectedRowValues[0]));
     if(event.message=='select'){
+      this.drillDown=[];
+
       this.newModelCounts = event.selectedRowValues[1];
       this.data = event.selectedRowValues[0];
       //console.log("the data is:" + JSON.stringify(this.data));
@@ -90,7 +92,7 @@ export class EbsCycleTimesComponent implements OnInit {
       for (let i in res) {
         //res[i].
         res[i].contract_creation_date = moment(res[i].case_creation_date).format('YYYY-MM-DD');
-        res[i].sts_changed_on = moment(res[i].sts_changed_on).format('YYYY-MM-DD');
+        //res[i].sts_changed_on = moment(res[i].sts_changed_on).format('YYYY-MM-DD');
         //this.drillDown(moment(res[i].contract_creation_date).format('YYY-MM-DD'));
       }
     //  console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(this.drillDown));
@@ -99,7 +101,7 @@ export class EbsCycleTimesComponent implements OnInit {
     }, error => {
       //console.log("error getTerritories " + error);
     });
-    this.drillDown=[];
+    // this.drillDown=[];
     }
   }
   public exportToExcel(){

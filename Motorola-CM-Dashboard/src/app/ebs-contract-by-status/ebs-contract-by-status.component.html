@@ -31,19 +31,19 @@
                 <th>Contract Number</th>
                 <th>Contract Status</th>
                 <th>Contract Owner</th>
-                <th>Contract Open Date</th>
+             
                 <th>Contract start date</th>
               </tr>
             </thead>
             <!-- outer for each  -->
             <tbody class="SCModlTbody" style="height: auto !important;min-height:52vh;">
               <tr *ngFor="let drilldown of this.drillDown" >
-                <td>{{drilldown.customer_name==null?'-':drilldown.customer_name}}</td>
+                <td>{{drilldown.customer_name}}</td>
                 <td>{{drilldown.contract_number}}</td>
                 <td>{{drilldown.to_status}}</td>
-                <td>{{drilldown.contract_owner==null?'-':drilldown.contract_owner}}</td>
-                <td>{{drilldown.sts_changed_on}}</td>
+                <td>{{drilldown.contract_owner}}</td>
                 <td>{{drilldown.contract_creation_date}}</td>
+              
               </tr>
               
             </tbody>

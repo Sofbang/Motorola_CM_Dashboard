@@ -173,9 +173,9 @@ router.get('/sc_cases_drilldown', (req, res, next) => {
     if (err) { return next(err); }
     //execute body using using connection instance returned by doConnect method
     if (status.casestatus == 'Other') {
-      postgreSql = "Select distinct case_number,customer,case_owner,case_creation_date,to_status,sts_changed_on from sc_case_state_master  where to_status NOT IN ('Open','Insufficient Data','InProg Awt 3PS','InProg Awt SSC','InProg Awt Credit','InProg Awt Resource','InProg Awt 3PS','InProg Acknowledged','InProg','InProg Awt Bus Unit')"
+      postgreSql = "Select distinct case_number,customer,case_owner,case_creation_date,to_status,contract_start_date from sc_case_state_master  where to_status NOT IN ('Open','Insufficient Data','InProg Awt 3PS','InProg Awt SSC','InProg Awt Credit','InProg Awt Resource','InProg Awt 3PS','InProg Acknowledged','InProg','InProg Awt Bus Unit')"
     } else {
-      postgreSql = "Select distinct case_number,customer,case_owner,case_creation_date,to_status from sc_case_state_master where to_status = '" + status.casestatus + "'";
+      postgreSql = "Select distinct case_number,customer,case_owner,case_creation_date,to_status,contract_start_date from sc_case_state_master where to_status = '" + status.casestatus + "'";
 
     }
     conn.doExecute(dbConn,
