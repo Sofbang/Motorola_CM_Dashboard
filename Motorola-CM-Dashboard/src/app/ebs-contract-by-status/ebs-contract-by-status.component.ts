@@ -54,27 +54,29 @@ export class EbsContractByStatusComponent implements OnInit {
     this._dataHandlerService.setDataForMainLayout(true);
   }
   public selectBar(event: ChartSelectEvent) {
-    this.openScModel.nativeElement.click();
-    let drillDownStatusnew = ''; let status: any; let letters = /^[0-9a-zA-Z]\s+$/;
-    let statusStr = '', j = 0;
-    drillDownStatusnew = (event.selectedRowValues[0]).split(' ');
-    status = drillDownStatusnew[0];
-    // console.log("the drilldown status is:" + JSON.stringify(status));
-    for (let i = event.selectedRowValues[0].length; i > 0; i--) {
-      if (event.selectedRowValues[0][i] == ' ') {
-        j = i;
-        //console.log("i---"+j)
-        break;
-      }
-      //console.log("hhh--"+event.selectedRowValues[0][i].match(/^[a-zA-Z]\s+$/));
-    }
-    status = event.selectedRowValues[0].substring(0, j);
+    
     if (event.message == 'select') {
 
+      this.drillDown = [];
+      this.openScModel.nativeElement.click();
+      let drillDownStatusnew = ''; let status: any; let letters = /^[0-9a-zA-Z]\s+$/;
+      let statusStr = '', j = 0;
+      drillDownStatusnew = (event.selectedRowValues[0]).split(' ');
+      status = drillDownStatusnew[0];
+      // console.log("the drilldown status is:" + JSON.stringify(status));
+      for (let i = event.selectedRowValues[0].length; i > 0; i--) {
+        if (event.selectedRowValues[0][i] == ' ') {
+          j = i;
+          //console.log("i---"+j)
+          break;
+        }
+        //console.log("hhh--"+event.selectedRowValues[0][i].match(/^[a-zA-Z]\s+$/));
+      }
+      status = event.selectedRowValues[0].substring(0, j);
       this.newModelCounts = event.selectedRowValues[1];
       this.data = event.selectedRowValues[0];
       //this.status = this.fdld(this.data);
-      console.log("the data is:", JSON.stringify(this.data));
+      //console.log("the data is:", JSON.stringify(this.data));
       $('.modal .modal-dialog').css('width', $(window).width() * 0.95);//fixed
       $('.modal .modal-body').css('height', $(window).height() * 0.77);//fixed
       $('tbody.SCModlTbody').css('max-height', $(window).height() * 0.69);
@@ -92,14 +94,13 @@ export class EbsContractByStatusComponent implements OnInit {
             res[i].sts_changed_on = moment(res[i].sts_changed_on).format('YYYY-MM-DD');
             //this.drillDown(moment(res[i].contract_creation_date).format('YYY-MM-DD'));
           }
-          console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(this.drillDown));
+         // console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(this.drillDown));
           this.drillDownData = res;
         }, error => {
-          console.log("error getTerritories " + error);
+          //console.log("error getTerritories " + error);
         });
-      this.drillDown = [];
 
-    }
+      }
   }
   public exportToExcel() {
 
@@ -165,7 +166,7 @@ export class EbsContractByStatusComponent implements OnInit {
       )
     }).catch((error) => {
       reject(error);
-      console.log('errorin getting data :', error);
+     // console.log('errorin getting data :', error);
     })
   }
 
@@ -178,13 +179,13 @@ export class EbsContractByStatusComponent implements OnInit {
       }, err => console.error(err),
         // the third argument is a function which runs on completion
         () => {
-          console.log("the drilldown data recived is:" + this.drillDown);
+         // console.log("the drilldown data recived is:" + this.drillDown);
           resolve(this.drillDown);
         }
       )
     }).catch((error) => {
       reject(error);
-      console.log('errorin getting data :', error);
+     // console.log('errorin getting data :', error);
     })
 
   }
@@ -219,7 +220,7 @@ export class EbsContractByStatusComponent implements OnInit {
       )
     }).catch((error) => {
       reject(error);
-      console.log('errorin getting data :', error);
+      //console.log('errorin getting data :', error);
     })
   }
 
@@ -243,7 +244,7 @@ export class EbsContractByStatusComponent implements OnInit {
           }
         )
     }).catch((error) => {
-      console.log('errorin getting data :', error);
+     // console.log('errorin getting data :', error);
       reject(error);
     })
   }
@@ -268,7 +269,7 @@ export class EbsContractByStatusComponent implements OnInit {
           }
         )
     }).catch((error) => {
-      console.log('errorin getting data :', error);
+      //console.log('errorin getting data :', error);
       reject(error);
     })
   }
@@ -619,7 +620,7 @@ export class EbsContractByStatusComponent implements OnInit {
 
         // this.drawchart(res);
       }, error => {
-        console.log("error getCaseData " + error);
+       // console.log("error getCaseData " + error);
       });
 
     this.getebsTerritoriesData()
@@ -630,7 +631,7 @@ export class EbsContractByStatusComponent implements OnInit {
         this.sideViewDropDowns.territoryData = res;
         this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
       }, error => {
-        console.log("error getTerritories " + error);
+        //console.log("error getTerritories " + error);
       });
     this.getWorkflowStatus()
       .then((res: any) => {
@@ -639,7 +640,7 @@ export class EbsContractByStatusComponent implements OnInit {
         this.sideViewDropDowns.workFlowData = res;
         this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
       }, error => {
-        console.log("error getWorkflowStatus " + error);
+       // console.log("error getWorkflowStatus " + error);
       });
       this.getArrivalType()
       .then((res: any) => {
@@ -648,7 +649,7 @@ export class EbsContractByStatusComponent implements OnInit {
         this.sideViewDropDowns.arrivalTypeData = res;
         this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
       }, error => {
-        console.log("error getArrivalType " + error);
+       // console.log("error getArrivalType " + error);
       });
     // this.sideViewDropDowns.showArrivalType = true;
     // this.sideViewDropDowns.arrivalTypeData = ['SAOF', 'CPQ', 'Q2SC'];

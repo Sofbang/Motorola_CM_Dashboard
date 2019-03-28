@@ -13,11 +13,11 @@ router.get('/ebs_contract_state', (req, res, next) => {
       `SELECT status, 
       SUM (mediandays :: INTEGER) AS mediandays, 
       SUM(contractperstatus)      AS contractscount,
-      territory ,arrival_type
+      territory 
 FROM   (SELECT to_status              AS Status, 
               Median(daysinstatus)   AS MedianDays, 
               Count(contract_number) AS contractPerStatus, 
-              territory ,arrival_type
+              territory 
        FROM   (SELECT contract_number, 
                       to_status, 
                       Min(sts_changed_on), 
@@ -26,13 +26,11 @@ FROM   (SELECT to_status              AS Status,
                                      'DD')), 
                       '99G999D9S') AS 
                       DaysInStatus, 
-                      territory ,
-                      arrival_type
+                      territory 
                FROM   (SELECT A2.contract_number, 
                               A2.to_status, 
                               A2.sts_changed_on, 
                               territory, 
-                              arrival_type,
                               Coalesce((SELECT Max(A1.sts_changed_on) 
                                         FROM   ebs_contracts_state_master A1 
                                         WHERE  A1.contract_number = 
@@ -47,13 +45,13 @@ FROM   (SELECT to_status              AS Status,
                GROUP  BY contract_number, 
                          to_status, 
                          datemoved, 
-                         territory,arrival_type)R2 
+                         territory)R2 
        GROUP  BY to_status, 
-                 territory ,arrival_type
+                 territory 
        ORDER  BY to_status) R3 
 WHERE  status IN ( 'Generate PO', 'PO Issued', 'QA Hold', 'Modify PO' )  
      -- AND territory IN ( " + territory + " ) 
-GROUP  BY status,territory,arrival_type;`, [],
+GROUP  BY status,territory;`, [],
       function (err, result) {
         if (err) {
           conn.doRelease(dbConn);
@@ -102,6 +100,32 @@ router.get('/ebs_workflow_status', (req, res, next) => {
       `SELECT DISTINCT( to_status ) 
       FROM   ebs_contracts_state_master 
       WHERE  to_status IN ( 'Generate PO', 'PO Issued', 'QA Hold', 'Modify PO' ) `, [],
+      function (err, result) {
+        if (err) {
+          conn.doRelease(dbConn);
+          //call error handler
+          return next(err);
+        }
+        response.data = result.rows;
+        res.json(response);
+        //release connection back to pool
+        conn.doRelease(dbConn);
+      });
+  });
+});
+
+// API for ebs_workflow_status
+router.get('/ebs_contracts_drilldownstatus', (req, res, next) => {
+  //call doConnect method in db_operations
+  var status =  req.query;
+  console.log("the status is:"+JSON.stringify(status));
+  var postgresql = "Select distinct contract_number,customer_name, contract_owner,contract_creation_date,to_status from ebs_contracts_state_master where to_status = '"+status.contractstatus+"'";
+  //console.log("the status passed is:"+JSON.stringify(status));
+  conn.doConnect((err, dbConn) => {
+    if (err) { return next(err); }
+    //execute query using using connection instance returned by doConnect method
+    conn.doExecute(dbConn,
+      postgresql, [],
       function (err, result) {
         if (err) {
           conn.doRelease(dbConn);
