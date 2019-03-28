@@ -49,7 +49,7 @@ FROM   (SELECT to_status              AS Status,
        GROUP  BY to_status, 
                  territory 
        ORDER  BY to_status) R3 
-WHERE  status IN ( 'GENERATE_PO', 'PO_ISSUED', 'QA_HOLD', 'MODIFY_PO' ) 
+WHERE  status IN ( 'Generate PO', 'PO Issued', 'QA Hold', 'Modify PO' )  
      -- AND territory IN ( " + territory + " ) 
 GROUP  BY status,territory;`, [],
       function (err, result) {
@@ -99,7 +99,7 @@ router.get('/ebs_workflow_status', (req, res, next) => {
     conn.doExecute(dbConn,
       `SELECT DISTINCT( to_status ) 
       FROM   ebs_contracts_state_master 
-      WHERE  to_status IN ( 'GENERATE_PO', 'PO_ISSUED', 'QA_HOLD', 'MODIFY_PO' )`, [],
+      WHERE  to_status IN ( 'Generate PO', 'PO Issued', 'QA Hold', 'Modify PO' ) `, [],
       function (err, result) {
         if (err) {
           conn.doRelease(dbConn);
