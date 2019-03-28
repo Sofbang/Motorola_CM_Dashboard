@@ -357,7 +357,7 @@ export class ScNewCasesComponent implements OnInit {
     if (data.length == 0) {
       console.log("the if of check for length");
       this.checkDataSCNC = true;
-      array = [['Months', 'Cases Counts'], ['Jan 17', 0], ['Feb 17', 0], ['Mar 17', 0], ['Apr 17', 0], ['May 17', 0], ['Jun 17', 0], ['Jul 17', 0], ['Aug 17', 0], ['Sep 17', 0], ['Oct 17', 0], ['Nov 17', 0], ['Dec 17', 0], ['Jan 18', 0], ['Feb 18', 0], ['Mar 18', 0], ['Apr 18', 0], ['May 18', 0], ['Jun 18', 0], ['Jul 18', 0], ['Aug 18', 0], ['Sep 18', 0], ['Oct 18', 0], ['Nov 18', 0], ['Dec 18', 0]];
+      array = [['Months', 'Cases Counts'], ['Jan', 0], ['Feb ', 0], ['Mar ', 0], ['Apr ', 0], ['May ', 0], ['Jun ', 0], ['Jul ', 0], ['Aug ', 0], ['Sep ', 0], ['Oct ', 0], ['Nov ', 0], ['Dec ', 0]];
       this.drawChart(array);
 
     } else {
@@ -365,6 +365,7 @@ export class ScNewCasesComponent implements OnInit {
       for (let i in data) {
         array.push(data[i]);
       }
+      this.checkDataSCNC = false;
     }
     return array;
   }
@@ -614,6 +615,7 @@ export class ScNewCasesComponent implements OnInit {
       }).catch(error => {
         console.log("error getMinMaxDates " + error);
       })
+
 
     this.sideViewDropDowns.showArrivalType = true;
     this.sideViewDropDowns.arrivalTypeData = ['SAOF', 'CPQ', 'Q2SC'];
