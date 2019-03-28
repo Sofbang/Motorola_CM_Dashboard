@@ -118,7 +118,7 @@ router.get('/ebs_workflow_status', (req, res, next) => {
 router.post('/ebs_contracts_drilldown', (req, res, next) => {
   //call doConnect method in db_operations
   var status =  req.query;
-  console.log("the status passed is:"+JSON.stringify(status));
+  //console.log("the status passed is:"+JSON.stringify(status));
   conn.doConnect((err, dbConn) => {
     if (err) { return next(err); }
     //execute query using using connection instance returned by doConnect method
@@ -162,27 +162,27 @@ router.get('/ebs_dates_max_min', (req, res, next) => {
 
 
 
-// API for ebs_workflow_status
-router.get('/ebs_contracts_status_avg', (req, res, next) => {
-  //call doConnect method in db_operations
-  conn.doConnect((err, dbConn) => {
-    if (err) { return next(err); }
-    //execute query using using connection instance returned by doConnect method
-    conn.doExecute(dbConn,
-      "Select TO_CHAR(MAX(contract_creation_date), 'yyyy-mm-dd') as max_date_cases, TO_CHAR(MIN(contract_creation_date), 'yyyy-mm-dd')  as min_date_cases from ebs_contracts_state_master", [],
-      function (err, result) {
-        if (err) {
-          conn.doRelease(dbConn);
-          //call error handler
-          return next(err);
-        }
-        response.data = result.rows;
-        res.json(response);
-        //release connection back to pool
-        conn.doRelease(dbConn);
-      });
-  });
-});
+// // API for ebs_workflow_status
+// router.get('/ebs_contracts_status_avg', (req, res, next) => {
+//   //call doConnect method in db_operations
+//   conn.doConnect((err, dbConn) => {
+//     if (err) { return next(err); }
+//     //execute query using using connection instance returned by doConnect method
+//     conn.doExecute(dbConn,
+//       "Select TO_CHAR(MAX(contract_creation_date), 'yyyy-mm-dd') as max_date_cases, TO_CHAR(MIN(contract_creation_date), 'yyyy-mm-dd')  as min_date_cases from ebs_contracts_state_master", [],
+//       function (err, result) {
+//         if (err) {
+//           conn.doRelease(dbConn);
+//           //call error handler
+//           return next(err);
+//         }
+//         response.data = result.rows;
+//         res.json(response);
+//         //release connection back to pool
+//         conn.doRelease(dbConn);
+//       });
+//   });
+// });
 
 
 
@@ -214,7 +214,7 @@ router.get('/ebs_contract_state_avg', (req, res, next) => {
   //call doConnect method in db_operations
   conn.doConnect((err, dbConn) => {
     var postgresql ="select to_status as status,count(contract_number) as contracts_count,Avg(q.days) averagedays,territory,TO_CHAR(MAX(contract_creation_date), 'yyyy-mm-dd')  as Contract_creation_date  from(select contract_number,to_status,territory,contract_creation_date, date_signed, CASE WHEN date_signed is not null THEN date_signed::date-contract_creation_date::date ELSE current_date::date-contract_creation_date::date END as days from ebs_contracts_state_master)q   group by to_status,territory,contract_creation_date";
-    console.log("the query for avg is:"+JSON.stringify(postgresql));
+    //console.log("the query for avg is:"+JSON.stringify(postgresql));
     if (err) { return next(err); }
     //execute query using using connection instance returned by doConnect method
     conn.doExecute(dbConn,
@@ -236,10 +236,10 @@ router.get('/ebs_contract_state_avg', (req, res, next) => {
 
 router.post('/ebs_cycle_times', (req, res, next) => {
   var status =  req.body;
-  console.log("the status passed is:"+JSON.stringify(status));
+ // console.log("the status passed is:"+JSON.stringify(status));
   //call doConnect method in db_operations
   var postgresql = "select to_status as status,count(contract_number) as contracts_count,median(q.days) median_days,territory,TO_CHAR(MAX(contract_creation_date), 'yyyy-mm-dd')  as Contract_creation_date  from(select contract_number,to_status,territory,contract_creation_date, date_signed, CASE WHEN date_signed is not null THEN date_signed::date-contract_creation_date::date ELSE current_date::date-contract_creation_date::date END as days from ebs_contracts_state_master)q   WHERE  to_status IN ( 'GENERATE_PO', 'PO_ISSUED', 'QA_HOLD', 'MODIFY_PO' )  AND  date_trunc('day',contract_creation_date) BETWEEN '"+req.body.from+"' AND '"+req.body.to+"' group by to_status,territory,contract_creation_date";
-  console.log("the query is:"+postgresql)
+  //console.log("the query is:"+postgresql)
   conn.doConnect((err, dbConn) => {
     if (err) { return next(err); }
     //execute query using using connection instance returned by doConnect method
