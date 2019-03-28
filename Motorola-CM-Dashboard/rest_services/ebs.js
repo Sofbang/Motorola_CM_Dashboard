@@ -213,10 +213,12 @@ router.get('/ebs_arrival_type', (req, res, next) => {
 router.get('/ebs_contract_state_avg', (req, res, next) => {
   //call doConnect method in db_operations
   conn.doConnect((err, dbConn) => {
+    var postgresql ="select to_status as status,count(contract_number) as contracts_count,Avg(q.days) averagedays,territory,TO_CHAR(MAX(contract_creation_date), 'yyyy-mm-dd')  as Contract_creation_date  from(select contract_number,to_status,territory,contract_creation_date, date_signed, CASE WHEN date_signed is not null THEN date_signed::date-contract_creation_date::date ELSE current_date::date-contract_creation_date::date END as days from ebs_contracts_state_master)q   group by to_status,territory,contract_creation_date";
+    console.log("the query for avg is:"+JSON.stringify(postgresql));
     if (err) { return next(err); }
     //execute query using using connection instance returned by doConnect method
     conn.doExecute(dbConn,
-      `select to_status as status,count(contract_number) as contracts_count,Avg(q.days) median_days,territory,TO_CHAR(MAX(contract_creation_date), 'yyyy-mm-dd')  as Contract_creation_date  from(select contract_number,to_status,territory,contract_creation_date, date_signed, CASE WHEN date_signed is not null THEN date_signed::date-contract_creation_date::date ELSE current_date::date-contract_creation_date::date END as days from ebs_contracts_state_master)q   WHERE  to_status IN ( 'GENERATE_PO', 'PO_ISSUED', 'QA_HOLD', 'MODIFY_PO' )  AND  date_trunc('day',contract_creation_date) BETWEEN '"+req.body.first+"' AND '"+req.body.last+"' group by to_status,territory,contract_creation_date`, [],
+      postgresql, [],
       function (err, result) {
         if (err) {
           conn.doRelease(dbConn);
@@ -236,11 +238,13 @@ router.post('/ebs_cycle_times', (req, res, next) => {
   var status =  req.body;
   console.log("the status passed is:"+JSON.stringify(status));
   //call doConnect method in db_operations
+  var postgresql = "select to_status as status,count(contract_number) as contracts_count,median(q.days) median_days,territory,TO_CHAR(MAX(contract_creation_date), 'yyyy-mm-dd')  as Contract_creation_date  from(select contract_number,to_status,territory,contract_creation_date, date_signed, CASE WHEN date_signed is not null THEN date_signed::date-contract_creation_date::date ELSE current_date::date-contract_creation_date::date END as days from ebs_contracts_state_master)q   WHERE  to_status IN ( 'GENERATE_PO', 'PO_ISSUED', 'QA_HOLD', 'MODIFY_PO' )  AND  date_trunc('day',contract_creation_date) BETWEEN '"+req.body.from+"' AND '"+req.body.to+"' group by to_status,territory,contract_creation_date";
+  console.log("the query is:"+postgresql)
   conn.doConnect((err, dbConn) => {
     if (err) { return next(err); }
     //execute query using using connection instance returned by doConnect method
     conn.doExecute(dbConn,
-      "select to_status as status,count(contract_number) as contracts_count,median(q.days) median_days,territory,TO_CHAR(MAX(contract_creation_date), 'yyyy-mm-dd')  as Contract_creation_date  from(select contract_number,to_status,territory,contract_creation_date, date_signed, CASE WHEN date_signed is not null THEN date_signed::date-contract_creation_date::date ELSE current_date::date-contract_creation_date::date END as days from ebs_contracts_state_master)q   WHERE  to_status IN ( 'GENERATE_PO', 'PO_ISSUED', 'QA_HOLD', 'MODIFY_PO' )  AND  date_trunc('day',contract_creation_date) BETWEEN '"+req.body.first+"' AND '"+req.body.last+"' group by to_status,territory,contract_creation_date", [],
+      postgresql, [],
       function (err, result) {
         if (err) {
           conn.doRelease(dbConn);

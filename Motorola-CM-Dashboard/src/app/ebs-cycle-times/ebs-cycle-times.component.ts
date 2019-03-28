@@ -233,8 +233,9 @@ export class EbsCycleTimesComponent implements OnInit {
     let cases = [];
     this._ebsService.getEBSContractsAvg().
       subscribe(data => {
+        console.log(" the avg is:"+JSON.stringify(data.length));
         if (data.length > 0) {
-          cases = this.makeChartDataAvg(data);
+          cases = this.makeCount(this.datesInit,data);
           let arr = [];
           // for (let i in cases) {
           //   arr.push(cases[i].contractscount)
@@ -343,13 +344,15 @@ export class EbsCycleTimesComponent implements OnInit {
         this.filterChartData();
 
       }
-      else if (from == 'contracttime') {
+      else if (from == 'contractTime') {
+        console.log("in contract time :"+JSON.stringify(from));
         this._dataHandlerService.resetAllDropDowns(true);
         this.territoriesArr = [];
         this.workFlowStatusArr = [];
         this.arrivalTypesArr = [];
         // console.log("casetime selected Median" + from);
-        if (item == 'Median') {
+        if (item.item_text == 'Median') {
+          console.log("in contract time :"+JSON.stringify(item.item_text));
           console.log("in the If of Medain Days");
           this.restUrlFilterYr = 'ebs_cycle_times';
           this.fromMedOrAvg = 'median';
@@ -364,7 +367,8 @@ export class EbsCycleTimesComponent implements OnInit {
             }, error => {
               console.log("error getCaseData " + error);
             });
-        } else if (item == 'Average') {
+        } else if (item.item_text == 'Average') {
+          console.log("in contract time :"+JSON.stringify(item.item_text));
           //console.log("in the else if of Medain Days" );
           this.restUrlFilterYr = 'ebs_contract_state_avg';
           this.fromMedOrAvg = 'average';
@@ -478,9 +482,9 @@ export class EbsCycleTimesComponent implements OnInit {
   
       } else if (this.territoriesArr.length == 0 && this.arrivalTypesArr.length == 0) {
         console.log("t0  a0");
-        if(this.datesData.length>1){
-          this.datesInit=this.datesData;
-        }
+        // if(this.datesData.length>1){
+        //   this.datesInit=this.datesData;
+        // }
         this.checkDateDropdownSelected(this.datesData)
           .then(result => {
             if (result != 'nodateselected') {
@@ -495,9 +499,9 @@ export class EbsCycleTimesComponent implements OnInit {
   
       } else if (this.territoriesArr.length == 0 && this.arrivalTypesArr.length > 0) {
         console.log("t0 a>0");
-        if(this.datesData.length>1){
-          this.datesInit=this.datesData;
-        }
+        // if(this.datesData.length>1){
+        //   this.datesInit=this.datesData;
+        // }
         this.checkDateDropdownSelected(this.datesData)
           .then(result => {
             if (result != 'nodateselected') {
@@ -524,9 +528,9 @@ export class EbsCycleTimesComponent implements OnInit {
       }
       else if (this.territoriesArr.length > 0 && this.arrivalTypesArr.length > 0) {
         console.log("t>0  a>0");
-        if(this.datesData.length>1){
-          this.datesInit=this.datesData;
-        }
+        // if(this.datesData.length>1){
+        //   this.datesInit=this.datesData;
+        // }
         this.checkDateDropdownSelected(this.datesData)
           .then(result => {
             if (result != 'nodateselected') {
