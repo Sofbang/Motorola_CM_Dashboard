@@ -141,26 +141,26 @@ router.get('/sc_arrival_type', (req, res, next) => {
 });
 
 // // API for sc_case_territories
-router.post('/sc_new_cases', (req, res, next) => {
-  //call doConnect method in db_operations
-  conn.doConnect((err, dbConn) => {
-    if (err) { return next(err); }
-    //execute body using using connection instance returned by doConnect method
-    conn.doExecute(dbConn,
-      "Select distinct case_number,case_title,current_status,from_status,to_status,territory,case_creation_date,sts_changed_on,customer,       case_owner,arrival_type  FROM sc_case_state_master   where date_trunc('day',case_creation_date)>='" + req.body.from + "' AND date_trunc('day',case_creation_date)<='" + req.body.to +"' order by case_number asc ", [],
-      function (err, result) {
-        if (err) {
-          conn.doRelease(dbConn);
-          //call error handler
-          return next(err);
-        }
-        response.data = result.rows;
-        res.json(response);
-        //release connection back to pool
-        conn.doRelease(dbConn);
-      });
-  });
-});
+// router.post('/sc_new_cases', (req, res, next) => {
+//   //call doConnect method in db_operations
+//   conn.doConnect((err, dbConn) => {
+//     if (err) { return next(err); }
+//     //execute body using using connection instance returned by doConnect method
+//     conn.doExecute(dbConn,
+//       "Select distinct case_number,case_title,current_status,from_status,to_status,territory,case_creation_date,sts_changed_on,customer,       case_owner,arrival_type  FROM sc_case_state_master   where date_trunc('day',case_creation_date)>='" + req.body.from + "' AND date_trunc('day',case_creation_date)<='" + req.body.to +"' order by case_number asc ", [],
+//       function (err, result) {
+//         if (err) {
+//           conn.doRelease(dbConn);
+//           //call error handler
+//           return next(err);
+//         }
+//         response.data = result.rows;
+//         res.json(response);
+//         //release connection back to pool
+//         conn.doRelease(dbConn);
+//       });
+//   });
+// });
 
 
 // // API for sc_case_territories
@@ -399,4 +399,41 @@ router.post('/sc_case_status_avg_yr', (req, res, next) => {
 });
 
 
+router.post('/sc_new_cases', (req, res, next) => {
+  //call doConnect method in db_operations
+  conn.doConnect((err, dbConn) => {
+    if (err) { return next(err); }
+    //execute body using using connection instance returned by doConnect method
+    conn.doExecute(dbConn,
+      `Select count (distinct m.case_number) as Case_Count
+      ,to_char(date (date_trunc('month',m.case_creation_date)),'MON')||'-'|| extract (year from (date (date_trunc('month',m.case_creation_date)))) as byMonth
+      FROM sc_case_state_master m
+      where date(date_trunc('day',m.case_creation_date))>= coalesce( $1::date, (date_trunc('month',CURRENT_DATE) - interval '25 months')) 
+      AND date(date_trunc('day',m.case_creation_date))<=  coalesce( $2::date,  (date_trunc('month',CURRENT_DATE) - interval '1 months'))
+      and m.territory = ANY(CASE
+        WHEN $3::boolean=false 
+        THEN ARRAY[m.territory]
+        ELSE ARRAY[$4::text[]] 
+        END)
+      and m.arrival_type = ANY(CASE
+        WHEN $5::boolean=false
+        THEN ARRAY[m.arrival_type]
+        ELSE ARRAY[$6::text[]] 
+        END)
+      group by date_trunc('month',m.case_creation_date)
+      order by date_trunc('month',m.case_creation_date)`, [req.body.from_date,req.body.to_date,req.body.territory_selected,req.body.territory_data,req.body.arrival_selected,req.body.arrival_data],
+      function (err, result) {
+        if (err) {
+          conn.doRelease(dbConn);
+          //call error handler
+          return next(err);
+        }
+        response.data = result.rows;
+        res.json(response);
+        //release connection back to pool
+        conn.doRelease(dbConn);
+      });
+  });
+});
+//{"OTHER","T2","T4E","T4W","T5N","T5S","T6","T7","T8","T3"}
 module.exports = router;
