@@ -118,7 +118,7 @@ router.get('/ebs_workflow_status', (req, res, next) => {
 router.get('/ebs_contracts_drilldownstatus', (req, res, next) => {
   //call doConnect method in db_operations
   var status =  req.query;
-  console.log("the status is:"+JSON.stringify(status));
+  //console.log("the status is:"+JSON.stringify(status));
   var postgresql = "Select distinct contract_number,customer_name, contract_owner,contract_creation_date,to_status from ebs_contracts_state_master where to_status = '"+status.contractstatus+"'";
   //console.log("the status passed is:"+JSON.stringify(status));
   conn.doConnect((err, dbConn) => {

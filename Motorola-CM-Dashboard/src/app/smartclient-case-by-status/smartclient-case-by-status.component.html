@@ -42,7 +42,7 @@
               <th>Case Owner</th>
               <th>Case Open Date</th>
               <th>NSS Aging</th>
-              <th>Case start date</th>
+              <th>Contract start date</th>
             </tr>
           </thead>    
           <!-- outer for each  -->
@@ -52,9 +52,9 @@
               <td>{{drilldown.case_number}}</td>
               <td>{{drilldown.to_status}}</td>
               <td>{{drilldown.case_owner==null?'_':drilldown.case_owner}}</td>
-              <td>{{drilldown.sts_changed_on}}</td>
-              <td>{{drilldown.nss_aging}}</td>
               <td>{{drilldown.case_creation_date}}</td>
+              <td>{{drilldown.nss_aging}}</td>
+              <td>{{drilldown.contract_start_date}}</td>
             </tr>
            
           </tbody>

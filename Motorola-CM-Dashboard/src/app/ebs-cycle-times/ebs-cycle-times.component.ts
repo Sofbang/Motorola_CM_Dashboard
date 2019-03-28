@@ -345,7 +345,7 @@ export class EbsCycleTimesComponent implements OnInit {
     }
   }
   public drawchartavg(res) {
-    console.log("inside the avg dc")
+   // console.log("inside the avg dc")
     this.ebscolumnChartData = {
       chartType: 'ComboChart',
       dataTable: res,

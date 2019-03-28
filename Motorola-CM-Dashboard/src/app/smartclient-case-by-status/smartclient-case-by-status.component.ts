@@ -57,23 +57,23 @@ export class SmartclientCaseByStatusComponent implements OnInit {
   public selectBarScCaseByStatus(event: ChartSelectEvent) {
 
     this.openScModel.nativeElement.click();
-
-    let drillDownStatusnew = ''; let status: any; let letters = /^[0-9a-zA-Z]\s+$/;
-    let statusStr = '', j = 0;
-    drillDownStatusnew = (event.selectedRowValues[0]).split(' ');
-    status = drillDownStatusnew[0];
-    // console.log("the drilldown status is:" + JSON.stringify(status));
-    for (let i = event.selectedRowValues[0].length; i > 0; i--) {
-      if (event.selectedRowValues[0][i] == ' ') {
-        j = i;
-        //console.log("i---"+j)
-        break;
-      }
-      //console.log("hhh--"+event.selectedRowValues[0][i].match(/^[a-zA-Z]\s+$/));
-    }
-    status = event.selectedRowValues[0].substring(0, j);
-    //console.log("event.." + event.selectedRowValues[0].substring(0,j));
+    this.drillDown = [];
+   //console.log("event.." + event.selectedRowValues[0].substring(0,j));
     if (event.message == 'select') {
+      let drillDownStatusnew = ''; let status: any; let letters = /^[0-9a-zA-Z]\s+$/;
+      let statusStr = '', j = 0;
+      drillDownStatusnew = (event.selectedRowValues[0]).split(' ');
+      status = drillDownStatusnew[0];
+      // console.log("the drilldown status is:" + JSON.stringify(status));
+      for (let i = event.selectedRowValues[0].length; i > 0; i--) {
+        if (event.selectedRowValues[0][i] == ' ') {
+          j = i;
+          //console.log("i---"+j)
+          break;
+        }
+        //console.log("hhh--"+event.selectedRowValues[0][i].match(/^[a-zA-Z]\s+$/));
+      }
+      status = event.selectedRowValues[0].substring(0, j);
       //console.log("in the selectBar"+JSON.stringify(e));
       this.newModelCounts = event.selectedRowValues[1];
       //console.log("the selectBar is:" + JSON.stringify(this.newModelCounts));
@@ -108,7 +108,6 @@ export class SmartclientCaseByStatusComponent implements OnInit {
         }, error => {
           //console.log("error getTerritories " + error);
         });
-      this.drillDown = [];
 
 
     }
