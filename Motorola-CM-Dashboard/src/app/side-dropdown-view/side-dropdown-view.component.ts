@@ -39,20 +39,21 @@ export class SideDropdownViewComponent implements OnInit {
   toModel: any;
   casetimeModel: any;
   constructor(private _dataHandlerService: DataHandlerService) {
+    //calls from every component
     this._dataHandlerService.sideViewDropDownData
       .subscribe(res => {
         this.sideViewDDObj = new SideViewDropDowns();
         this.sideViewDDObj = res;
         this.casetimeModel = 'Median';
         this.resetDropDowns();
-        // console.log("subscribe inside sideview" + JSON.stringify(this.sideViewDDObj));
-        // this.ngFormDate.reset();
       });
+    //calls from component where data reset is needed
     this._dataHandlerService.resetDropdowns
       .subscribe(result => {
         this.resetDropDowns();
       })
     this.getScreenSize();
+    //calls from component getting min max limit of dates
     this._dataHandlerService.SCMinMaxDates
       .subscribe(res => {
         this.makeDate(res);
@@ -68,27 +69,48 @@ export class SideDropdownViewComponent implements OnInit {
     $('.slimScrollDiv').removeAttr('style');//remove slimscroll from side menus on screen size change
   }
 
+  /**
+   * On select event fires from html ng multiselect dropdown
+   * @param item -current selected value
+   * @param dropDownName -String name of dropdown which is selected
+   */
   onItemSelect(item, dropDownName) {
     let jsonObj = { 'event': 'onItemSelect', 'from': dropDownName, 'data': item }
     this._dataHandlerService.setDataFromSideView(jsonObj);
   }
 
+  /**
+    * On select event fires from html ng multiselect dropdown
+    * @param item -current selected value
+    * @param dropDownName -String name of dropdown which is selected
+    */
   onItemDeSelect(items, dropDownName) {
     let jsonObj = { 'event': 'onItemDeSelect', 'from': dropDownName, 'data': items }
     this._dataHandlerService.setDataFromSideView(jsonObj);
   }
-
+  /**
+     * On select event fires from html ng multiselect dropdown
+     * @param item -current selected value
+     * @param dropDownName -String name of dropdown which is selected
+     */
   onSelectAll(items, dropDownName) {
     let jsonObj = { 'event': 'onSelectAll', 'from': dropDownName, 'data': items }
     this._dataHandlerService.setDataFromSideView(jsonObj);
 
   }
-
+  /**
+     * On select event fires from html ng multiselect dropdown
+     * @param item -current selected value
+     * @param dropDownName -String name of dropdown which is selected
+     */
   onDeSelectAll(items, dropDownName) {
     let jsonObj = { 'event': 'onDeSelectAll', 'from': dropDownName, 'data': items }
     this._dataHandlerService.setDataFromSideView(jsonObj);
   }
 
+  /**
+   * reset all dropdowns to default 
+   */
   resetDropDowns() {
     this.workflowModel = [];
     this.caseTypeModel = [];
@@ -100,44 +122,41 @@ export class SideDropdownViewComponent implements OnInit {
     this.toModel = null;
   }
 
-
+  /**
+   * Make dates data for from and to dropdowns
+   * @param data-min max dates 
+   */
   public makeDate(data) {
-    //console.log("the res is:"+JSON.stringify(data));
     let startDate = data[0].min_date_cases;
     let endDate = data[0].max_date_cases;
     let starting = new Date(startDate);
     let ending = new Date(endDate);
     let dates = [];
     for (let i = starting.getFullYear(); i < ending.getFullYear() + 1; i++) {
-      // console.log("the getFullYear is:" + JSON.stringify(starting.getFullYear()) + "the ith index is" + JSON.stringify(i));
       for (let j = 1; j <= 12; j++) {
-        // console.log("inside the jth loop:" + j)
         if (i === ending.getFullYear() && j === ending.getMonth() + 3) {
-          // console.log("inside the first if" + JSON.stringify(ending.getFullYear()))
           break;
         }
         else if (i === 2012 && j < 4) {
-          // console.log("the else if firt time part :")
           continue;
         }
         else if (j < 10) {
-          // console.log("the else if second time is:")
           let dateString = [i, '-', '0' + j, '-', '01'].join('');
           dates.push(dateString)
         }
         else {
-          // console.log("the else part is:")
           let dateString = [i, '-', j, '-', '01'].join('');
           dates.push(dateString);
         }
       }
     }
     this.makeDateFormat(dates);
-    // console.log(dates);
-    // return dates;
-
   }
 
+  /**
+   * make from dates dropdown values in format JAN 2019
+   * @param arr-array of dates  YYYY-mm-dd
+   */
   public makeDateFormat(arr) {
     let dateArr = this.sortDate(arr)
     for (let i = dateArr.length - 1; i > 0; i--) {
@@ -146,22 +165,27 @@ export class SideDropdownViewComponent implements OnInit {
       let options = { year: 'numeric', month: 'short' };
       this.fromDates.push(event.toLocaleString('en', options));
     }
-    //console.log("lll"+JSON.stringify(this.fromDates));
   }
-  
-   public sortDate(monthYear) {
+
+  /**
+   * Sort the dates in ascending order
+   * @param monthYear- date in YYYY-mm-dd
+   */
+  public sortDate(monthYear) {
     var sorted = monthYear.sort((a, b) => {
       return a - b;
     });
     return sorted;
   }
-public onChangeFrom(filterVal: any) {
+  /**
+   * Fires when on select in from dd
+   * @param filterVal-date value selected 
+   */
+  public onChangeFrom(filterVal: any) {
     let options = { year: 'numeric', month: 'short' };
-    let date=new Date();;
-    let dt=date.toLocaleString('en', options);
-    console.log("fff"+dt);
+    let date = new Date();;
+    let dt = date.toLocaleString('en', options);
     this.selectedYear = moment(filterVal).format('YY');
-    console.log("the year :" + JSON.stringify(this.selectedYear));
     this.toYear = [];
     this.selectedFrom = filterVal;
     this.n = this.fromDates.indexOf(this.selectedFrom);
@@ -172,7 +196,10 @@ public onChangeFrom(filterVal: any) {
     }
   }
 
-
+  /**
+    * Fires when on select in to dd
+    * @param filterVal-date value selected 
+    */
   public onChangeTo(filterVal: any) {
     // console.log("hey hi "+filterVal);
     // console.log("the values is "+this.selectedFrom);
@@ -233,17 +260,17 @@ public onChangeFrom(filterVal: any) {
       allowSearchFilter: true,
       dir: 'asc'
     };
-    this.dropdownSettingsCaseTime={
+    this.dropdownSettingsCaseTime = {
       singleSelection: false,
       idField: 'item_id',
       textField: 'item_text',
-      text:'Median',
+      text: 'Median',
       selectAllText: 'All',
       unSelectAllText: 'Clear All',
       itemsShowLimit: 1,
       allowSearchFilter: true,
       dir: 'asc'
-     };
-     
+    };
+
   }
 }
