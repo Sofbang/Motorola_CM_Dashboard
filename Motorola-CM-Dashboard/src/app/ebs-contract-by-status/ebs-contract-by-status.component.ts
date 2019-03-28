@@ -23,6 +23,7 @@ export class EbsContractByStatusComponent implements OnInit {
   public drillDownData: any;
   public territories: any;
   public drillDown: any;
+  public status: any;
   public checkDataEBS: any = false;
   public territoriesArr: any = [];
   public arrivalTypesArr: any = [];
@@ -52,20 +53,27 @@ export class EbsContractByStatusComponent implements OnInit {
       });
     this._dataHandlerService.setDataForMainLayout(true);
   }
-
-
-
   public selectBar(event: ChartSelectEvent) {
     this.openScModel.nativeElement.click();
-    let drillDownStatusnew = []; let status: any;
+    let drillDownStatusnew = ''; let status: any; let letters = /^[0-9a-zA-Z]\s+$/;
+    let statusStr = '', j = 0;
     drillDownStatusnew = (event.selectedRowValues[0]).split(' ');
     status = drillDownStatusnew[0];
-    console.log("the drilldown status is:" + JSON.stringify(status));
-    console.log("in the selectBar" + JSON.stringify(event.selectedRowValues[0]));
+    // console.log("the drilldown status is:" + JSON.stringify(status));
+    for (let i = event.selectedRowValues[0].length; i > 0; i--) {
+      if (event.selectedRowValues[0][i] == ' ') {
+        j = i;
+        //console.log("i---"+j)
+        break;
+      }
+      //console.log("hhh--"+event.selectedRowValues[0][i].match(/^[a-zA-Z]\s+$/));
+    }
+    status = event.selectedRowValues[0].substring(0, j);
     if (event.message == 'select') {
 
-      this.newModelCounts = event.selectedRowValues[1]
+      this.newModelCounts = event.selectedRowValues[1];
       this.data = event.selectedRowValues[0];
+      //this.status = this.fdld(this.data);
       console.log("the data is:", JSON.stringify(this.data));
       $('.modal .modal-dialog').css('width', $(window).width() * 0.95);//fixed
       $('.modal .modal-body').css('height', $(window).height() * 0.77);//fixed
@@ -80,7 +88,7 @@ export class EbsContractByStatusComponent implements OnInit {
           //console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(res.length));
           for (let i in res) {
             //res[i].
-            res[i].contract_creation_date = moment(res[i].case_creation_date).format('YYYY-MM-DD');
+            res[i].contract_creation_date = moment(res[i].contract_creation_date).format('YYYY-MM-DD');
             res[i].sts_changed_on = moment(res[i].sts_changed_on).format('YYYY-MM-DD');
             //this.drillDown(moment(res[i].contract_creation_date).format('YYY-MM-DD'));
           }
@@ -100,6 +108,22 @@ export class EbsContractByStatusComponent implements OnInit {
 
   }
 
+  public fdld(data) {
+    var v = data.split(' ');
+    let arr = [];
+    var newone = v[0] + ' 1, '
+    var newtwo = v[1];
+    var newthree = newone + newtwo;
+    var newModDate = new Date(newthree);
+    var FirstDay = new Date(newModDate.getFullYear(), newModDate.getMonth(), 1).toLocaleDateString();
+    var LastDay = new Date(newModDate.getFullYear(), newModDate.getMonth() + 1, 0).toLocaleDateString();
+    var fd = moment(FirstDay).format('YYYY-MM-DD');
+    var ld = moment(LastDay).format('YYYY-MM-DD');
+    arr.push(fd);
+    arr.push(ld);
+    return arr;
+
+  }
 
   public calculatePerc(cases) {
     for (let i in cases) {
@@ -147,7 +171,8 @@ export class EbsContractByStatusComponent implements OnInit {
 
   public getEBSDrillDownData(status) {
     return new Promise((resolve, reject) => {
-      this._ebsService.getEBSDrillDown(status).subscribe(data => {
+      // let jsonObj = { 'first': this.status[0], 'last': this.status[1] };
+      this._ebsService.getEBSDrillDownStatus(status).subscribe(data => {
         this.drillDown = data;
         // console.log("territories" + this.territories)
       }, err => console.error(err),

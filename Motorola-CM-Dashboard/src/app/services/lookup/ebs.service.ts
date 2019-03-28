@@ -35,7 +35,7 @@ export class EbsService {
   }
 
   getEBSContractsAvg(){
-    return this.http.get('api/ebs_contracts_status_avg')
+    return this.http.get('api/ebs_contract_state_avg')
       .map(result => this.result = result.json().data);
   }
 
@@ -43,6 +43,11 @@ export class EbsService {
   // drilldowmn service
   getEBSDrillDown(jsonobj){
     return this.http.post('api/ebs_contracts_drilldown',JSON.stringify(jsonobj),this.options)
+    .map(result => this.result = result.json().data);
+  }
+
+  getEBSDrillDownStatus(status){
+    return this.http.get('api/ebs_contracts_drilldownstatus?contractstatus='+status)
     .map(result => this.result = result.json().data);
   }
   

@@ -185,7 +185,7 @@ export class ScNewCasesComponent implements OnInit {
 
 
   public scNewCaseAllData: any;
-  public datesInit=[]
+  public datesInit=[];
   public getSCNewCases() {
     return new Promise((resolve, reject) => {
       let lastDate = this.convertDateMoment(new Date());//current date
