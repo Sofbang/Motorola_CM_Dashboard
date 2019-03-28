@@ -55,7 +55,6 @@ export class EbsContractByStatusComponent implements OnInit {
   }
   public selectBar(event: ChartSelectEvent) {
     this.openScModel.nativeElement.click();
-    this.drillDown = [];
     let drillDownStatusnew = ''; let status: any; let letters = /^[0-9a-zA-Z]\s+$/;
     let statusStr = '', j = 0;
     drillDownStatusnew = (event.selectedRowValues[0]).split(' ');
@@ -70,15 +69,12 @@ export class EbsContractByStatusComponent implements OnInit {
       //console.log("hhh--"+event.selectedRowValues[0][i].match(/^[a-zA-Z]\s+$/));
     }
     status = event.selectedRowValues[0].substring(0, j);
-    //console.log("event.." + event.selectedRowValues[0].substring(0,j));
-    // if (event.message == 'select') {
-      this.drillDown = [];
+    if (event.message == 'select') {
 
-      //console.log("in the selectBar"+JSON.stringify(e));
       this.newModelCounts = event.selectedRowValues[1];
-      //console.log("the selectBar is:" + JSON.stringify(this.newModelCounts));
       this.data = event.selectedRowValues[0];
-
+      //this.status = this.fdld(this.data);
+      console.log("the data is:", JSON.stringify(this.data));
       $('.modal .modal-dialog').css('width', $(window).width() * 0.95);//fixed
       $('.modal .modal-body').css('height', $(window).height() * 0.77);//fixed
       $('tbody.SCModlTbody').css('max-height', $(window).height() * 0.69);
@@ -86,14 +82,14 @@ export class EbsContractByStatusComponent implements OnInit {
       $('tbody.SCModlTbody').css('overflow-x', 'hidden');
       // $('tbody.SCModlTbody').css('display', 'block');
       $('tbody.SCModlTbody').css('width', '100%');
-     console.log("the status is:"+JSON.stringify(status));
+
       this.getEBSDrillDownData(status)
         .then((res: any) => {
-          console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(res));
+          //console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(res.length));
           for (let i in res) {
             //res[i].
             res[i].contract_creation_date = moment(res[i].contract_creation_date).format('YYYY-MM-DD');
-            //res[i].sts_changed_on = moment(res[i].sts_changed_on).format('YYYY-MM-DD');
+            res[i].sts_changed_on = moment(res[i].sts_changed_on).format('YYYY-MM-DD');
             //this.drillDown(moment(res[i].contract_creation_date).format('YYY-MM-DD'));
           }
           console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(this.drillDown));
@@ -101,8 +97,9 @@ export class EbsContractByStatusComponent implements OnInit {
         }, error => {
           console.log("error getTerritories " + error);
         });
+      this.drillDown = [];
 
-    
+    }
   }
   public exportToExcel() {
 

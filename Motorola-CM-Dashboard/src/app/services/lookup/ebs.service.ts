@@ -47,7 +47,6 @@ export class EbsService {
   }
 
   getEBSDrillDownStatus(status){
-    console.log("the status passed is:"+status)
     return this.http.get('api/ebs_contracts_drilldownstatus?contractstatus='+status)
     .map(result => this.result = result.json().data);
   }

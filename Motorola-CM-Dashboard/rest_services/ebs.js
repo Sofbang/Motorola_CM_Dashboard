@@ -115,33 +115,6 @@ router.get('/ebs_workflow_status', (req, res, next) => {
 });
 
 // API for ebs_workflow_status
-router.get('/ebs_contracts_drilldownstatus', (req, res, next) => {
-  //call doConnect method in db_operations
-  var status =  req.query;
-  console.log("the status is:"+JSON.stringify(status));
-  var postgresql = "Select distinct contract_number,customer_name, contract_owner,contract_creation_date,to_status from ebs_contracts_state_master where to_status = '"+statuscontractstatus+"'";
-  //console.log("the status passed is:"+JSON.stringify(status));
-  conn.doConnect((err, dbConn) => {
-    if (err) { return next(err); }
-    //execute query using using connection instance returned by doConnect method
-    conn.doExecute(dbConn,
-      postgresql, [],
-      function (err, result) {
-        if (err) {
-          conn.doRelease(dbConn);
-          //call error handler
-          return next(err);
-        }
-        response.data = result.rows;
-        res.json(response);
-        //release connection back to pool
-        conn.doRelease(dbConn);
-      });
-  });
-});
-
-
-// API for ebs_workflow_status
 router.post('/ebs_contracts_drilldown', (req, res, next) => {
   //call doConnect method in db_operations
   var status =  req.query;
@@ -150,7 +123,7 @@ router.post('/ebs_contracts_drilldown', (req, res, next) => {
     if (err) { return next(err); }
     //execute query using using connection instance returned by doConnect method
     conn.doExecute(dbConn,
-      "Select distinct contract_number,customer_name,contract_owner,contract_creation_date,to_status, from ebs_contracts_state_master where date_trunc('day',contract_creation_date)  BETWEEN'"+ req.body.first +"' AND '" + req.body.last + "' ", [],
+      "Select distinct contract_number,customer_name,contract_owner,contract_creation_date,to_status,sts_changed_on from ebs_contracts_state_master where date_trunc('day',contract_creation_date)  BETWEEN'"+ req.body.first +"' AND '" + req.body.last + "' ", [],
       function (err, result) {
         if (err) {
           conn.doRelease(dbConn);

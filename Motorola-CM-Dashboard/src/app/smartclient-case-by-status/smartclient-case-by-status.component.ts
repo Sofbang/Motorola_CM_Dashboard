@@ -73,9 +73,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
     }
     status = event.selectedRowValues[0].substring(0, j);
     //console.log("event.." + event.selectedRowValues[0].substring(0,j));
-    // if (event.message == 'select') {
-      this.drillDown = [];
-
+    if (event.message == 'select') {
       //console.log("in the selectBar"+JSON.stringify(e));
       this.newModelCounts = event.selectedRowValues[1];
       //console.log("the selectBar is:" + JSON.stringify(this.newModelCounts));
@@ -100,7 +98,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
             //console.log("diff----"+diffDays)
             res[i]['nss_aging'] = diffDays + ' days';
             res[i].case_creation_date = moment(res[i].case_creation_date).format('YYYY-MM-DD');
-            res[i].contract_start_date = moment(res[i].contract_start_date).format('YYYY-MM-DD');
+            res[i].sts_changed_on = moment(res[i].sts_changed_on).format('YYYY-MM-DD');
 
           }
           //console.log("the res is:" + JSON.stringify(res));
@@ -110,9 +108,10 @@ export class SmartclientCaseByStatusComponent implements OnInit {
         }, error => {
           //console.log("error getTerritories " + error);
         });
+      this.drillDown = [];
 
 
-    
+    }
   }
 
   public exportToExcel() {
