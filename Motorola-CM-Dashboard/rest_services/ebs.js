@@ -13,13 +13,11 @@ router.get('/ebs_contract_state', (req, res, next) => {
       `SELECT status, 
       SUM (mediandays :: INTEGER) AS mediandays, 
       SUM(contractperstatus)      AS contractscount,
-      territory,
-      arrival_type 
+      territory 
 FROM   (SELECT to_status              AS Status, 
               Median(daysinstatus)   AS MedianDays, 
               Count(contract_number) AS contractPerStatus, 
-              territory,
-              arrival_type 
+              territory 
        FROM   (SELECT contract_number, 
                       to_status, 
                       Min(sts_changed_on), 
@@ -28,13 +26,11 @@ FROM   (SELECT to_status              AS Status,
                                      'DD')), 
                       '99G999D9S') AS 
                       DaysInStatus, 
-                      territory,
-                      arrival_type 
+                      territory 
                FROM   (SELECT A2.contract_number, 
                               A2.to_status, 
                               A2.sts_changed_on, 
-                              territory,
-                              arrival_type, 
+                              territory, 
                               Coalesce((SELECT Max(A1.sts_changed_on) 
                                         FROM   ebs_contracts_state_master A1 
                                         WHERE  A1.contract_number = 
@@ -49,12 +45,13 @@ FROM   (SELECT to_status              AS Status,
                GROUP  BY contract_number, 
                          to_status, 
                          datemoved, 
-                         territory,arrival_type)R2 
+                         territory)R2 
        GROUP  BY to_status, 
-                 territory,arrival_type 
+                 territory 
        ORDER  BY to_status) R3 
 WHERE  status IN ( 'Generate PO', 'PO Issued', 'QA Hold', 'Modify PO' )  
-GROUP  BY status,territory,arrival_type;`, [],
+     -- AND territory IN ( " + territory + " ) 
+GROUP  BY status,territory;`, [],
       function (err, result) {
         if (err) {
           conn.doRelease(dbConn);
