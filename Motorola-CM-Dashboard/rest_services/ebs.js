@@ -341,32 +341,55 @@ router.post('/ebs_contract_state', (req, res, next) => {
     if (err) { return next(err); }
     //execute query using using connection instance returned by doConnect method
     conn.doExecute(dbConn,
-      `select count(distinct main.contract_number) contractscount
-      , main.to_status status
-      ,median(main.numofdays) mediandays
-      from
-      (
-      select m.*
-      ,extract(day from coalesce(m.date_signed,CURRENT_DATE) - date_trunc('day',m.contract_creation_date)) NumofDays
-      from ebs_contracts_state_master m
-      where m.sts_changed_on = (select max(m2.sts_changed_on) from ebs_contracts_state_master m2 where m2.contract_number = m.contract_number)
-      )main
-      where main.territory =  ANY(CASE
-        WHEN $1::boolean=false 
-        THEN ARRAY[main.territory]
-        ELSE ARRAY[$2::text[]] 
-        END)
-      and main.arrival_type = ANY(CASE
-        WHEN $3::boolean=false
-        THEN ARRAY[main.arrival_type]
-        ELSE ARRAY[$4::text[]] 
-        END)
-      and main.to_status =  ANY(CASE
-        WHEN $5::boolean=false
-        THEN ARRAY['Generate PO', 'PO Issued', 'QA Hold', 'Modify PO']
-        ELSE ARRAY[$6::text[]] 
-        END) 
-      Group by main.to_status`, 
+      `SELECT
+      r3.status
+    , SUM( r3.mediandays::INTEGER) AS mediandays
+    , SUM(r3.contractperstatus) AS contractscount
+   FROM 
+           (SELECT r2.to_status AS status
+              , MEDIAN(r2.daysinstatus) AS mediandays
+              , COUNT(r2.contract_number) AS contractperstatus
+              , r2.territory
+              , r2.arrival_type 
+            FROM    
+                  ( SELECT r1.contract_number
+                  , r1.to_status
+                  , MIN(r1.sts_changed_on)
+                  , r1.datemoved
+                  , to_number(TRIM(to_char(r1.datemoved - MIN(r1.sts_changed_on),'DD')),'99G999D9S') AS daysinstatus
+                  , r1.territory 
+                  , r1.arrival_type
+                    FROM   ( SELECT a2.contract_number
+                            , a2.to_status
+                            , a2.sts_changed_on
+                            , a2.territory
+                            , a2.arrival_type
+                            , COALESCE(   ( SELECT MAX(a1.sts_changed_on) 
+                                                       FROM ebs_contracts_state_master a1 
+                                                       WHERE a1.contract_number = a2.contract_number 
+                                                       AND a1.from_status = a2.to_status), current_date ) AS datemoved 
+                                 FROM ebs_contracts_state_master a2 
+                                 ORDER BY contract_number, sts_changed_on ) r1
+                    GROUP BY r1.contract_number, r1.to_status, r1.datemoved, r1.territory, r1.arrival_type) r2
+              GROUP BY r2.to_status, r2.territory ,r2.arrival_type  
+              ORDER BY r2.to_status) r3
+   WHERE r3.status = ANY(CASE
+           WHEN $5::boolean=false
+           THEN ARRAY['Generate PO', 'PO Issued', 'QA Hold', 'Modify PO']
+           ELSE ARRAY[$6::text[]] 
+           END) 
+   AND r3.territory = ANY(CASE
+           WHEN $1::boolean=false 
+           THEN ARRAY[r3.territory]
+           ELSE ARRAY[$2::text[]] 
+           END)
+   AND r3.arrival_type =ANY(CASE
+           WHEN $3::boolean=false
+           THEN ARRAY[r3.arrival_type]
+           ELSE ARRAY[$4::text[]] 
+           END)
+   GROUP
+       BY r3.status`, 
       [req.body.territory_selected,req.body.territory_data,req.body.arrival_selected,req.body.arrival_data,req.body.workflow_selected,req.body.workflow_data],
       function (err, result) {
         if (err) {
