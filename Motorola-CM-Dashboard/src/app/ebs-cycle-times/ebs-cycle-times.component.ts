@@ -61,12 +61,14 @@ export class EbsCycleTimesComponent implements OnInit {
   }
 
   public selectBar(event: ChartSelectEvent) {
+    let drillDownStatusnew =[];
     this.openScModel.nativeElement.click();
     if (event.message == 'select') {
       this.newModelCounts = event.selectedRowValues[1];
+      drillDownStatusnew = event.selectedRowValues[0];
       this.data = event.selectedRowValues[0];
       //console.log("the data is:" + JSON.stringify(this.data));
-      this.status = this.fdld(this.data);
+      this.status = this.fdld(drillDownStatusnew);
 
       // console.log("the data is:",this.data);
       $('.modal .modal-dialog').css('width', $(window).width() * 0.95);//fixed
@@ -77,15 +79,15 @@ export class EbsCycleTimesComponent implements OnInit {
       // $('tbody.SCModlTbody').css('display', 'block');
       $('tbody.SCModlTbody').css('width', '100%');
 
-      this.getDrillDownData(moment(status[0]).format('YYYY-MM-DD'), moment(status[1]).format('YYYY-MM-DD'))
+      this.getDrillDownData(moment(this.status[0]).format('YYYY-MM-DD'), moment(this.status[1]).format('YYYY-MM-DD'))
         .then((res: any) => {
 
-          //console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(res));
+          console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(res));
 
           for (let i in res) {
             //res[i].
-            res[i].contract_creation_date = moment(res[i].case_creation_date).format('YYYY-MM-DD');
-            res[i].sts_changed_on = moment(res[i].sts_changed_on).format('YYYY-MM-DD');
+            res[i].contract_creation_date = res[i].contract_creation_date==null?'-': moment(res[i].contract_creation_date).format('YYYY-MM-DD');
+            //res[i].sts_changed_on = moment(res[i].sts_changed_on).format('YYYY-MM-DD');
             //this.drillDown(moment(res[i].contract_creation_date).format('YYY-MM-DD'));
           }
           //  console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(this.drillDown));
@@ -105,14 +107,15 @@ export class EbsCycleTimesComponent implements OnInit {
   public fdld(data) {
     var v = data.split(' ');
     let arr = [];
-    var newone = v[0] + ' 1, '
-    var newtwo = v[1];
-    var newthree = newone + newtwo;
-    var newModDate = new Date(newthree);
-    var FirstDay = new Date(newModDate.getFullYear(), newModDate.getMonth(), 1).toLocaleDateString();
-    var LastDay = new Date(newModDate.getFullYear(), newModDate.getMonth() + 1, 0).toLocaleDateString();
-    var fd = moment(FirstDay).format('YYYY-MM-DD');
-    var ld = moment(LastDay).format('YYYY-MM-DD');
+    let newone = '01-'+v[0]; 
+    let newtwo = v[1];
+    let newthree = newone + newtwo;
+    console.log("the date is:"+JSON.stringify(newthree));
+    let newModDate = new Date(newthree.replace('undefined',''));
+    let FirstDay = new Date(newModDate.getFullYear(), newModDate.getMonth(), 1).toLocaleDateString();
+    let LastDay = new Date(newModDate.getFullYear(), newModDate.getMonth() + 1, 0).toLocaleDateString();
+    let fd = moment(FirstDay).format('YYYY-MM-DD');
+    let ld = moment(LastDay).format('YYYY-MM-DD');
     arr.push(fd);
     arr.push(ld);
     return arr;

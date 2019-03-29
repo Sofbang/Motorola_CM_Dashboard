@@ -69,17 +69,19 @@ export class ScNewCasesComponent implements OnInit {
   public selectBar(event: ChartSelectEvent) {
     this.openScModel.nativeElement.click();
 
-    // let drillDownStatusnew =[];
+    let drillDownStatusnew =[];
     // drillDownStatusnew = (event.selectedRowValues[0]);
     // status = drillDownStatusnew[0];
     console.log("the drilldown data is:" + JSON.stringify(event));
     // console.log("in the selectBar" + JSON.stringify(event.selectedRowValues[0]));
     if (event.message == 'select') {
       this.newModelCounts = event.selectedRowValues[1];
+      drillDownStatusnew = event.selectedRowValues[0];
+      //console.log("the data is:" + JSON.stringify(drillDownStatusnew[0]));
       this.data = event.selectedRowValues[0];
       //console.log("the data is:" + JSON.stringify(this.data));
-      this.status = this.fdld(this.data);
-      //console.log("the ld is:" + JSON.stringify(this.status));
+      this.status = this.fdld(drillDownStatusnew);
+      console.log("the ld is:" + JSON.stringify(this.status));
       $('.modal .modal-dialog').css('width', $(window).width() * 0.95);//fixed
       $('.modal .modal-body').css('height', $(window).height() * 0.77);//fixed
       $('tbody.SCModlTbody').css('max-height', $(window).height() * 0.69);
@@ -87,19 +89,20 @@ export class ScNewCasesComponent implements OnInit {
       $('tbody.SCModlTbody').css('overflow-x', 'hidden');
       $('tbody.SCModlTbody').css('width', '100%');
       // status = this.fdld(status);
-      // console.log("the fd ld is :"+JSON.stringify(status[0])+"the ld is :"+JSON.stringify(status[1]));
-      this.getSCDrillDownData(moment(status[0]).format('YYYY-MM-DD'), moment(status[1]).format('YYYY-MM-DD'))
+       //console.log("the fd ld is :"+JSON.stringify(status[0])+"the ld is :"+JSON.stringify(status[1]));
+      this.getSCDrillDownData(moment( this.status[0]).format('YYYY-MM-DD'), moment( this.status[1]).format('YYYY-MM-DD'))
         .then((res: any) => {
           let currentDate: any = new Date();
-
+          console.log("the data is:"+JSON.stringify(res));
           for (let i = 0; i < res.length; i++) {
+            console.log("the res"+JSON.stringify(res));
             let caseCreationdate = new Date(moment(res[i].case_creation_date).format('YYYY-MM-DD'));
             let timeDiff = Math.abs(currentDate.getTime() - caseCreationdate.getTime());
             let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
             //console.log("diff----"+diffDays)
             res[i]['nss_aging'] = diffDays + ' days';
-            res[i].case_creation_date = moment(res[i].case_creation_date).format('YYYY-MM-DD');
-            res[i].sts_changed_on = moment(res[i].sts_changed_on).format('YYYY-MM-DD');
+            res[i].case_creation_date =res[i].case_creation_date==null?'-':  moment(res[i].case_creation_date).format('YYYY-MM-DD');
+            res[i].contract_start_date =res[i].contracts_start_date==null?'-': moment(res[i].contract_start_date).format('YYYY-MM-DD');
 
           }
           //console.log("the res is:" + JSON.stringify(res));
@@ -115,17 +118,30 @@ export class ScNewCasesComponent implements OnInit {
   }
 
   public exportToExcel() {
+  
+    // for(let i in this.drillDownData){
+    //  this.drillDownData[i].to_status.replace('_','Case Status');
+    //   //this.drillDownData.replace('_',' ');
+      
+    // }
+    console.log("the data is:"+JSON.stringify(this.drillDownData));
     this._excelService.exportAsExcelFile(this.drillDownData, 'Smart Client New Cases');
   }
 
 
   public fdld(data) {
     let v = data.split(' ');
+    // console.log("the v is:"+data);
+    // let startOfMonth = moment().startOf(data).format('YYYY-MM-DD hh:mm');
+    // console.log("start"+startOfMonth);
+    // let endOfMonth   = moment().endOf(data).format('YYYY-MM-DD hh:mm');
+    // console.log("end"+endOfMonth);
     let arr = [];
-    let newone = v[0] + ' 1, '
+    let newone = '01-'+v[0]; 
     let newtwo = v[1];
     let newthree = newone + newtwo;
-    let newModDate = new Date(newthree);
+    console.log("the date is:"+JSON.stringify(newthree));
+    let newModDate = new Date(newthree.replace('undefined',''));
     let FirstDay = new Date(newModDate.getFullYear(), newModDate.getMonth(), 1).toLocaleDateString();
     let LastDay = new Date(newModDate.getFullYear(), newModDate.getMonth() + 1, 0).toLocaleDateString();
     let fd = moment(FirstDay).format('YYYY-MM-DD');

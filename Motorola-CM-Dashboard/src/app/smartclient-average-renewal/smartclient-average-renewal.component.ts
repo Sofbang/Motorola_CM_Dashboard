@@ -100,18 +100,19 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       $('tbody.SCModlTbody').css('overflow-x', 'hidden');
       // $('tbody.SCModlTbody').css('display', 'block');
       $('tbody.SCModlTbody').css('width', '100%');
-
+      console.log("the status is:"+JSON.stringify(status));
       this.getSCDrillDownData(status)
         .then((res: any) => {
+          console.log("the srill ress:"+JSON.stringify(res));
           let currentDate: any = new Date();
           for (let i = 0; i < res.length; i++) {
-            let caseCreationdate = new Date(moment(res[i].case_creation_date).format('YYYY-MM-DD'));
+            let caseCreationdate = new Date(moment(res[i].case_open_date).format('YYYY-MM-DD'));
             let timeDiff = Math.abs(currentDate.getTime() - caseCreationdate.getTime());
             let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
             //console.log("diff----"+diffDays)
             res[i]['nss_aging'] = diffDays + ' days';
-            res[i].case_creation_date = moment(res[i].case_creation_date).format('YYYY-MM-DD');
-            res[i].sts_changed_on = moment(res[i].sts_changed_on).format('YYYY-MM-DD');
+            res[i].case_open_date = res[i].case_open_date==null?'-': moment(res[i].case_open_date).format('YYYY-MM-DD');
+            res[i].contracts_start_date = res[i].contracts_start_date==null?'-': moment(res[i].contracts_start_date).format('YYYY-MM-DD');
 
           }
           //console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(this.drillDown));
@@ -125,6 +126,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
   }
 
   public exportToExcel() {
+    console.log("the data is:"+JSON.stringify(this.drillDownData));
     this._excelService.exportAsExcelFile(this.drillDownData, 'Smart Client Cases');
 
   }

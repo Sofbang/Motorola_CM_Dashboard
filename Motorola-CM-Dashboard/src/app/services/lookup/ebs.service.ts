@@ -52,7 +52,7 @@ export class EbsService {
   }
   
   getEBSCycleTimes(jsonObj){
-   // console.log("the rest service:"+JSON.stringify(jsonObj));
+   console.log("the rest service:"+JSON.stringify(jsonObj));
     return this.http.post('api/ebs_cycle_times',JSON.stringify(jsonObj),this.options)
     .map(result => this.result = result.json().data);
   }

@@ -84,14 +84,14 @@ export class EbsContractByStatusComponent implements OnInit {
       $('tbody.SCModlTbody').css('overflow-x', 'hidden');
       // $('tbody.SCModlTbody').css('display', 'block');
       $('tbody.SCModlTbody').css('width', '100%');
-
+      console.log("the status passed is:"+JSON.stringify(status));
       this.getEBSDrillDownData(status)
         .then((res: any) => {
-          //console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(res.length));
+          console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(res));
           for (let i in res) {
             //res[i].
-            res[i].contract_creation_date = moment(res[i].contract_creation_date).format('YYYY-MM-DD');
-            res[i].sts_changed_on = moment(res[i].sts_changed_on).format('YYYY-MM-DD');
+            res[i].contract_start_date = res[i].contract_start_date==null?'-':  moment(res[i].contract_start_date).format('YYYY-MM-DD');
+            //res[i].sts_changed_on = moment(res[i].sts_changed_on).format('YYYY-MM-DD');
             //this.drillDown(moment(res[i].contract_creation_date).format('YYY-MM-DD'));
           }
          // console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(this.drillDown));

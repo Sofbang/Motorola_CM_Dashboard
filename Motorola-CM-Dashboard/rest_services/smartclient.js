@@ -197,13 +197,13 @@ router.get('/sc_cases_drilldown', (req, res, next) => {
 // // API for sc_case_territories
 router.post('/sc_cases_drilldownfilter', (req, res, next) => {
   //call doConnect method in db_operations
-  var status = req.query;
-  //console.log("the status passed is:" + JSON.stringify(status));
+  var status = req.body;
+  console.log("the status passed is:" + JSON.stringify(status));
   conn.doConnect((err, dbConn) => {
     if (err) { return next(err); }
     //execute body using using connection instance returned by doConnect method
     conn.doExecute(dbConn,
-      "Select distinct case_number,customer,case_owner,case_creation_date,current_status from sc_case_state_master where date_trunc('day',case_creation_date)  BETWEEN '" + req.body.first + "' AND '" + req.body.last + "' ", [],
+      "Select distinct customer ,case_number ,to_status ,case_owner ,case_creation_date,contract_start_date from sc_case_state_master where date_trunc('day',case_creation_date)  BETWEEN '" + req.body.first + "' AND '" + req.body.last + "' ", [],
       function (err, result) {
         if (err) {
           conn.doRelease(dbConn);

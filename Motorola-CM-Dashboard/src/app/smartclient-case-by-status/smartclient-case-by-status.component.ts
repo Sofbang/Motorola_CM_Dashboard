@@ -97,8 +97,8 @@ export class SmartclientCaseByStatusComponent implements OnInit {
             let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
             //console.log("diff----"+diffDays)
             res[i]['nss_aging'] = diffDays + ' days';
-            res[i].case_creation_date = moment(res[i].case_creation_date).format('YYYY-MM-DD');
-            res[i].sts_changed_on = moment(res[i].sts_changed_on).format('YYYY-MM-DD');
+            res[i].case_creation_date =res[i].case_creation_date==null?'-':  moment(res[i].case_creation_date).format('YYYY-MM-DD');
+            res[i].contract_start_date =res[i].contract_start_date==null?'-':  moment(res[i].contract_start_date).format('YYYY-MM-DD');
 
           }
           //console.log("the res is:" + JSON.stringify(res));
