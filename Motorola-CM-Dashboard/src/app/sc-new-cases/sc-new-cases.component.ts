@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { SmartclientService } from '../services/lookup/smartclient.service';
 import { reject } from 'q';
 import { SideViewDropDowns } from '../beans/sideBarDropdown';
-import { SCNewCases } from '../beans/common_bean';
+import { FilterFormat } from '../beans/common_bean';
 import { DataHandlerService } from '../services/data-handler/data-handler.service';
 import { ViewChild, ElementRef } from '@angular/core';
 import * as $ from 'jquery';
@@ -191,7 +191,7 @@ export class ScNewCasesComponent implements OnInit {
     return new Promise((resolve, reject) => {
       let lastDate = this.convertDateMoment(new Date());//current date
       let firstDate = moment(new Date()).subtract(1, 'years');//earlier date
-      let newCasesObj = new SCNewCases();
+      let newCasesObj = new FilterFormat();
       newCasesObj.from_date = this.convertDateMoment(firstDate);
       newCasesObj.to_date = lastDate;
       newCasesObj.territory_selected = false;
@@ -425,7 +425,7 @@ export class ScNewCasesComponent implements OnInit {
 
   public filterChartData() {
     let finalArr = [];
-    let newCasesObj = new SCNewCases();;
+    let newCasesObj = new FilterFormat();;
     if (this.datesData.length == 2) {
       newCasesObj.from_date = this.convertDateMoment(this.datesData[0]);
       newCasesObj.to_date = this.convertDateMoment(this.datesData[1]);

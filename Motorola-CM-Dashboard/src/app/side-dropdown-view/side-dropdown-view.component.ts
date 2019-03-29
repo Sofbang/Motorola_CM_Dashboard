@@ -32,7 +32,7 @@ export class SideDropdownViewComponent implements OnInit {
   contractTypeModel: any;
   territoryModel: any;
   arrivalTypeModel: any;
-  contractTimemodel: any;
+  contractTimeModel: any;
   screenHeight: any;
   screenWidth: any;
   fromModel: any;
@@ -44,7 +44,6 @@ export class SideDropdownViewComponent implements OnInit {
       .subscribe(res => {
         this.sideViewDDObj = new SideViewDropDowns();
         this.sideViewDDObj = res;
-        this.casetimeModel = 'Median';
         this.resetDropDowns();
       });
     //calls from component where data reset is needed
@@ -117,9 +116,10 @@ export class SideDropdownViewComponent implements OnInit {
     this.contractTypeModel = [];
     this.territoryModel = [];
     this.arrivalTypeModel = [];
-    this.contractTimemodel = [];
     this.fromModel = null;
     this.toModel = null;
+    this.casetimeModel = 'Median';
+    this.contractTimeModel='Median';
   }
 
   /**
@@ -159,7 +159,13 @@ export class SideDropdownViewComponent implements OnInit {
    */
   public makeDateFormat(arr) {
     let dateArr = this.sortDate(arr)
-    for (let i = dateArr.length - 1; i > 0; i--) {
+    // for (let i = dateArr.length - 1; i > 0; i--) {
+    //   // console.log("in the for loop", +i)
+    //   let event = new Date(dateArr[i]);
+    //   let options = { year: 'numeric', month: 'short' };
+    //   this.fromDates.push(event.toLocaleString('en', options));
+    // }
+    for (let i = 0; i <dateArr.length; i++) {
       // console.log("in the for loop", +i)
       let event = new Date(dateArr[i]);
       let options = { year: 'numeric', month: 'short' };
@@ -227,26 +233,6 @@ export class SideDropdownViewComponent implements OnInit {
 
   }
 
-  // public getDateFilteredResults(startDate, endDate){
-  //   return new Promise((resolve,reject) => {
-  //     let dateFilteredData;
-  //     this._smartclientService.getScDateFilteredReults()
-  //     .subscribe(data => {
-  //       dateFilteredData = this.makeChartData(data);
-  //       this.dateFilteredDataResults = data;
-  //     }, err => console.error(err),
-  //     () => {
-  //       resolve(this.makeChartArr(dateFilteredData));
-
-  //     }
-  //    )
-  //   }).catch((error) => {
-  //     console.log('error in getting data:',error);
-  //     reject(error);
-  //   })
-  // }
-
-
   ngOnInit() {
     //dropdown settings
     // this.fromDates=[];
@@ -260,17 +246,17 @@ export class SideDropdownViewComponent implements OnInit {
       allowSearchFilter: true,
       dir: 'asc'
     };
-    this.dropdownSettingsCaseTime = {
-      singleSelection: false,
-      idField: 'item_id',
-      textField: 'item_text',
-      text: 'Median',
-      selectAllText: 'All',
-      unSelectAllText: 'Clear All',
-      itemsShowLimit: 1,
-      allowSearchFilter: true,
-      dir: 'asc'
-    };
+    // this.dropdownSettingsCaseTime = {
+    //   singleSelection: false,
+    //   idField: 'item_id',
+    //   textField: 'item_text',
+    //   text: 'Median',
+    //   selectAllText: 'All',
+    //   unSelectAllText: 'Clear All',
+    //   itemsShowLimit: 1,
+    //   allowSearchFilter: true,
+    //   dir: 'asc'
+    // };
 
   }
 }
