@@ -213,7 +213,7 @@ export class EbsCycleTimesComponent implements OnInit {
   public contractTimeSelect = false;
   // ng multiselect events implemented by Vishal Sehgal 12/2/2019
   onItemSelect(item, from) {
-    //console.log("the item is:"+JSON.stringify(item)+JSON.stringify(from));
+    console.log("the item is:"+JSON.stringify(item)+JSON.stringify(from));
     if (from == 'territory') {
       this.territoriesArr.push(item);
       this.contractTimeSelect = false;
@@ -226,15 +226,17 @@ export class EbsCycleTimesComponent implements OnInit {
       this.filterChartData();
     }
     else if (from == 'contractTime') {
-      ////console.log("in contract time :"+JSON.stringify(from));
+      console.log("in contract time :"+JSON.stringify(from));
+      console.log("the item is :"+JSON.stringify(item));
       this._dataHandlerService.resetAllDropDowns(true);
       this.territoriesArr = [];
       this.arrivalTypesArr = [];
       this.contractTimeSelect = true;
-      // console.log("casetime selected Median" + from);
-      if (item.item_text == 'Median') {
+      if (item == 'Median') {
+        console.log("casetime selected Median" + from);
         this.fromMedOrAvg = 'median';
-      } else if (item.item_text == 'Average') {
+      } else if (item == 'Average') {
+        console.log("casetime selected Median" + from);
         this.fromMedOrAvg = 'average';
       }
       this.filterChartData();
@@ -320,7 +322,9 @@ export class EbsCycleTimesComponent implements OnInit {
     let newCasesObj = new FilterFormat();
     if (this.datesData.length == 2) {
       newCasesObj.from_date = this.convertDateMoment(this.datesData[0]);
+      console.log("the from:"+JSON.stringify(newCasesObj.from_date));
       newCasesObj.to_date = this.convertDateMoment(this.datesData[1]);
+      console.log("the from:"+JSON.stringify(newCasesObj.to_date));
     } else {
       let lastDate = this.convertDateMoment(new Date());//current date
       let firstDate = moment(new Date()).subtract(1, 'years');//earlier date
