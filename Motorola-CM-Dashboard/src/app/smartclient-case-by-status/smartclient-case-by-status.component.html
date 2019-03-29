@@ -50,11 +50,11 @@
             <tr *ngFor="let drilldown of drillDown" >
               <td>{{drilldown.customer==null?'-':drilldown.customer}}</td>
               <td>{{drilldown.case_number}}</td>
-              <td>{{drilldown.to_status}}</td>
+              <td>{{drilldown.case_status}}</td>
               <td>{{drilldown.case_owner==null?'_':drilldown.case_owner}}</td>
-              <td>{{drilldown.case_creation_date}}</td>
+              <td>{{drilldown.case_open_date}}</td>
               <td>{{drilldown.nss_aging}}</td>
-              <td>{{drilldown.contract_start_date}}</td>
+              <td>{{drilldown.contracts_start_date}}</td>
             </tr>
            
           </tbody>
