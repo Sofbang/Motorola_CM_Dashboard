@@ -1,4 +1,4 @@
-export class SCNewCases {
+export class FilterFormat {
     public from_date: string;
     public to_date: string;
     public territory_selected: boolean = false;
