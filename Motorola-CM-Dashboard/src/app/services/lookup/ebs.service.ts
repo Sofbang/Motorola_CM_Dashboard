@@ -19,8 +19,8 @@ export class EbsService {
 
   constructor(private http: Http) { }
 
-  getEBSContractState() {
-    return this.http.get('api/ebs_contract_state')
+  getEBSContractState(ebsObj) {
+    return this.http.post('api/ebs_contract_state',JSON.stringify(ebsObj),this.options)
       .map(result => this.result = result.json().data);
   }
 
@@ -52,7 +52,7 @@ export class EbsService {
   }
   
   getEBSCycleTimes(jsonObj){
-   console.log("the rest service:"+JSON.stringify(jsonObj));
+   //console.log("the rest service:"+JSON.stringify(jsonObj));
     return this.http.post('api/ebs_cycle_times',JSON.stringify(jsonObj),this.options)
     .map(result => this.result = result.json().data);
   }

@@ -26,3 +26,11 @@ export class SideViewDropDowns {
 
 
 }
+export class FilterFormatEBS {
+    public territory_selected: boolean = false;
+    public territory_data: Array<any>=[];
+    public arrival_selected: boolean = false;
+    public arrival_data: Array<any>=[];
+    public workflow_selected: boolean = false;
+    public workflow_data: Array<any>=[];
+}

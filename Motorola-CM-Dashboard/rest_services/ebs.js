@@ -4,69 +4,69 @@ const conn = require('../app_configuration/db_operations');
 const response = require('../app_configuration/response');
 
 //EBS Data implemented by Vishal Sehgal as on 8/2/2019
-router.get('/ebs_contract_state', (req, res, next) => {
-  //call doConnect method in db_operations
-  conn.doConnect((err, dbConn) => {
-    if (err) { return next(err); }
-    //execute query using using connection instance returned by doConnect method
-    conn.doExecute(dbConn,
-      `SELECT status, 
-      SUM (mediandays :: INTEGER) AS mediandays, 
-      SUM(contractperstatus)      AS contractscount,
-      territory,arrival_type 
-FROM   (SELECT to_status              AS Status, 
-              Median(daysinstatus)   AS MedianDays, 
-              Count(contract_number) AS contractPerStatus, 
-              territory,arrival_type
-       FROM   (SELECT contract_number, 
-                      to_status, 
-                      Min(sts_changed_on), 
-                      datemoved, 
-                      To_number(Trim(To_char(datemoved - Min(sts_changed_on), 
-                                     'DD')), 
-                      '99G999D9S') AS 
-                      DaysInStatus, 
-                      territory,
-                      arrival_type 
-               FROM   (SELECT A2.contract_number, 
-                              A2.to_status, 
-                              A2.sts_changed_on, 
-                              territory,
-                              arrival_type, 
-                              Coalesce((SELECT Max(A1.sts_changed_on) 
-                                        FROM   ebs_contracts_state_master A1 
-                                        WHERE  A1.contract_number = 
-                                               A2.contract_number 
-                                               AND A1.from_status = 
-                                                   A2.to_status), 
-                              current_date) AS 
-                                      DateMoved 
-                       FROM   ebs_contracts_state_master A2 
-                       ORDER  BY contract_number, 
-                                 sts_changed_on) resultset 
-               GROUP  BY contract_number, 
-                         to_status, 
-                         datemoved, 
-                         territory,arrival_type)R2 
-       GROUP  BY to_status, 
-                 territory,arrival_type 
-       ORDER  BY to_status) R3 
-WHERE  status IN ( 'Generate PO', 'PO Issued', 'QA Hold', 'Modify PO' )  
-     -- AND territory IN ( " + territory + " ) 
-GROUP  BY status,territory,arrival_type;`, [],
-      function (err, result) {
-        if (err) {
-          conn.doRelease(dbConn);
-          //call error handler
-          return next(err);
-        }
-        response.data = result.rows;
-        res.json(response);
-        //release connection back to pool
-        conn.doRelease(dbConn);
-      });
-  });
-});
+// router.get('/ebs_contract_state', (req, res, next) => {
+//   //call doConnect method in db_operations
+//   conn.doConnect((err, dbConn) => {
+//     if (err) { return next(err); }
+//     //execute query using using connection instance returned by doConnect method
+//     conn.doExecute(dbConn,
+//       `SELECT status, 
+//       SUM (mediandays :: INTEGER) AS mediandays, 
+//       SUM(contractperstatus)      AS contractscount,
+//       territory,arrival_type 
+// FROM   (SELECT to_status              AS Status, 
+//               Median(daysinstatus)   AS MedianDays, 
+//               Count(contract_number) AS contractPerStatus, 
+//               territory,arrival_type
+//        FROM   (SELECT contract_number, 
+//                       to_status, 
+//                       Min(sts_changed_on), 
+//                       datemoved, 
+//                       To_number(Trim(To_char(datemoved - Min(sts_changed_on), 
+//                                      'DD')), 
+//                       '99G999D9S') AS 
+//                       DaysInStatus, 
+//                       territory,
+//                       arrival_type 
+//                FROM   (SELECT A2.contract_number, 
+//                               A2.to_status, 
+//                               A2.sts_changed_on, 
+//                               territory,
+//                               arrival_type, 
+//                               Coalesce((SELECT Max(A1.sts_changed_on) 
+//                                         FROM   ebs_contracts_state_master A1 
+//                                         WHERE  A1.contract_number = 
+//                                                A2.contract_number 
+//                                                AND A1.from_status = 
+//                                                    A2.to_status), 
+//                               current_date) AS 
+//                                       DateMoved 
+//                        FROM   ebs_contracts_state_master A2 
+//                        ORDER  BY contract_number, 
+//                                  sts_changed_on) resultset 
+//                GROUP  BY contract_number, 
+//                          to_status, 
+//                          datemoved, 
+//                          territory,arrival_type)R2 
+//        GROUP  BY to_status, 
+//                  territory,arrival_type 
+//        ORDER  BY to_status) R3 
+// WHERE  status IN ( 'Generate PO', 'PO Issued', 'QA Hold', 'Modify PO' )  
+//      -- AND territory IN ( " + territory + " ) 
+// GROUP  BY status,territory,arrival_type;`, [],
+//       function (err, result) {
+//         if (err) {
+//           conn.doRelease(dbConn);
+//           //call error handler
+//           return next(err);
+//         }
+//         response.data = result.rows;
+//         res.json(response);
+//         //release connection back to pool
+//         conn.doRelease(dbConn);
+//       });
+//   });
+// });
 
 
 // API for ebs_territories
@@ -320,6 +320,54 @@ router.post('/ebs_cycle_times', (req, res, next) => {
     //execute query using using connection instance returned by doConnect method
     conn.doExecute(dbConn,
       postgresql, [req.body.from_date, req.body.to_date, req.body.territory_selected, req.body.territory_data, req.body.arrival_selected, req.body.arrival_data],
+      function (err, result) {
+        if (err) {
+          conn.doRelease(dbConn);
+          //call error handler
+          return next(err);
+        }
+        response.data = result.rows;
+        res.json(response);
+        //release connection back to pool
+        conn.doRelease(dbConn);
+      });
+  });
+});
+
+
+router.post('/ebs_contract_state', (req, res, next) => {
+  //call doConnect method in db_operations
+  conn.doConnect((err, dbConn) => {
+    if (err) { return next(err); }
+    //execute query using using connection instance returned by doConnect method
+    conn.doExecute(dbConn,
+      `select count(distinct main.contract_number) contractscount
+      , main.to_status status
+      ,median(main.numofdays) mediandays
+      from
+      (
+      select m.*
+      ,extract(day from coalesce(m.date_signed,CURRENT_DATE) - date_trunc('day',m.contract_creation_date)) NumofDays
+      from ebs_contracts_state_master m
+      where m.sts_changed_on = (select max(m2.sts_changed_on) from ebs_contracts_state_master m2 where m2.contract_number = m.contract_number)
+      )main
+      where main.territory =  ANY(CASE
+        WHEN $1::boolean=false 
+        THEN ARRAY[main.territory]
+        ELSE ARRAY[$2::text[]] 
+        END)
+      and main.arrival_type = ANY(CASE
+        WHEN $3::boolean=false
+        THEN ARRAY[main.arrival_type]
+        ELSE ARRAY[$4::text[]] 
+        END)
+      and main.to_status =  ANY(CASE
+        WHEN $5::boolean=false
+        THEN ARRAY['Generate PO', 'PO Issued', 'QA Hold', 'Modify PO']
+        ELSE ARRAY[$6::text[]] 
+        END) 
+      Group by main.to_status`, 
+      [req.body.territory_selected,req.body.territory_data,req.body.arrival_selected,req.body.arrival_data,req.body.workflow_selected,req.body.workflow_data],
       function (err, result) {
         if (err) {
           conn.doRelease(dbConn);
