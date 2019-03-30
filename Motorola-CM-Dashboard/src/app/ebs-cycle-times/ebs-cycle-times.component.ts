@@ -61,9 +61,10 @@ export class EbsCycleTimesComponent implements OnInit {
   }
 
   public selectBar(event: ChartSelectEvent) {
-    let drillDownStatusnew =[];
-    this.openScModel.nativeElement.click();
+    
     if (event.message == 'select') {
+      this.openScModel.nativeElement.click();
+      let drillDownStatusnew =[];
       this.newModelCounts = event.selectedRowValues[1];
       drillDownStatusnew = event.selectedRowValues[0];
       this.data = event.selectedRowValues[0];
@@ -78,25 +79,8 @@ export class EbsCycleTimesComponent implements OnInit {
       $('tbody.SCModlTbody').css('overflow-x', 'hidden');
       // $('tbody.SCModlTbody').css('display', 'block');
       $('tbody.SCModlTbody').css('width', '100%');
-
-      this.getDrillDownData(moment(this.status[0]).format('YYYY-MM-DD'), moment(this.status[1]).format('YYYY-MM-DD'))
-        .then((res: any) => {
-
-          console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(res));
-
-          for (let i in res) {
-            //res[i].
-            res[i].contract_creation_date = res[i].contract_creation_date==null?'-': moment(res[i].contract_creation_date).format('YYYY-MM-DD');
-            //res[i].sts_changed_on = moment(res[i].sts_changed_on).format('YYYY-MM-DD');
-            //this.drillDown(moment(res[i].contract_creation_date).format('YYY-MM-DD'));
-          }
-          //  console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(this.drillDown));
-          this.drillDownData = res;
-
-        }, error => {
-          //console.log("error getTerritories " + error);
-        });
-      this.drillDown = [];
+      this.filterChartData('drilldown');
+      this.newModelCounts='';
     }
   }
   public exportToExcel() {
@@ -110,7 +94,7 @@ export class EbsCycleTimesComponent implements OnInit {
     let newone = '01-'+v[0]; 
     let newtwo = v[1];
     let newthree = newone + newtwo;
-    console.log("the date is:"+JSON.stringify(newthree));
+    //console.log("the date is:"+JSON.stringify(newthree));
     let newModDate = new Date(newthree.replace('undefined',''));
     let FirstDay = new Date(newModDate.getFullYear(), newModDate.getMonth(), 1).toLocaleDateString();
     let LastDay = new Date(newModDate.getFullYear(), newModDate.getMonth() + 1, 0).toLocaleDateString();
@@ -213,33 +197,33 @@ export class EbsCycleTimesComponent implements OnInit {
   public contractTimeSelect = false;
   // ng multiselect events implemented by Vishal Sehgal 12/2/2019
   onItemSelect(item, from) {
-    console.log("the item is:"+JSON.stringify(item)+JSON.stringify(from));
+    //console.log("the item is:"+JSON.stringify(item)+JSON.stringify(from));
     if (from == 'territory') {
       this.territoriesArr.push(item);
       this.contractTimeSelect = false;
       // console.log("terrr is:"+JSON.stringify(this.territoriesArr));
-      this.filterChartData();
+      this.filterChartData('dropdown');
     } else if (from == 'arrivalType') {
       this.arrivalTypesArr.push(item);
       this.contractTimeSelect = false;
       /// console.log("terrr is:"+JSON.stringify(this.territoriesArr));
-      this.filterChartData();
+      this.filterChartData('dropdown');
     }
     else if (from == 'contractTime') {
-      console.log("in contract time :"+JSON.stringify(from));
-      console.log("the item is :"+JSON.stringify(item));
+     // console.log("in contract time :"+JSON.stringify(from));
+      //console.log("the item is :"+JSON.stringify(item));
       this._dataHandlerService.resetAllDropDowns(true);
       this.territoriesArr = [];
       this.arrivalTypesArr = [];
       this.contractTimeSelect = true;
       if (item == 'Median') {
-        console.log("casetime selected Median" + from);
+        //console.log("casetime selected Median" + from);
         this.fromMedOrAvg = 'median';
       } else if (item == 'Average') {
-        console.log("casetime selected Median" + from);
+       // console.log("casetime selected Median" + from);
         this.fromMedOrAvg = 'average';
       }
-      this.filterChartData();
+      this.filterChartData('dropdown');
     }
   }
 
@@ -264,7 +248,7 @@ export class EbsCycleTimesComponent implements OnInit {
     } else if (from == 'arrivalType') {
       this.workFlowStatusArr = this.removeElementArr(this.arrivalTypesArr, item);
     }
-    this.filterChartData();
+    this.filterChartData('dropdown');
   }
 
   onSelectAll(item, from) {
@@ -277,7 +261,7 @@ export class EbsCycleTimesComponent implements OnInit {
       this.arrivalTypesArr = item;
 
     }
-    this.filterChartData();
+    this.filterChartData('dropdown');
   }
 
   onDeSelectAll(item, from) {
@@ -286,7 +270,7 @@ export class EbsCycleTimesComponent implements OnInit {
     } else if (from == 'arrivalType') {
       this.arrivalTypesArr = [];
     }
-    this.filterChartData();
+    this.filterChartData('dropdown');
   }
 
 
@@ -297,7 +281,7 @@ export class EbsCycleTimesComponent implements OnInit {
     this.datesData.push(item.lastDay);
     //console.log("the dates data is:" + JSON.stringify(this.datesData));
     this.contractTimeSelect=false;
-    this.filterChartData();
+    this.filterChartData('dropdown');
   }
   /**
 * This method check if From and to dropdown selected.
@@ -318,13 +302,13 @@ export class EbsCycleTimesComponent implements OnInit {
   /**
    * This method filters the data according selected territories and workflowstatus
    */
-  public filterChartData() {
+  public filterChartData(comesfrom) {
     let newCasesObj = new FilterFormat();
     if (this.datesData.length == 2) {
       newCasesObj.from_date = this.convertDateMoment(this.datesData[0]);
-      console.log("the from:"+JSON.stringify(newCasesObj.from_date));
+      //console.log("the from:"+JSON.stringify(newCasesObj.from_date));
       newCasesObj.to_date = this.convertDateMoment(this.datesData[1]);
-      console.log("the from:"+JSON.stringify(newCasesObj.to_date));
+      //console.log("the from:"+JSON.stringify(newCasesObj.to_date));
     } else {
       let lastDate = this.convertDateMoment(new Date());//current date
       let firstDate = moment(new Date()).subtract(1, 'years');//earlier date
@@ -333,64 +317,204 @@ export class EbsCycleTimesComponent implements OnInit {
     }
     //console.log("case data" + JSON.stringify(this.caseData));
     if (this.territoriesArr.length > 0 && this.arrivalTypesArr.length == 0) {
-      //console.log("t>1  a0");
+      console.log("t>1  a0");
+      this.drillDown = [];
       newCasesObj.territory_selected = true;
       newCasesObj.territory_data = this.territoriesArr;
       newCasesObj.arrival_selected = false;
+      if(comesfrom=='dropdown'){
+        console.log("check 1");
 
-      this.checkDateDropdownSelected(newCasesObj)
+        this.checkDateDropdownSelected(newCasesObj)
         .then(result => {
           //let res = this.combiningDataForChart(result);
           let chartData = this.makeChartData(result);
           this.drawchart(chartData);
         }).catch(error => {
-          console.log("error in dateDropdownSelected " + error);
+          //console.log("error in dateDropdownSelected " + error);
         });
+
+
+      }
+      else{
+        console.log("check 2");
+        let fromarr =[];let toarr=[];
+        newCasesObj.from_date=moment(this.status[0]).format('YYYY-MM-DD');
+        newCasesObj.to_date=moment(this.status[1]).format('YYYY-MM-DD');
+        
+        this.getDrillDownData(newCasesObj)
+        .then((res: any) => {
+          this.newModelCounts=res.length;
+          console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(res.length));
+  
+          for (let i in res) {
+            //res[i].
+            res[i].contract_creation_date = res[i].contract_creation_date==null?'-': moment(res[i].contract_creation_date).format('YYYY-MM-DD');
+            //res[i].sts_changed_on = moment(res[i].sts_changed_on).format('YYYY-MM-DD');
+            //this.drillDown(moment(res[i].contract_creation_date).format('YYY-MM-DD'));
+          }
+          //  console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(this.drillDown));
+          //this.drillDownData = res;
+  
+        }, error => {
+          //console.log("error getTerritories " + error);
+        });
+       this.newModelCounts='';
+
+
+      }
+     
+      
 
     } else if (this.territoriesArr.length == 0 && this.arrivalTypesArr.length == 0) {
-      //console.log("t0  a0");
+      console.log("t0  a0");
+      this.drillDown = [];
       newCasesObj.territory_selected = false;
       newCasesObj.arrival_selected = false;
 
-      this.checkDateDropdownSelected(newCasesObj)
+      if(comesfrom=='dropdown'){
+        console.log("check 3");
+
+        this.checkDateDropdownSelected(newCasesObj)
         .then(result => {
           //let res = this.combiningDataForChart(result);
           let chartData = this.makeChartData(result);
           this.drawchart(chartData);
         }).catch(error => {
-          console.log("error in dateDropdownSelected " + error);
+         // console.log("error in dateDropdownSelected " + error);
         });
+        
+      }
+      else{
+        console.log("check 4");
+        newCasesObj.from_date=moment(this.status[0]).format('YYYY-MM-DD');
+        newCasesObj.to_date=moment(this.status[1]).format('YYYY-MM-DD');
+
+        this.getDrillDownData(newCasesObj)
+        .then((res: any) => {
+          this.newModelCounts=res.length;
+
+          console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(res.length));
+  
+          for (let i in res) {
+            //res[i].
+            res[i].contract_creation_date = res[i].contract_creation_date==null?'-': moment(res[i].contract_creation_date).format('YYYY-MM-DD');
+            //res[i].sts_changed_on = moment(res[i].sts_changed_on).format('YYYY-MM-DD');
+            //this.drillDown(moment(res[i].contract_creation_date).format('YYY-MM-DD'));
+          }
+          //  console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(this.drillDown));
+          //this.drillDownData = res;
+  
+        }, error => {
+          //console.log("error getTerritories " + error);
+        });
+        this.newModelCounts='';
+
+      }
+
+
+      
 
     } else if (this.territoriesArr.length == 0 && this.arrivalTypesArr.length > 0) {
-      //console.log("t0 a>0");
+      console.log("t0 a>0");
+      this.drillDown = [];
       newCasesObj.territory_selected = false;
       newCasesObj.arrival_selected = true;
       newCasesObj.arrival_data = this.arrivalTypesArr;
 
-      this.checkDateDropdownSelected(newCasesObj)
+      if(comesfrom=='dropdown'){
+        console.log("check 5");
+
+        this.checkDateDropdownSelected(newCasesObj)
         .then(result => {
           //let res = this.combiningDataForChart(result);
           let chartData = this.makeChartData(result);
           this.drawchart(chartData);
         }).catch(error => {
-          console.log("error in dateDropdownSelected " + error);
+         // console.log("error in dateDropdownSelected " + error);
         });
 
+        
+      }
+      else{
+        console.log("check 6");
+        newCasesObj.from_date=moment(this.status[0]).format('YYYY-MM-DD');
+        newCasesObj.to_date=moment(this.status[1]).format('YYYY-MM-DD');
+
+        this.getDrillDownData(newCasesObj)
+      .then((res: any) => {
+        this.newModelCounts=res.length;
+
+        console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(res.length));
+
+        for (let i in res) {
+          //res[i].
+          res[i].contract_creation_date = res[i].contract_creation_date==null?'-': moment(res[i].contract_creation_date).format('YYYY-MM-DD');
+          //res[i].sts_changed_on = moment(res[i].sts_changed_on).format('YYYY-MM-DD');
+          //this.drillDown(moment(res[i].contract_creation_date).format('YYY-MM-DD'));
+        }
+        //  console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(this.drillDown));
+        //this.drillDownData = res;
+
+      }, error => {
+        //console.log("error getTerritories " + error);
+      });
+      this.newModelCounts='';
+
+      }
+
+      
+
+    
     }
     else if (this.territoriesArr.length > 0 && this.arrivalTypesArr.length > 0) {
-      //console.log("t>0  a>0");
+      console.log("t>0  a>0");
+      this.drillDown = [];
       newCasesObj.territory_selected = true;
       newCasesObj.territory_data = this.territoriesArr;
       newCasesObj.arrival_selected = true;
       newCasesObj.arrival_data = this.arrivalTypesArr;
-      this.checkDateDropdownSelected(newCasesObj)
+      if(comesfrom=='dropdown'){
+        console.log("check 7");
+        this.checkDateDropdownSelected(newCasesObj)
         .then(result => {
           // let res = this.combiningDataForChart(result);
           let chartData = this.makeChartData(result);
           this.drawchart(chartData);
         }).catch(error => {
-          console.log("error in dateDropdownSelected " + error);
+          //console.log("error in dateDropdownSelected " + error);
         });
+        
+      }
+      else{
+        console.log("check 8");
+        newCasesObj.from_date=moment(this.status[0]).format('YYYY-MM-DD');
+        newCasesObj.to_date=moment(this.status[1]).format('YYYY-MM-DD');
+
+        this.getDrillDownData(newCasesObj)
+      .then((res: any) => {
+        this.newModelCounts=res.length;
+
+       console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(res.length));
+
+        for (let i in res) {
+          //res[i].
+          res[i].contract_creation_date = res[i].contract_creation_date==null?'-': moment(res[i].contract_creation_date).format('YYYY-MM-DD');
+          //res[i].sts_changed_on = moment(res[i].sts_changed_on).format('YYYY-MM-DD');
+          //this.drillDown(moment(res[i].contract_creation_date).format('YYY-MM-DD'));
+        }
+        //  console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(this.drillDown));
+        //this.drillDownData = res;
+
+      }, error => {
+        //console.log("error getTerritories " + error);
+      });
+      this.newModelCounts='';
+
+      }
+      
+
+      
     }
   }
   /**
@@ -458,10 +582,10 @@ export class EbsCycleTimesComponent implements OnInit {
     return array;
   }
 
-  public getDrillDownData(first, last) {
+  public getDrillDownData(jsonobj) {
     return new Promise((resolve, reject) => {
-      let jsonObj = { 'first': this.status[0], 'last': this.status[1] };
-      this._ebsService.getEBSDrillDown(jsonObj).subscribe(data => {
+      //let jsonObj = { 'first': this.status[0], 'last': this.status[1] };
+      this._ebsService.getEBCCycleTimesDrillDown(jsonobj).subscribe(data => {
         this.drillDown = data;
         // console.log("territories" + this.territories)
       }, err => console.error(err),
@@ -504,7 +628,7 @@ export class EbsCycleTimesComponent implements OnInit {
 
 
       }, error => {
-        console.log("error getCaseData " + error);
+        //console.log("error getCaseData " + error);
       });
 
 

@@ -46,11 +46,18 @@ export class EbsService {
     .map(result => this.result = result.json().data);
   }
 
-  getEBSDrillDownStatus(status){
-    return this.http.get('api/ebs_contracts_drilldownstatus?contractstatus='+status)
+  getEBSDrillDownStatus(jsonobj){
+    //console.log("the data passed is:"+JSON.stringify(jsonobj));
+    return this.http.post('api/ebs_contractbystatus_drilldown',JSON.stringify(jsonobj),this.options)
     .map(result => this.result = result.json().data);
   }
   
+  getEBCCycleTimesDrillDown(jsonobj){
+    console.log("the rest service:"+JSON.stringify(jsonobj));
+    return this.http.post('api/ebs_cycletime_drilldown',JSON.stringify(jsonobj),this.options)
+    .map(result => this.result = result.json().data);
+  }
+
   getEBSCycleTimes(jsonObj){
    //console.log("the rest service:"+JSON.stringify(jsonObj));
     return this.http.post('api/ebs_cycle_times',JSON.stringify(jsonObj),this.options)
