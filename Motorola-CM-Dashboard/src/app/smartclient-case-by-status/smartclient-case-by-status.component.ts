@@ -4,6 +4,7 @@ import { reject } from 'q';
 import { SideViewDropDowns } from '../beans/sideBarDropdown';
 import { DataHandlerService } from '../services/data-handler/data-handler.service';
 import { ViewChild, ElementRef } from '@angular/core';
+import { FilterFormatEBS } from '../beans/common_bean';
 import * as $ from 'jquery';
 import { ChartSelectEvent } from 'ng2-google-charts';
 import { appheading } from '../enums/enum';
@@ -58,7 +59,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
 
     this.openScModel.nativeElement.click();
     this.drillDown = [];
-   //console.log("event.." + event.selectedRowValues[0].substring(0,j));
+    //console.log("event.." + event.selectedRowValues[0].substring(0,j));
     if (event.message == 'select') {
       let drillDownStatusnew = ''; let status: any; let letters = /^[0-9a-zA-Z]\s+$/;
       let statusStr = '', j = 0;
@@ -97,8 +98,8 @@ export class SmartclientCaseByStatusComponent implements OnInit {
             let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
             //console.log("diff----"+diffDays)
             res[i]['nss_aging'] = diffDays + ' days';
-            res[i].case_open_date =res[i].case_open_date==null?'-':  moment(res[i].case_open_date).format('YYYY-MM-DD');
-            res[i].contracts_start_date =res[i].contracts_start_date==null?'-':  moment(res[i].contracts_start_date).format('YYYY-MM-DD');
+            res[i].case_open_date = res[i].case_open_date == null ? '-' : moment(res[i].case_open_date).format('YYYY-MM-DD');
+            res[i].contracts_start_date = res[i].contracts_start_date == null ? '-' : moment(res[i].contracts_start_date).format('YYYY-MM-DD');
 
           }
           //console.log("the res is:" + JSON.stringify(res));
@@ -144,37 +145,68 @@ export class SmartclientCaseByStatusComponent implements OnInit {
      * calling the Angular Lookup Service Method getContracts() implemented by Vishal Sehgal as on 8/2/2019
      * 
      */
-  public getCaseData() {
+  // public getCaseData() {
+  //   return new Promise((resolve, reject) => {
+  //     let cases = [];
+  //     this._smartclientService.getSCCases().
+  //       subscribe(data => {
+  //         if (data.length > 0) {
+  //           cases = this.makeChartData(data);
+  //           //console.log("the cases data is :" + JSON.stringify(cases));
+  //           let arr = [];
+  //           for (let i in cases) {
+  //             arr.push(cases[i].contractscount);
+
+  //           }
+  //           this.Total = arr.reduce(this.sum);
+  //           // console.log("the contractscount are as under:"+JSON.stringify(arr));
+  //           // console.log("the total cases are :"+JSON.stringify(this.Total));
+  //           this.caseData = data;
+  //           cases = this.calculatePerc(cases);
+  //           //console.log("contracts cases with percentages:" + JSON.stringify(cases));
+  //           //console.log("contracts" + cases)
+  //         }
+
+  //       }, err => console.error(err),
+  //         // the third argument is a function which runs on completion
+  //         () => {
+  //           resolve(this.makeChartArr(cases));
+  //         }
+  //       )
+  //   }).catch((error) => {
+  //     //console.log('errorin getting data :', error);
+  //     reject(error);
+  //   })
+  // }
+
+  public totalPerc = 0;
+  public getCaseData(scObj) {
     return new Promise((resolve, reject) => {
-      let cases = [];
-      this._smartclientService.getSCCases().
-        subscribe(data => {
-          if (data.length > 0) {
-            cases = this.makeChartData(data);
-            //console.log("the cases data is :" + JSON.stringify(cases));
-            let arr = [];
-            for (let i in cases) {
-              arr.push(cases[i].contractscount);
-
-            }
-            this.Total = arr.reduce(this.sum);
-            // console.log("the contractscount are as under:"+JSON.stringify(arr));
-            // console.log("the total cases are :"+JSON.stringify(this.Total));
-            this.caseData = data;
-            cases = this.calculatePerc(cases);
-            //console.log("contracts cases with percentages:" + JSON.stringify(cases));
-            //console.log("contracts" + cases)
+      let contractData = [];
+      this._smartclientService.
+      getSCByStatus(scObj)
+        .subscribe(res => {
+          for (let i = 0; i < res.length; i++) {
+            this.totalPerc = this.totalPerc + parseInt(res[i].casecount)
           }
+          // if (data.length > 0) {
+          //   this.contractsData = data;
+          //   contractData = this.makeChartData(data);
+          //   //console.log("contracts" + JSON.stringify(contractData));
+          //   let arr = [];
+          //   for (let i in contractData) {
+          //     arr.push(contractData[i].contractscount)
 
-        }, err => console.error(err),
-          // the third argument is a function which runs on completion
-          () => {
-            resolve(this.makeChartArr(cases));
-          }
-        )
-    }).catch((error) => {
-      //console.log('errorin getting data :', error);
-      reject(error);
+          //   }
+          //   this.Total = arr.reduce(this.SUM);
+          //   contractData = this.calculatePerc(contractData);
+          // }
+          resolve(res);
+        }, error => {
+          console.log("getEBSContractState" + error);
+          reject(error);
+          
+        })
     })
   }
 
@@ -291,7 +323,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
   }
 
 
-  public drawChart(data) {
+  public drawchart(data) {
     //this.barChartData.dataTable = data;
     this.barChartData = {
       chartType: 'BarChart',
@@ -392,154 +424,251 @@ export class SmartclientCaseByStatusComponent implements OnInit {
    */
   public filterChartData() {
     let finalArr = [];
-    //console.log("the finalarr:" + JSON.stringify(finalArr));
-    //console.log("case data" + JSON.stringify(this.caseData));
+    let scObj = new FilterFormatEBS();
+    //console.log("case data" + JSON.stringify(this.contractsData));
     if (this.territoriesArr.length == 0 && this.arrivalTypesArr.length == 0 && this.workFlowStatusArr.length > 0) {
-      //console.log("t0 s>0 a0");
-      for (let j in this.workFlowStatusArr) {
-        let workflowItem = this.workFlowStatusArr[j];
-        let workflowFilterarr = this.caseData.filter(item => {
-          return (item.status.toLowerCase() == workflowItem.toLowerCase() || item.status_order.toLowerCase() == workflowItem.toLowerCase());
-        });
-        for (let i = 0; i < workflowFilterarr.length; i++) {
-          finalArr.push(workflowFilterarr[i]);
-        }
-        //finalArr.push(workflowFilterarr);
-        //finalArr = workflowFilterarr;
-      }
-    } else if (this.workFlowStatusArr.length == 0 && this.arrivalTypesArr.length == 0 && this.territoriesArr.length > 0) {
-      //console.log("t>0 s0 a0");
-      for (let i in this.territoriesArr) {
-        let territoryItem = this.territoriesArr[i];
-        let territoryFilterarr = this.caseData.filter(item => {
-          //console.log("territoryItem" + territoryItem);
-          return item.territory == territoryItem;
-        });
-        for (let i = 0; i < territoryFilterarr.length; i++) {
-          finalArr.push(territoryFilterarr[i]);
-        }
-        //finalArr.push(territoryFilterarr);
-        //finalArr = territoryFilterarr;
-      }
-    } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length == 0 && this.arrivalTypesArr.length == 0) {
-      //console.log("t0 s0 a0");
-      let cases = this.makeChartData(this.caseData);
-      cases = this.calculatePerc(cases);
-      let chartArr = this.makeChartArr(cases);
-      this.drawChart(chartArr);
-      return;
-    } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length == 0 && this.arrivalTypesArr.length > 0) {
-      //console.log("t0 s0 a>0");
-      for (let i in this.arrivalTypesArr) {
-        let arrivalTypeItem = this.arrivalTypesArr[i];
-        let arrivalTypeFilterarr = this.caseData.filter(item => {
+      scObj.territory_selected = false;
+      scObj.territory_data = [];
+      scObj.arrival_selected = false;
+      scObj.arrival_data = [];
+      scObj.workflow_selected = true;
+      scObj.workflow_data = this.workFlowStatusArr;
 
-          return item.arrival_type == arrivalTypeItem;
+      this.getCaseData(scObj)
+        .then(result => {
+          let arr = this.makeChartArr(result)
+          this.drawchart(arr);
+        }).catch(error => {
+          console.log("error filterChartData getCaseData" + error)
         });
-        for (let i = 0; i < arrivalTypeFilterarr.length; i++) {
-          finalArr.push(arrivalTypeFilterarr[i]);
-        }
-      }
+      // console.log("t0 s>0 a0");
+      // for (let j in this.workFlowStatusArr) {
+      //   let workflowItem = this.workFlowStatusArr[j];
+      //   let workflowFilterarr = this.contractsData.filter(item => {
+      //     return (item.status == workflowItem);
+      //   });
+      //   for (let i = 0; i < workflowFilterarr.length; i++) {
+      //     finalArr.push(workflowFilterarr[i]);
+      //   }
+      //   //finalArr.push(workflowFilterarr);
+      //   //finalArr = workflowFilterarr;
+      // }
+    } else if (this.workFlowStatusArr.length == 0 && this.arrivalTypesArr.length == 0 && this.territoriesArr.length > 0) {
+      //console.log("t>1 s0 a0");
+      // for (let i in this.territoriesArr) {
+      //   let territoryItem = this.territoriesArr[i];
+      //   let territoryFilterarr = this.contractsData.filter(item => {
+      //     //console.log("territoryItem" + territoryItem);
+      //     return item.territory == territoryItem;
+      //   });
+      //   for (let i = 0; i < territoryFilterarr.length; i++) {
+      //     finalArr.push(territoryFilterarr[i]);
+      //   }
+      //   //finalArr.push(territoryFilterarr);
+      //   //finalArr = territoryFilterarr;
+      // }
+      scObj.territory_selected = true;
+      scObj.territory_data = this.territoriesArr;
+      scObj.arrival_selected = false;
+      scObj.arrival_data = [];
+      scObj.workflow_selected = false;
+      scObj.workflow_data = [];
+
+      this.getCaseData(scObj)
+        .then(result => {
+          let arr = this.makeChartArr(result)
+          this.drawchart(arr);
+        }).catch(error => {
+          console.log("error filterChartData getCaseData" + error)
+        });
+    } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length == 0 && this.arrivalTypesArr.length == 0) {
+      scObj.territory_selected = false;
+      scObj.territory_data = [];
+      scObj.arrival_selected = false;
+      scObj.arrival_data = [];
+      scObj.workflow_selected = false;
+      scObj.workflow_data = [];
+      this.getCaseData(scObj)
+        .then(result => {
+          let arr = this.makeChartArr(result)
+          this.drawchart(arr);
+        }).catch(error => {
+          console.log("error filterChartData getCaseData" + error)
+        });
+    } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length == 0 && this.arrivalTypesArr.length > 0) {
+      // for (let i in this.arrivalTypesArr) {
+      //   let arrivalTypeItem = this.arrivalTypesArr[i];
+      //   let arrivalTypeFilterarr = this.contractsData.filter(item => {
+
+      //     return item.arrival_type == arrivalTypeItem;
+      //   });
+      //   for (let i = 0; i < arrivalTypeFilterarr.length; i++) {
+      //     finalArr.push(arrivalTypeFilterarr[i]);
+      //   }
+      // }
+      scObj.territory_selected = false;
+      scObj.territory_data = [];
+      scObj.arrival_selected = true;
+      scObj.arrival_data = this.arrivalTypesArr;
+      scObj.workflow_selected = false;
+      scObj.workflow_data = [];
+
+      this.getCaseData(scObj)
+        .then(result => {
+          let arr = this.makeChartArr(result)
+          this.drawchart(arr);
+        }).catch(error => {
+          console.log("error filterChartData getCaseData" + error)
+        });
     } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length > 0 && this.arrivalTypesArr.length > 0) {
       //console.log("t>0 s0 a>0");
-      for (let i in this.territoriesArr) {
-        let territoryItem = this.territoriesArr[i];
-        let territoryFilterarr = this.caseData.filter(item => {
-          return item.territory.toLowerCase() == territoryItem.toLowerCase();
-        });
-        //console.log("territoryFilterarr" + JSON.stringify(territoryFilterarr));
-        //finalArr = territoryFilterarr;
-        for (let j in this.arrivalTypesArr) {
-          let arrivalTypeItem = this.arrivalTypesArr[j];
-          let arrrTypeFilterAarr = territoryFilterarr.filter(item => {
-            return (item.status.toLowerCase() == arrivalTypeItem.toLowerCase() || item.status_order.toLowerCase() == arrivalTypeItem.toLowerCase());
-          });
-          for (let i = 0; i < arrrTypeFilterAarr.length; i++) {
-            finalArr.push(arrrTypeFilterAarr[i]);
-          }
+      // for (let i in this.territoriesArr) {
+      //   let territoryItem = this.territoriesArr[i];
+      //   let territoryFilterarr = this.contractsData.filter(item => {
+      //     return item.territory == territoryItem;
+      //   });
+      //   //console.log("territoryFilterarr" + JSON.stringify(territoryFilterarr));
+      //   //finalArr = territoryFilterarr;
+      //   for (let j in this.arrivalTypesArr) {
+      //     let arrivalTypeItem = this.arrivalTypesArr[j];
+      //     let arrrTypeFilterAarr = territoryFilterarr.filter(item => {
+      //       return item.arrival_type == arrivalTypeItem;
+      //     });
+      //     for (let i = 0; i < arrrTypeFilterAarr.length; i++) {
+      //       finalArr.push(arrrTypeFilterAarr[i]);
+      //     }
 
-        }
-      }
+      //   }
+      // }
+      scObj.territory_selected = true;
+      scObj.territory_data = this.territoriesArr;
+      scObj.arrival_selected = true;
+      scObj.arrival_data = this.arrivalTypesArr;
+      scObj.workflow_selected = false;
+      scObj.workflow_data = [];
+
+      this.getCaseData(scObj)
+        .then(result => {
+          let arr = this.makeChartArr(result)
+          this.drawchart(arr);
+        }).catch(error => {
+          console.log("error filterChartData getCaseData" + error)
+        });
     } else if (this.workFlowStatusArr.length > 0 && this.territoriesArr.length == 0 && this.arrivalTypesArr.length > 0) {
       //console.log("t0 s>0 a>0");
-      for (let j in this.workFlowStatusArr) {
-        let workflowItem = this.workFlowStatusArr[j];
-        let workflowFilterarr = this.caseData.filter(item => {
-          return (item.status.toLowerCase() == workflowItem.toLowerCase() || item.status_order.toLowerCase() == workflowItem.toLowerCase());
+      // for (let j in this.workFlowStatusArr) {
+      //   let workflowItem = this.workFlowStatusArr[j];
+      //   let workflowFilterarr = this.contractsData.filter(item => {
+      //     return (item.status == workflowItem || item.status_order == workflowItem);
+      //   });
+      //   for (let i in this.arrivalTypesArr) {
+      //     let arrivalTypeItem = this.arrivalTypesArr[i];
+      //     let arrivalTypeFilterarr = workflowFilterarr.filter(item => {
+      //       return item.arrival_type == arrivalTypeItem;
+      //     });
+      //     for (let i = 0; i < arrivalTypeFilterarr.length; i++) {
+      //       finalArr.push(arrivalTypeFilterarr[i]);
+      //     }
+      //   }
+      // }
+      scObj.territory_selected = false;
+      scObj.territory_data = [];
+      scObj.arrival_selected = true;
+      scObj.arrival_data = this.arrivalTypesArr;
+      scObj.workflow_selected = true;
+      scObj.workflow_data = this.workFlowStatusArr;
+
+      this.getCaseData(scObj)
+        .then(result => {
+          let arr = this.makeChartArr(result)
+          this.drawchart(arr);
+        }).catch(error => {
+          console.log("error filterChartData getCaseData" + error)
         });
-        for (let i in this.arrivalTypesArr) {
-          let arrivalTypeItem = this.arrivalTypesArr[i];
-          let arrivalTypeFilterarr = workflowFilterarr.filter(item => {
-            return item.arrival_type == arrivalTypeItem;
-          });
-          for (let i = 0; i < arrivalTypeFilterarr.length; i++) {
-            finalArr.push(arrivalTypeFilterarr[i]);
-          }
-        }
-      }
     } else if (this.workFlowStatusArr.length > 0 && this.territoriesArr.length > 0 && this.arrivalTypesArr.length == 0) {
-      //console.log("t>0 s>0 a0");
-      for (let i in this.territoriesArr) {
-        let territoryItem = this.territoriesArr[i];
-        let territoryFilterarr = this.caseData.filter(item => {
-          return item.territory == territoryItem;
+      // console.log("t>0 s>0 a0");
+      // for (let i in this.territoriesArr) {
+      //   let territoryItem = this.territoriesArr[i];
+      //   let territoryFilterarr = this.contractsData.filter(item => {
+      //     return item.territory == territoryItem;
+      //   });
+      //   //console.log("territoryFilterarr" + JSON.stringify(territoryFilterarr));
+      //   //finalArr = territoryFilterarr;
+      //   for (let j in this.workFlowStatusArr) {
+      //     let workflowItem = this.workFlowStatusArr[j];
+      //     let workflowFilterarr = territoryFilterarr.filter(item => {
+      //       return (item.status == workflowItem);
+      //     });
+      //     for (let i = 0; i < workflowFilterarr.length; i++) {
+      //       finalArr.push(workflowFilterarr[i]);
+      //     }
+      //   }
+      //   //console.log("workflowFilterarr" + JSON.stringify(workflowFilterarr));
+      //   //finalArr = workflowFilterarr;
+      // }
+      scObj.territory_selected = true;
+      scObj.territory_data = this.territoriesArr;
+      scObj.arrival_selected = false;
+      scObj.arrival_data = [];
+      scObj.workflow_selected = true;
+      scObj.workflow_data = this.workFlowStatusArr;
+
+      this.getCaseData(scObj)
+        .then(result => {
+          let arr = this.makeChartArr(result)
+          this.drawchart(arr);
+        }).catch(error => {
+          console.log("error filterChartData getCaseData" + error)
         });
-        //console.log("territoryFilterarr" + JSON.stringify(territoryFilterarr));
-        //finalArr = territoryFilterarr;
-        for (let j in this.workFlowStatusArr) {
-          let workflowItem = this.workFlowStatusArr[j];
-          let workflowFilterarr = territoryFilterarr.filter(item => {
-            return (item.status == workflowItem);
-          });
-          for (let i = 0; i < workflowFilterarr.length; i++) {
-            finalArr.push(workflowFilterarr[i]);
-          }
-        }
-        //console.log("workflowFilterarr" + JSON.stringify(workflowFilterarr));
-        //finalArr = workflowFilterarr;
-      }
     }
     else {
       //console.log("t>0 s>0 a>0");
-      for (let i in this.territoriesArr) {
-        let territoryItem = this.territoriesArr[i];
-        let territoryFilterarr = this.caseData.filter(item => {
-          return item.territory.toLowerCase() == territoryItem.toLowerCase();
-        });
-        //console.log("territoryFilterarr" + JSON.stringify(territoryFilterarr));
-        //finalArr = territoryFilterarr;
-        for (let j in this.workFlowStatusArr) {
-          let workflowItem = this.workFlowStatusArr[j];
-          let workflowFilterarr = territoryFilterarr.filter(item => {
-            return (item.status.toLowerCase() == workflowItem.toLowerCase() || item.status_order.toLowerCase() == workflowItem.toLowerCase());
-          });
-          //console.log("workflowFilterarr" + JSON.stringify(workflowFilterarr));
+      // for (let i in this.territoriesArr) {
+      //   let territoryItem = this.territoriesArr[i];
+      //   let territoryFilterarr = this.contractsData.filter(item => {
+      //     return item.territory == territoryItem;
+      //   });
+      //   //console.log("territoryFilterarr" + JSON.stringify(territoryFilterarr));
+      //   //finalArr = territoryFilterarr;
+      //   for (let j in this.workFlowStatusArr) {
+      //     let workflowItem = this.workFlowStatusArr[j];
+      //     let workflowFilterarr = territoryFilterarr.filter(item => {
+      //       return (item.status == workflowItem);
+      //     });
+      //     for (let i in this.arrivalTypesArr) {
+      //       let arrivalTypeItem = this.arrivalTypesArr[i];
+      //       let arrivalTypeFilterarr = workflowFilterarr.filter(item => {
+      //         return item.arrival_type == arrivalTypeItem;
+      //       });
+      //       for (let i = 0; i < arrivalTypeFilterarr.length; i++) {
+      //         finalArr.push(arrivalTypeFilterarr[i]);
+      //       }
+      //     }
+      //   }
+      //   //console.log("workflowFilterarr" + JSON.stringify(workflowFilterarr));
+      //   //finalArr = workflowFilterarr;
+      // }
+      scObj.territory_selected = true;
+      scObj.territory_data = this.territoriesArr;
+      scObj.arrival_selected = true;
+      scObj.arrival_data = this.arrivalTypesArr;
+      scObj.workflow_selected = true;
+      scObj.workflow_data = this.workFlowStatusArr;
 
-          for (let i in this.arrivalTypesArr) {
-            let arrivalTypeItem = this.arrivalTypesArr[i];
-            let arrivalTypeFilterarr = workflowFilterarr.filter(item => {
-              return item.arrival_type == arrivalTypeItem;
-            });
-            for (let i = 0; i < arrivalTypeFilterarr.length; i++) {
-              finalArr.push(arrivalTypeFilterarr[i]);
-            }
-          }
-          // for (let i = 0; i < workflowFilterarr.length; i++) {
-          //   finalArr.push(workflowFilterarr[i]);
-          // }
-          //console.log("workflowFilterarr" + JSON.stringify(workflowFilterarr));
-          //finalArr = workflowFilterarr;
-        }
-      }
+      this.getCaseData(scObj)
+        .then(result => {
+          let arr = this.makeChartArr(result)
+          this.drawchart(arr);
+        }).catch(error => {
+          console.log("error filterChartData getCaseData" + error)
+        });
     }
 
-    let cases = this.makeChartData(finalArr);
-    cases = this.calculatePerc(cases);
-    let chartArr = this.makeChartArr(cases);
-    this.drawChart(chartArr);
-
+    // let cases = this.makeChartData(finalArr);
+    // cases = this.calculatePerc(cases);
+    // let chartArr = this.makeChartArr(cases);
+    // this.drawchart(chartArr);
   }
-
   /**
    * Array reduce function
    * @param accumulator-array item summed value
@@ -553,28 +682,28 @@ export class SmartclientCaseByStatusComponent implements OnInit {
    * This method make chart data by doing groupby them as we are getting whole data from service.
    * @param data-ungrouped data it has data like open many rows of data,inprog many rows of data 
    */
-  public makeChartData(data) {
-    let tempArr = [];
-    let finalArr = [];
-    tempArr.push(this._dataHandlerService.groupBySameKeyValues(data, 'status_order'));
-    //this.caseDataGrpBy=tempArr;//using in filter data
-    for (let k in tempArr[0]) {
-      let elmData = tempArr[0][k]
-      let medianDays = [], contractsCount = [], json = {}, statusName;
-      //console.log("--hello"+JSON.stringify(tempArr[k]));
-      for (let i = 0; i < elmData.length; i++) {
-        //console.log("--hello1"+JSON.stringify(tempArr[k][i]));
-        let elem = elmData[i];
-        medianDays.push(parseInt(elem.mediandays));
-        contractsCount.push(parseInt(elem.contractscount));
-        statusName = elem.status_order == 'OTHER' ? 'Other' : elmData[0].status
-      }
-      json = { status: statusName, mediandays: medianDays.reduce(this.sum), contractscount: contractsCount.reduce(this.sum) };
-      finalArr.push(json);
-    }
-    //console.log("makeChartData" + JSON.stringify(finalArr));
-    return finalArr;
-  }
+  // public makeChartData(data) {
+  //   let tempArr = [];
+  //   let finalArr = [];
+  //   tempArr.push(this._dataHandlerService.groupBySameKeyValues(data, 'status_order'));
+  //   //this.caseDataGrpBy=tempArr;//using in filter data
+  //   for (let k in tempArr[0]) {
+  //     let elmData = tempArr[0][k]
+  //     let medianDays = [], contractsCount = [], json = {}, statusName;
+  //     //console.log("--hello"+JSON.stringify(tempArr[k]));
+  //     for (let i = 0; i < elmData.length; i++) {
+  //       //console.log("--hello1"+JSON.stringify(tempArr[k][i]));
+  //       let elem = elmData[i];
+  //       medianDays.push(parseInt(elem.mediandays));
+  //       contractsCount.push(parseInt(elem.contractscount));
+  //       statusName = elem.status_order == 'OTHER' ? 'Other' : elmData[0].status
+  //     }
+  //     json = { status: statusName, mediandays: medianDays.reduce(this.sum), contractscount: contractsCount.reduce(this.sum) };
+  //     finalArr.push(json);
+  //   }
+  //   //console.log("makeChartData" + JSON.stringify(finalArr));
+  //   return finalArr;
+  // }
 
 
   /**
@@ -586,48 +715,32 @@ export class SmartclientCaseByStatusComponent implements OnInit {
     let array = [];
     array.push(['Status', 'No. Of Cases', { role: "annotation" }, { role: "style" }]);
     if (cases.length > 0) {
-      this.drawChart(cases);
+      //this.drawChart(cases);
       this.checkDataSCS = false;
-
       let barColor = null;
 
       for (let i in cases) {
         let index = parseInt(i);
-        if (cases[i].status == 'Insufficient Data' || cases[i].status == 'InProg Awt 3PS' || cases[i].status == 'InProg Awt SSC' || cases[i].status == 'InProg Awt Credit' || cases[i].status == 'InProg Awt Resource') {
+        if (cases[i].status1 == 'Insufficient Data' || cases[i].status1 == 'InProg Awt 3PS' || cases[i].status1 == 'InProg Awt SSC' || cases[i].status1 == 'InProg Awt Credit' || cases[i].status1 == 'InProg Awt Resource') {
           barColor = '#93C0F6';
-          // }else if(cases[i].status =='InProg Awt 3PS'){
-          //   barColor='#93C0F6';
-          // }else if(cases[i].status =='InProg Awt SSC'){
-          //   barColor='#4A90E2';
-          // }else if(cases[i].status =='InProg Awt Credit'){
-          //   barColor='#618CF7';
-          // }else if(cases[i].status == 'InProg Awt Resource'){
-          //   barColor='#164985';
-          // }
         }
         else {
           barColor = '#3274C2';
         }
-        //console.log(i);
-        // Create new array above and push every object in
-        array.push([cases[i].status + "  " + cases[i].status_percent, parseInt(cases[i].contractscount), "Median Days - " + parseInt(cases[i].mediandays), barColor]);
+        array.push([cases[i].status1 + "  " + this.calculatePercent(cases[i].casecount,this.totalPerc), parseInt(cases[i].casecount), "Median Days - " + parseInt(cases[i].mediandays), barColor]);
       }
-      return array;
 
     } else if (cases.length == 0) {
       //cases = [['Status','Cases'],['No_Status',0]];
-      this.drawChart(cases);
       this.checkDataSCS = true;
       array.push(['', 0, '', '']);
-      return array;
-
-    } else {
-
-      this.checkDataSCS = true;
     }
 
-    // array.push(['Status', 'No. Of Cases', { role: "annotation" }, { role: "style" }]);
-    // ARRAY OF OBJECTS
+    return array;
+  }
+  calculatePercent(remValue,totalvalue){
+    let percentage=((parseInt(remValue)/totalvalue)*100).toFixed(2);
+  return percentage+'%';
   }
 
   /**
@@ -642,24 +755,39 @@ export class SmartclientCaseByStatusComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getCaseData()
+    let scObj = new FilterFormatEBS();
+    scObj.territory_selected = false;
+    scObj.territory_data = [];
+    scObj.arrival_selected = false;
+    scObj.arrival_data = [];
+    scObj.workflow_selected = false;
+    scObj.workflow_data = [];
+    this.getCaseData(scObj)
       .then((res: any) => {
         if (res.length > 0) {
-          this.drawChart(res);
-          // this.checkDataSCS = false;
-        } else if (res.length == 0) {
-          // alert("there is no data to bind to chart");
-          res = [['Status', 'Cases'], ['No Status', 0], ['No Status', 0], ['No Status', 0]];
-          this.drawChart(res);
-          // this.checkDataSCS = true;
-
+          let arr = this.makeChartArr(res)
+          this.drawchart(arr);
         } else {
-          // this.checkDataSCS = true;
+          res = [['Status', 'Cases'], ['No Status', 0], ['No Status', 0], ['No Status', 0]];
+          this.drawchart(res);
         }
 
-        // this.drawChart(res);
+        // if (res.length > 0) {
+        //   this.drawchart(res);
+        //   // this.checkDataEBS = false;
+        // } else if (res.length == 0) {
+        //   // alert("there is no data to bind to chart");
+        //   res = [['Status', 'Cases'], ['No Status', 0], ['No Status', 0], ['No Status', 0]];
+        //   this.drawchart(res);
+        //   // this.checkDataEBS = true;
+
+        // } else {
+        //   // this.checkDataEBS = true;
+        // }
+
+        // this.drawchart(res);
       }, error => {
-        //console.log("error getCaseData " + error);
+        // console.log("error getCaseData " + error);
       });
 
     this.getTerritories()
