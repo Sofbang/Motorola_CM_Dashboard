@@ -118,6 +118,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
       this._smartclientService.
         getSCByStatus(scObj)
         .subscribe(res => {
+          this.totalPerc=0;
           for (let i = 0; i < res.length; i++) {
             this.totalPerc = this.totalPerc + parseInt(res[i].casecount)
           }
@@ -338,6 +339,12 @@ export class SmartclientCaseByStatusComponent implements OnInit {
         scObj.workflow_data = arr;
         this.getSCDrillDownData(scObj)
           .then((res: any) => {
+            this.newModelCounts = res.length;
+            //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(res));
+            for (let i in res) {
+              //res[i].
+              res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('YYYY-MM-DD');
+            }
             this.drillDown = res;
           }, error => {
             console.log("error getSCDrillDownData " + error);
@@ -367,6 +374,12 @@ export class SmartclientCaseByStatusComponent implements OnInit {
         scObj.workflow_data = arr;
         this.getSCDrillDownData(scObj)
           .then((res: any) => {
+            this.newModelCounts = res.length;
+            //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(res));
+            for (let i in res) {
+              //res[i].
+              res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('YYYY-MM-DD');
+            }
             this.drillDown = res;
           }, error => {
             console.log("error getSCDrillDownData " + error);
@@ -396,6 +409,12 @@ export class SmartclientCaseByStatusComponent implements OnInit {
         scObj.workflow_data = arr;
         this.getSCDrillDownData(scObj)
           .then((res: any) => {
+            this.newModelCounts = res.length;
+            //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(res));
+            for (let i in res) {
+              //res[i].
+              res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('YYYY-MM-DD');
+            }
             this.drillDown = res;
           }, error => {
             console.log("error getSCDrillDownData " + error);
@@ -425,6 +444,12 @@ export class SmartclientCaseByStatusComponent implements OnInit {
         scObj.workflow_data = arr;
         this.getSCDrillDownData(scObj)
           .then((res: any) => {
+            this.newModelCounts = res.length;
+            //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(res));
+            for (let i in res) {
+              //res[i].
+              res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('YYYY-MM-DD');
+            }
             this.drillDown = res;
           }, error => {
             console.log("error getSCDrillDownData " + error);
@@ -455,6 +480,12 @@ export class SmartclientCaseByStatusComponent implements OnInit {
         scObj.workflow_data = arr;
         this.getSCDrillDownData(scObj)
           .then((res: any) => {
+            this.newModelCounts = res.length;
+            //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(res));
+            for (let i in res) {
+              //res[i].
+              res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('YYYY-MM-DD');
+            }
             this.drillDown = res;
           }, error => {
             console.log("error getSCDrillDownData " + error);
@@ -486,6 +517,12 @@ export class SmartclientCaseByStatusComponent implements OnInit {
         scObj.workflow_data = arr;
         this.getSCDrillDownData(scObj)
           .then((res: any) => {
+            this.newModelCounts = res.length;
+            //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(res));
+            for (let i in res) {
+              //res[i].
+              res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('YYYY-MM-DD');
+            }
             this.drillDown = res;
           }, error => {
             console.log("error getSCDrillDownData " + error);
@@ -516,6 +553,12 @@ export class SmartclientCaseByStatusComponent implements OnInit {
         scObj.workflow_data = arr;
         this.getSCDrillDownData(scObj)
           .then((res: any) => {
+            this.newModelCounts = res.length;
+            //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(res));
+            for (let i in res) {
+              //res[i].
+              res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('YYYY-MM-DD');
+            }
             this.drillDown = res;
           }, error => {
             console.log("error getSCDrillDownData " + error);
@@ -546,6 +589,12 @@ export class SmartclientCaseByStatusComponent implements OnInit {
         scObj.workflow_data = arr;
         this.getSCDrillDownData(scObj)
           .then((res: any) => {
+            this.newModelCounts = res.length;
+            //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(res));
+            for (let i in res) {
+              //res[i].
+              res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('YYYY-MM-DD');
+            }
             this.drillDown = res;
           }, error => {
             console.log("error getSCDrillDownData " + error);

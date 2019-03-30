@@ -1,9 +1,9 @@
 <button id="openSCModal1" #openSCModal [hidden]="true" data-toggle="modal" data-target="#smartClientARModal">Open
-    Modal</button>
+  Modal</button>
 <div class="chart-div col-md-offset-2">
   <google-chart #cchartnew [data]="barChartData" (chartSelect)='selectBar($event)'></google-chart>
 </div>
-<div class="show-msg"  *ngIf="this.checkDataSC">
+<div class="show-msg" *ngIf="this.checkDataSC">
   <h3>No Data Available</h3>
 </div>
 <!-- modal -->
@@ -14,12 +14,13 @@
       <div class="modal-header">
         <div class="col-lg-6">
           <button type="button" class="btn btn-primary btn-lg" data-dismiss="modal">Back</button>
-          <span class="fontCss pull-right"><b >Status - {{data}} </b></span>
+          <span class="fontCss pull-right"><b>Status - {{data}} </b></span>
 
         </div>
         <div class="col-lg-6">
           <span class="fontCss pull-left"><b>{{newModelCounts}} </b></span>
-          <button class="pull-right btn btn-sucess btn-sm" title="Export To Excel" type="button" (click)="exportToExcel()"><i class="fas fa-file-export "></i></button>
+          <button class="pull-right btn btn-sucess btn-sm" title="Export To Excel" type="button"
+            (click)="exportToExcel()"><i class="fas fa-file-export "></i></button>
         </div>
 
       </div>
@@ -38,17 +39,17 @@
           </thead>
           <!-- outer for each  -->
           <tbody class="SCModlTbody" style="height: auto !important;min-height:52vh;">
-            <tr *ngFor="let drilldown of this.drillDown" >
-              <td>{{drilldown.customer==null?'-':drilldown.customer}}</td>
-              <td>{{drilldown.case_number}}</td>
-              <td>{{drilldown.case_status==null?'-':drilldown.case_status}}</td>
-              <td>{{drilldown.case_owner==null?'_':drilldown.case_owner}}</td>
-              <td>{{drilldown.case_open_date}}</td>
-              <td>{{drilldown.nss_aging}}</td>
-              <td>{{drilldown.contracts_start_date}}</td>
+            <tr *ngFor="let item of drillDown">
+              <td>{{item.customer==null?'-':item.customer}}</td>
+              <td>{{item.case_number}}</td>
+              <td>{{item.status==null?'-':item.status}}</td>
+              <td>{{item.case_owner==null?'_':item.case_owner}}</td>
+              <td>{{item.case_creation_date}}</td>
+              <td>{{item.nss_aging}}</td>
+              <td>{{item.contracts_start_date}}</td>
 
             </tr>
-                
+
           </tbody>
           <!-- outer for each  -->
         </table>

@@ -43,6 +43,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
   public newModelCounts: any;
   public checkDataSC: any = false;
   public sideViewDropDowns = new SideViewDropDowns();
+  public barStatus;
   public restUrlFilterYr: string = 'sc_case_status_med_yr';
   @ViewChild('openSCModal') openScModel: ElementRef;
   @ViewChild('FromTo') FromTo;
@@ -70,6 +71,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
 
   }
 
+
   public selectBar(event: ChartSelectEvent) {
 
     this.openScModel.nativeElement.click();
@@ -82,15 +84,11 @@ export class SmartclientAverageRenewalComponent implements OnInit {
     for (let i = event.selectedRowValues[0].length; i > 0; i--) {
       if (event.selectedRowValues[0][i] == ' ') {
         j = i;
-        //console.log("i---"+j)
         break;
       }
-      //console.log("hhh--"+event.selectedRowValues[0][i].match(/^[a-zA-Z]\s+$/));
     }
-    status = event.selectedRowValues[0].substring(0, j);
+    this.barStatus = event.selectedRowValues[0].substring(0, j).trim();
     if (event.message == 'select') {
-
-
       this.newModelCounts = event.selectedRowValues[2];
       this.data = event.selectedRowValues[0];
       //console.log("the data is:", this.data);
@@ -101,28 +99,9 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       $('tbody.SCModlTbody').css('overflow-x', 'hidden');
       // $('tbody.SCModlTbody').css('display', 'block');
       $('tbody.SCModlTbody').css('width', '100%');
-      console.log("the status is:" + JSON.stringify(status));
-      this.getSCDrillDownData(status)
-        .then((res: any) => {
-          console.log("the srill ress:" + JSON.stringify(res));
-          let currentDate: any = new Date();
-          for (let i = 0; i < res.length; i++) {
-            let caseCreationdate = new Date(moment(res[i].case_open_date).format('YYYY-MM-DD'));
-            let timeDiff = Math.abs(currentDate.getTime() - caseCreationdate.getTime());
-            let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
-            //console.log("diff----"+diffDays)
-            res[i]['nss_aging'] = diffDays + ' days';
-            res[i].case_open_date = res[i].case_open_date == null ? '-' : moment(res[i].case_open_date).format('YYYY-MM-DD');
-            res[i].contracts_start_date = res[i].contracts_start_date == null ? '-' : moment(res[i].contracts_start_date).format('YYYY-MM-DD');
-
-          }
-          //console.log("the drilldowndata for ebs contracts by status is:"+JSON.stringify(this.drillDown));
-          this.drillDownData = res;
-        }, error => {
-          console.log("error getTerritories " + error);
-        });
+      //console.log("the status is:" + JSON.stringify(status));
       this.drillDown = [];
-
+      this.filterChartData('drilldown');
     }
   }
 
@@ -131,24 +110,19 @@ export class SmartclientAverageRenewalComponent implements OnInit {
     this._excelService.exportAsExcelFile(this.drillDownData, 'Smart Client Cases');
 
   }
-  
 
-
-  public getSCDrillDownData(status) {
+  public getSCCycleDrillDownData(cycleTimeObj) {
+    // console.log("kkk"+JSON.stringify(cycleTimeObj));
     return new Promise((resolve, reject) => {
-      this._smartclientService.getScDrillDown(status).subscribe(data => {
-        this.drillDown = data;
-        // console.log("territories" + this.territories)
-      }, err => console.error(err),
-        // the third argument is a function which runs on completion
-        () => {
-          //console.log("the drilldown data recived is:"+this.drillDown);
-          resolve(this.drillDown);
-        }
-      )
-    }).catch((error) => {
-      reject(error);
-      console.log('errorin getting data :', error);
+      this._smartclientService
+        .getScCycleTimesDrillDown(cycleTimeObj)
+        .subscribe(res => {
+          //console.log("getSCCycleDrillDownData" + JSON.stringify(res));
+          resolve(res);
+        }, error => {
+          console.log("getSCCycleDrillDownData" + error);
+          reject(error);
+        })
     })
 
   }
@@ -221,7 +195,21 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       reject(error);
     })
   }
-
+  public getArrivalTypeData() {
+    return new Promise((resolve, reject) => {
+      let arrivalType;
+      this._smartclientService.getScArrivalType()
+        .subscribe(res => {
+          let array = [];
+          for (let i in res) {
+            array.push({ 'item_id': res[i].arrival_type, 'item_text': res[i].arrival_type });
+          }
+          resolve(array);
+        }, err => {
+          console.error(err)
+        })
+    })
+  }
   public drawChart(data) {
     //this.barChartData.dataTable = data;
     this.barChartData = {
@@ -242,7 +230,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
         backgroundColor: '#FFFFFF',
         hAxis: {
           textStyle: { color: '#444444' },
-          title: this.fromMedOrAvg == 'median' ? 'Number Of Median Days' : 'Number Of Average Days' ,
+          title: this.fromMedOrAvg == 'median' ? 'Number Of Median Days' : 'Number Of Average Days',
           titleTextStyle: { italic: false }
         },
         vAxis: {
@@ -264,8 +252,8 @@ export class SmartclientAverageRenewalComponent implements OnInit {
   public fromMedOrAvg = 'median';
   // ng multiselect events implemented by Vishal Sehgal 12/2/2019
   onItemSelect(item, from) {
- //console.log("onItemSelect"+item,"from"+from);
-    this.contractTimeSelect=false;
+    //console.log("onItemSelect"+item,"from"+from);
+    this.contractTimeSelect = false;
     if (from == 'territory') {
       this.territoriesArr.push(item);
       //this.filterChartData();
@@ -277,7 +265,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       this.territoriesArr = [];
       this.workFlowStatusArr = [];
       this.arrivalTypesArr = [];
-      this.contractTimeSelect=true;
+      this.contractTimeSelect = true;
       // console.log("casetime selected Median" + from);
       if (item == 'Median') {
         this.fromMedOrAvg = 'median';
@@ -287,7 +275,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
     } else if (from == 'arrivalType') {
       this.arrivalTypesArr.push(item);
     }
-    this.filterChartData();
+    this.filterChartData('dropdown');
   }
 
   onItemDeSelect(item, from) {
@@ -298,7 +286,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
     } else if (from == 'arrivalType') {
       this.arrivalTypesArr = this.removeElementArr(this.arrivalTypesArr, item);
     }
-    this.filterChartData();
+    this.filterChartData('dropdown');
   }
 
   onSelectAll(item, from) {
@@ -312,7 +300,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       this.arrivalTypesArr = [];
       this.arrivalTypesArr = item;
     }
-    this.filterChartData();
+    this.filterChartData('dropdown');
   }
 
   /**
@@ -323,7 +311,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
     this.datesData = [];
     this.datesData.push(item.firstDay);
     this.datesData.push(item.lastDay);
-    this.filterChartData();
+    this.filterChartData('dropdown');
   }
 
   onDeSelectAll(item, from) {
@@ -334,9 +322,9 @@ export class SmartclientAverageRenewalComponent implements OnInit {
     } else if (from == 'arrivalType') {
       this.arrivalTypesArr = [];
     }
-    this.filterChartData();
+    this.filterChartData('dropdown');
   }
-  public totalPerc=0;
+  public totalPerc = 0;
   /**
    * This method check if From and to dropdown selected.
    */
@@ -344,8 +332,8 @@ export class SmartclientAverageRenewalComponent implements OnInit {
     return new Promise((resolve, reject) => {
       this._smartclientService.getSCCycleTimes(cycleTimeObj)
         .subscribe(res => {
-          for(let i=0;i<res.length;i++){
-            this.totalPerc=this.totalPerc+parseInt(res[i].casecount)
+          for (let i = 0; i < res.length; i++) {
+            this.totalPerc = this.totalPerc + parseInt(res[i].casecount)
           }
           resolve(res);
         }, error => {
@@ -360,9 +348,9 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       let newObj = this.contractTimeSelect ? this.makeInitDataLoadObj() : filterDataObj;
       this._smartclientService.getSCCycleTimes(newObj)
         .subscribe(res => {
-          this.totalPerc=0;
-          for(let i=0;i<res.length;i++){
-            this.totalPerc=this.totalPerc+parseInt(res[i].casecount)
+          this.totalPerc = 0;
+          for (let i = 0; i < res.length; i++) {
+            this.totalPerc = this.totalPerc + parseInt(res[i].casecount)
           }
           //  console.log("the data after ebs cycle times is:"+JSON.stringify(res));
           //this.cycleTimesData = res;//to use in only territoy or arival type filter
@@ -390,7 +378,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
     return moment(incominDate).format('YYYY-MM-DD');
   }
 
-  public filterChartData() {
+  public filterChartData(from) {
     let cycleTimeObj = new FilterFormatSCNEWCASES();
     if (this.datesData.length == 2) {
       cycleTimeObj.from_date = this.convertDateMoment(this.datesData[0]);
@@ -412,14 +400,26 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       cycleTimeObj.arrival_data = [];
       cycleTimeObj.workflow_selected = true;
       cycleTimeObj.workflow_data = this.workFlowStatusArr;
-      this.checkDateDropdownSelected(cycleTimeObj)
-        .then(result => {
-          let chartData = this.makeChartArr(result);
-          this.drawChart(chartData);
-        }).catch(error => {
-          console.log("error in dateDropdownSelected " + error);
-        });
-
+      if (from == 'dropdown') {
+        this.checkDateDropdownSelected(cycleTimeObj)
+          .then(result => {
+            let chartData = this.makeChartArr(result);
+            this.drawChart(chartData);
+          }).catch(error => {
+            console.log("error in dateDropdownSelected " + error);
+          });
+      } else {
+        let arr = []
+        arr.push(this.barStatus);
+        cycleTimeObj.workflow_selected = true;
+        cycleTimeObj.workflow_data = arr;
+        this.getSCCycleDrillDownData(cycleTimeObj)
+          .then(result => {
+            this.drillDown = result;
+          }).catch(error => {
+            console.log("error in getSCCycleDrillDownData " + error);
+          });
+      }
     } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length > 0 && this.arrivalTypesArr.length == 0) {
       //console.log("t>1 ws0 a0");
       cycleTimeObj.territory_selected = true;
@@ -429,13 +429,26 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       cycleTimeObj.workflow_selected = false;
       cycleTimeObj.workflow_data = [];
 
-      this.checkDateDropdownSelected(cycleTimeObj)
-        .then(result => {
-          let chartData = this.makeChartArr(result);
-          this.drawChart(chartData);
-        }).catch(error => {
-          console.log("error in dateDropdownSelected " + error);
-        });
+      if (from == 'dropdown') {
+        this.checkDateDropdownSelected(cycleTimeObj)
+          .then(result => {
+            let chartData = this.makeChartArr(result);
+            this.drawChart(chartData);
+          }).catch(error => {
+            console.log("error in dateDropdownSelected " + error);
+          });
+      } else {
+        let arr = []
+        arr.push(this.barStatus);
+        cycleTimeObj.workflow_selected = true;
+        cycleTimeObj.workflow_data = arr;
+        this.getSCCycleDrillDownData(cycleTimeObj)
+          .then(result => {
+            this.drillDown = result;
+          }).catch(error => {
+            console.log("error in getSCCycleDrillDownData " + error);
+          });
+      }
     } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length == 0 && this.arrivalTypesArr.length == 0) {
       //console.log("t0 s0 a0");
       cycleTimeObj.territory_selected = false;
@@ -444,13 +457,26 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       cycleTimeObj.arrival_data = [];
       cycleTimeObj.workflow_selected = false;
       cycleTimeObj.workflow_data = [];
-      this.checkDateDropdownSelected(cycleTimeObj)
-        .then(result => {
-          let chartData = this.makeChartArr(result);
-          this.drawChart(chartData);
-        }).catch(error => {
-          console.log("error in dateDropdownSelected " + error);
-        });
+      if (from == 'dropdown') {
+        this.checkDateDropdownSelected(cycleTimeObj)
+          .then(result => {
+            let chartData = this.makeChartArr(result);
+            this.drawChart(chartData);
+          }).catch(error => {
+            console.log("error in dateDropdownSelected " + error);
+          });
+      } else {
+        let arr = []
+        arr.push(this.barStatus);
+        cycleTimeObj.workflow_selected = true;
+        cycleTimeObj.workflow_data = arr;
+        this.getSCCycleDrillDownData(cycleTimeObj)
+          .then(result => {
+            this.drillDown = result;
+          }).catch(error => {
+            console.log("error in getSCCycleDrillDownData " + error);
+          });
+      }
     } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length > 0 && this.arrivalTypesArr.length > 0) {
       //console.log("t>0 s0 a>0");
       cycleTimeObj.territory_selected = true;
@@ -459,13 +485,26 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       cycleTimeObj.arrival_data = this.arrivalTypesArr;
       cycleTimeObj.workflow_selected = false;
       cycleTimeObj.workflow_data = [];
-      this.checkDateDropdownSelected(cycleTimeObj)
-        .then(result => {
-          let chartData = this.makeChartArr(result);
-          this.drawChart(chartData);
-        }).catch(error => {
-          console.log("error in dateDropdownSelected " + error);
-        });
+      if (from == 'dropdown') {
+        this.checkDateDropdownSelected(cycleTimeObj)
+          .then(result => {
+            let chartData = this.makeChartArr(result);
+            this.drawChart(chartData);
+          }).catch(error => {
+            console.log("error in dateDropdownSelected " + error);
+          });
+      } else {
+        let arr = []
+        arr.push(this.barStatus);
+        cycleTimeObj.workflow_selected = true;
+        cycleTimeObj.workflow_data = arr;
+        this.getSCCycleDrillDownData(cycleTimeObj)
+          .then(result => {
+            this.drillDown = result;
+          }).catch(error => {
+            console.log("error in getSCCycleDrillDownData " + error);
+          });
+      }
     } else if (this.workFlowStatusArr.length > 0 && this.territoriesArr.length == 0 && this.arrivalTypesArr.length > 0) {
       //console.log("t0 s>0 a>0");
       cycleTimeObj.territory_selected = false;
@@ -474,13 +513,26 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       cycleTimeObj.arrival_data = this.arrivalTypesArr;
       cycleTimeObj.workflow_selected = true;
       cycleTimeObj.workflow_data = this.workFlowStatusArr;
-      this.checkDateDropdownSelected(cycleTimeObj)
-        .then(result => {
-          let chartData = this.makeChartArr(result);
-          this.drawChart(chartData);
-        }).catch(error => {
-          console.log("error in dateDropdownSelected " + error);
-        });
+      if (from == 'dropdown') {
+        this.checkDateDropdownSelected(cycleTimeObj)
+          .then(result => {
+            let chartData = this.makeChartArr(result);
+            this.drawChart(chartData);
+          }).catch(error => {
+            console.log("error in dateDropdownSelected " + error);
+          });
+      } else {
+        let arr = []
+        arr.push(this.barStatus);
+        cycleTimeObj.workflow_selected = true;
+        cycleTimeObj.workflow_data = arr;
+        this.getSCCycleDrillDownData(cycleTimeObj)
+          .then(result => {
+            this.drillDown = result;
+          }).catch(error => {
+            console.log("error in getSCCycleDrillDownData " + error);
+          });
+      }
 
     } else if (this.workFlowStatusArr.length > 0 && this.territoriesArr.length > 0 && this.arrivalTypesArr.length == 0) {
       //console.log("t>0 s>0 a0");
@@ -490,14 +542,26 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       cycleTimeObj.arrival_data = [];
       cycleTimeObj.workflow_selected = true;
       cycleTimeObj.workflow_data = this.workFlowStatusArr;
-      this.checkDateDropdownSelected(cycleTimeObj)
-        .then(result => {
-          let chartData = this.makeChartArr(result);
-          this.drawChart(chartData);
-        }).catch(error => {
-          console.log("error in dateDropdownSelected " + error);
-        });
-
+      if (from == 'dropdown') {
+        this.checkDateDropdownSelected(cycleTimeObj)
+          .then(result => {
+            let chartData = this.makeChartArr(result);
+            this.drawChart(chartData);
+          }).catch(error => {
+            console.log("error in dateDropdownSelected " + error);
+          });
+      } else {
+        let arr = []
+        arr.push(this.barStatus);
+        cycleTimeObj.workflow_selected = true;
+        cycleTimeObj.workflow_data = arr;
+        this.getSCCycleDrillDownData(cycleTimeObj)
+          .then(result => {
+            this.drillDown = result;
+          }).catch(error => {
+            console.log("error in getSCCycleDrillDownData " + error);
+          });
+      }
     } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length == 0 && this.arrivalTypesArr.length > 0) {
       //console.log("t0 s0 a>0");
       cycleTimeObj.territory_selected = false;
@@ -506,13 +570,26 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       cycleTimeObj.arrival_data = this.arrivalTypesArr;
       cycleTimeObj.workflow_selected = false;
       cycleTimeObj.workflow_data = [];
-      this.checkDateDropdownSelected(cycleTimeObj)
-        .then(result => {
-          let chartData = this.makeChartArr(result);
-          this.drawChart(chartData);
-        }).catch(error => {
-          console.log("error in dateDropdownSelected " + error);
-        });
+      if (from == 'dropdown') {
+        this.checkDateDropdownSelected(cycleTimeObj)
+          .then(result => {
+            let chartData = this.makeChartArr(result);
+            this.drawChart(chartData);
+          }).catch(error => {
+            console.log("error in dateDropdownSelected " + error);
+          });
+      } else {
+        let arr = []
+        arr.push(this.barStatus);
+        cycleTimeObj.workflow_selected = true;
+        cycleTimeObj.workflow_data = arr;
+        this.getSCCycleDrillDownData(cycleTimeObj)
+          .then(result => {
+            this.drillDown = result;
+          }).catch(error => {
+            console.log("error in getSCCycleDrillDownData " + error);
+          });
+      }
     }
     else if (this.workFlowStatusArr.length > 0 && this.territoriesArr.length > 0 && this.arrivalTypesArr.length > 0) {
       //console.log("t>0 s>0 a>0");
@@ -522,13 +599,26 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       cycleTimeObj.arrival_data = this.arrivalTypesArr;
       cycleTimeObj.workflow_selected = true;
       cycleTimeObj.workflow_data = this.workFlowStatusArr;
-      this.checkDateDropdownSelected(cycleTimeObj)
-        .then(result => {
-          let chartData = this.makeChartArr(result);
-          this.drawChart(chartData);
-        }).catch(error => {
-          console.log("error in dateDropdownSelected " + error);
-        });
+      if (from == 'dropdown') {
+        this.checkDateDropdownSelected(cycleTimeObj)
+          .then(result => {
+            let chartData = this.makeChartArr(result);
+            this.drawChart(chartData);
+          }).catch(error => {
+            console.log("error in dateDropdownSelected " + error);
+          });
+      } else {
+        let arr = []
+        arr.push(this.barStatus);
+        cycleTimeObj.workflow_selected = true;
+        cycleTimeObj.workflow_data = arr;
+        this.getSCCycleDrillDownData(cycleTimeObj)
+          .then(result => {
+            this.drillDown = result;
+          }).catch(error => {
+            console.log("error in getSCCycleDrillDownData " + error);
+          });
+      }
     }
   }
 
@@ -547,8 +637,8 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       let barColor = null;
       // console.log("the color new array for cases are as under:"+JSON.stringify(cases));
       for (let i in cases) {
-      barColor = '#4A90E2';
-        array.push([cases[i].status1 + "  " + this.calculatePercent(cases[i].casecount,this.totalPerc), this.fromMedOrAvg == 'median' ? parseInt(cases[i].mediandays) : parseInt(cases[i].averagedays), " No. Of Cases - " + parseInt(cases[i].casecount), barColor]);
+        barColor = '#4A90E2';
+        array.push([cases[i].status1 + "  " + this.calculatePercent(cases[i].casecount, this.totalPerc), this.fromMedOrAvg == 'median' ? parseInt(cases[i].mediandays) : parseInt(cases[i].averagedays), " No. Of Cases - " + parseInt(cases[i].casecount), barColor]);
       }
 
     } else {
@@ -557,9 +647,9 @@ export class SmartclientAverageRenewalComponent implements OnInit {
     }
     return array;
   }
-  calculatePercent(remValue,totalvalue){
-    let percentage=((parseInt(remValue)/totalvalue)*100).toFixed(2);
-  return percentage+'%';
+  calculatePercent(remValue, totalvalue) {
+    let percentage = ((parseInt(remValue) / totalvalue) * 100).toFixed(2);
+    return percentage + '%';
   }
 
 
@@ -629,14 +719,23 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       }, error => {
         console.log("error getWorkflowStatus " + error);
       });
-
+    this.getArrivalTypeData()
+      .then((res: any) => {
+        //this.drawChart(res);
+        console.log("Arrival type" + JSON.stringify(res));
+        this.sideViewDropDowns.showArrivalType = true;
+        this.sideViewDropDowns.arrivalTypeData = res;
+        this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
+      }, error => {
+        //console.log("error getWorkflowStatus " + error);
+      });
     this.sideViewDropDowns.showCaseTime = true;
     let caseTimeData = [{ 'item_id': 1, 'item_text': 'Median' },
     { 'item_id': 2, 'item_text': 'Average' }];
     //let caseTimeData = ['Median' , 'Average' ];
     this.sideViewDropDowns.caseTimeData = caseTimeData;
-    this.sideViewDropDowns.showArrivalType = true;
-    this.sideViewDropDowns.arrivalTypeData = ['SAOF', 'CPQ', 'Q2SC'];
+    // this.sideViewDropDowns.showArrivalType = true;
+    // this.sideViewDropDowns.arrivalTypeData = ['SAOF', 'CPQ', 'Q2SC'];
     this.sideViewDropDowns.showYearDD = true;
     this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
     this.sideViewDropDowns.compHeading = appheading.graph5;
