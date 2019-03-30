@@ -34,3 +34,14 @@ export class FilterFormatEBS {
     public workflow_selected: boolean = false;
     public workflow_data: Array<any>=[];
 }
+
+export class FilterFormatSCNEWCASES {
+    public territory_selected: boolean = false;
+    public territory_data: Array<any>=[];
+    public arrival_selected: boolean = false;
+    public arrival_data: Array<any>=[];
+    public from_date: string;
+    public to_date: string;
+    public workflow_selected: boolean = false;
+    public workflow_data: Array<any>=[];
+}

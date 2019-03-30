@@ -64,4 +64,12 @@ export class SmartclientService {
     return this.http.get('api/sc_arrival_type')
     .map(result => this.result = result.json().data);
   }
+  getSCByStatus(scObj) {
+    return this.http.post('api/sc_case_by_status',JSON.stringify(scObj),this.options)
+      .map(result => this.result = result.json().data);
+  }
+  getSCCycleTimes(scObj) {
+    return this.http.post('api/sc_cycle_times',JSON.stringify(scObj),this.options)
+      .map(result => this.result = result.json().data);
+  }
 }
