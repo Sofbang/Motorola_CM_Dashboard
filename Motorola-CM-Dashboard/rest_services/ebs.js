@@ -404,4 +404,124 @@ router.post('/ebs_contract_state', (req, res, next) => {
       });
   });
 });
+
+router.post('/ebs_contractbystatus_drilldown', (req, res, next) => {
+  //call doConnect method in db_operations
+  conn.doConnect((err, dbConn) => {
+    if (err) { return next(err); }
+    //execute query using using connection instance returned by doConnect method
+    conn.doExecute(dbConn,
+      `SELECT r1.contract_number
+      , r1.to_status
+      , r1.datemoved
+      , r1.territory 
+      , r1.arrival_type
+      , (select distinct s1.customer_name from ebs_contracts_state_master s1 where s1.contract_number = r1.contract_number  limit 1 )
+      , (select distinct s1.contract_owner from ebs_contracts_state_master s1 where s1.contract_number = r1.contract_number limit 1 )
+      , (select distinct s1.contract_creation_date from ebs_contracts_state_master s1 where s1.contract_number = r1.contract_number limit 1 )
+FROM   ( SELECT a2.contract_number
+                , a2.to_status
+                , a2.sts_changed_on
+                , a2.territory
+                , a2.arrival_type
+                , customer_name
+                , contract_owner
+                , contract_creation_date
+                , COALESCE(   ( SELECT MAX(a1.sts_changed_on) 
+                                           FROM ebs_contracts_state_master a1 
+                                           WHERE a1.contract_number = a2.contract_number 
+                                           AND a1.from_status = a2.to_status), current_date ) AS datemoved 
+                     FROM ebs_contracts_state_master a2 
+                     ORDER BY contract_number, sts_changed_on ) r1
+where r1.to_status =ANY(CASE
+  WHEN $5::boolean=false
+  THEN ARRAY['Generate PO', 'PO Issued', 'QA Hold', 'Modify PO']
+  ELSE ARRAY[$6::text[]] 
+  END) 
+and r1.territory = ANY(CASE
+  WHEN $1::boolean=false 
+  THEN ARRAY[r1.territory]
+  ELSE ARRAY[$2::text[]] 
+  END)
+and r1.arrival_type =ANY(CASE
+  WHEN $3::boolean=false
+  THEN ARRAY[r1.arrival_type]
+  ELSE ARRAY[$4::text[]] 
+  END)
+GROUP BY r1.contract_number
+, r1.to_status
+, r1.datemoved
+, r1.territory
+, r1.arrival_type`, 
+      [req.body.territory_selected,req.body.territory_data,req.body.arrival_selected,req.body.arrival_data,req.body.workflow_selected,req.body.workflow_data],
+      function (err, result) {
+        if (err) {
+          conn.doRelease(dbConn);
+          //call error handler
+          return next(err);
+        }
+        response.data = result.rows;
+        res.json(response);
+        //release connection back to pool
+        conn.doRelease(dbConn);
+      });
+  });
+});
+
+router.post('/ebs_cycletime_drilldown', (req, res, next) => {
+  //call doConnect method in db_operations
+  conn.doConnect((err, dbConn) => {
+    var postgresql = `select distinct m.contract_number
+    , m.customer_name
+    , m.contract_owner
+    , m.contract_creation_date
+    , m.contract_status
+    , m.to_status
+    , m.contract_creation_date
+    ,to_char(date (date_trunc('month',m.contract_creation_date)),'MON')||'-'|| extract (year from (date (date_trunc('month',m.contract_creation_date)))) as by_Month
+    from ebs_contracts_state_master m
+    where m.sts_changed_on = (select max(m2.sts_changed_on) from ebs_contracts_state_master m2 where m2.contract_number = m.contract_number)
+    and date(date_trunc('day',m.contract_creation_date))>= coalesce( $1::date, (date_trunc('month',CURRENT_DATE) - interval '25 months')) 
+    AND date(date_trunc('day',m.contract_creation_date))<=  coalesce( $2::date,  (date_trunc('month',CURRENT_DATE) - interval '1 months'))
+    and m.territory =ANY(CASE
+      WHEN $3::boolean=false 
+      THEN ARRAY[m.territory]
+      ELSE ARRAY[$4::text[]] 
+      END)
+    and m.arrival_type =ANY(CASE
+      WHEN $5::boolean=false
+      THEN ARRAY[m.arrival_type]
+      ELSE ARRAY[$6::text[]] 
+      END)
+      and m.to_status =ANY(CASE
+        WHEN $7::boolean=false
+        THEN ARRAY['Generate PO', 'PO Issued', 'QA Hold', 'Modify PO']
+        ELSE ARRAY[$8::text[]] 
+        END) 
+    Group by date_trunc('month',m.contract_creation_date),m.contract_number
+    , m.customer_name
+    , m.contract_owner
+    , m.contract_creation_date
+    , m.contract_status
+    , m.to_status
+    , m.contract_creation_date`;
+    //console.log("the query for avg is:"+JSON.stringify(postgresql));
+    if (err) { return next(err); }
+    //execute query using using connection instance returned by doConnect method
+    conn.doExecute(dbConn,
+      postgresql, [req.body.from_date, req.body.to_date, req.body.territory_selected, req.body.territory_data, req.body.arrival_selected, req.body.arrival_data,req.body.workflow_selected,req.body.workflow_data],
+      function (err, result) {
+        if (err) {
+          conn.doRelease(dbConn);
+          //call error handler
+          //console.log("error---" + err);
+          return next(err);
+        }
+        response.data = result.rows;
+        res.json(response);
+        //release connection back to pool
+        conn.doRelease(dbConn);
+      });
+  });
+});
 module.exports = router;
