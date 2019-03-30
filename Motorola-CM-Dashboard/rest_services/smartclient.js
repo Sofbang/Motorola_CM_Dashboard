@@ -3,95 +3,6 @@ const router = express.Router();
 const conn = require('../app_configuration/db_operations');
 const response = require('../app_configuration/response');
 
-//Smart Client Data implemented by Vishal Sehgal as on 11/2/2019
-router.get('/sc_case_status', (req, res, next) => {
-  // var sql, binds = [], territory = req.body.territory, status = req.body.status;
-  // if (territory == 'all' && status=='all') {
-  //   sql = "SELECT status, CASE WHEN status = 'Open' THEN '1' WHEN status = 'Insufficient Data' THEN '2' WHEN status = 'InProg' THEN '3' WHEN status = 'InProg Acknowledged' THEN '4' WHEN status = 'InProg Awt 3PS' THEN '5' WHEN status = 'InProg Awt Bus Unit' THEN '6' WHEN status = 'InProg Awt SSC' THEN '7' WHEN status = 'InProg Awt Credit' THEN '8' WHEN status = 'InProg Awt Resource' THEN '9' ELSE 'OTHER' END                         AS status_order, SUM (mediandays :: INTEGER) AS mediandays, SUM(contractperstatus)      AS contractscount FROM   (SELECT to_status            AS Status, Median(daysinstatus) AS MedianDays, Count(case_number)   AS contractPerStatus, territory FROM   (SELECT case_number, to_status, Min(sts_changed_on), datemoved, To_number(Trim(To_char(datemoved - Min(sts_changed_on), 'DD')), '99G999D9S') AS DaysInStatus, territory FROM   (SELECT A2.case_number, A2.to_status, A2.sts_changed_on, territory, Coalesce((SELECT Max(A1.sts_changed_on) FROM   sc_case_state_master A1 WHERE  A1.case_number = A2.case_number AND A1.from_status = A2.to_status), current_date) AS DateMoved FROM   sc_case_state_master A2 ORDER  BY case_number, sts_changed_on) resultset GROUP  BY case_number, to_status, datemoved, territory)R2 GROUP  BY to_status, territory ORDER  BY to_status) R3 GROUP  BY status ORDER  BY status_order";
-  // } else {
-  //   binds.push(territory);
-  //   sql = "SELECT status, CASE WHEN status = 'Open' THEN '1' WHEN status = 'Insufficient Data' THEN '2' WHEN status = 'InProg' THEN '3' WHEN status = 'InProg Acknowledged' THEN '4' WHEN status = 'InProg Awt 3PS' THEN '5' WHEN status = 'InProg Awt Bus Unit' THEN '6' WHEN status = 'InProg Awt SSC' THEN '7' WHEN status = 'InProg Awt Credit' THEN '8' WHEN status = 'InProg Awt Resource' THEN '9' ELSE 'OTHER' END                         AS status_order, SUM (mediandays :: INTEGER) AS mediandays, SUM(contractperstatus)      AS contractscount FROM   (SELECT to_status            AS Status, Median(daysinstatus) AS MedianDays, Count(case_number)   AS contractPerStatus, territory FROM   (SELECT case_number, to_status, Min(sts_changed_on), datemoved, To_number(Trim(To_char(datemoved - Min(sts_changed_on), 'DD')), '99G999D9S') AS DaysInStatus, territory FROM   (SELECT A2.case_number, A2.to_status, A2.sts_changed_on, territory, Coalesce((SELECT Max(A1.sts_changed_on) FROM   sc_case_state_master A1 WHERE  A1.case_number = A2.case_number AND A1.from_status = A2.to_status), current_date) AS DateMoved FROM   sc_case_state_master A2 ORDER  BY case_number, sts_changed_on) resultset GROUP  BY case_number, to_status, datemoved, territory)R2 GROUP  BY to_status, territory ORDER  BY to_status) R3 WHERE  territory IN ( " + territory + " ) AND status IN (" + status + " ) GROUP  BY status ORDER  BY status_order";
-  // }
-  var postgreSql = `SELECT status, 
-	CASE 
-      WHEN status = 'Open' THEN '1' 
-      WHEN status = 'Insufficient Data' THEN '2' 
-      WHEN status = 'InProg' THEN '3' 
-      WHEN status = 'InProg Acknowledged' THEN '4' 
-      WHEN status = 'InProg Awt 3PS' THEN '5' 
-      WHEN status = 'InProg Awt Bus Unit' THEN '6' 
-      WHEN status = 'InProg Awt SSC' THEN '7' 
-      WHEN status = 'InProg Awt Credit' THEN '8' 
-      WHEN status = 'InProg Awt Resource' THEN '9' 
-      ELSE 'OTHER' 
-    END                         AS status_order, 
-    SUM (mediandays :: INTEGER) AS mediandays, 
-    SUM(contractperstatus)      AS contractscount, 
-    arrival_type,
-    territory 
-  FROM   (SELECT to_status            AS Status, 
-            Median(daysinstatus) AS MedianDays, 
-            Count(case_number)   AS contractPerStatus, 
-            arrival_type,
-            territory 
-     FROM   (SELECT case_number, 
-                    to_status, 
-                    Min(sts_changed_on), 
-                    datemoved, 
-                    To_number(Trim(To_char(datemoved - Min(sts_changed_on), 
-                                   'DD')), 
-                    '99G999D9S') AS 
-                    DaysInStatus,
-                    arrival_type, 
-                    territory 
-             FROM   (SELECT A2.case_number, 
-                            A2.to_status, 
-                            A2.sts_changed_on,
-                            arrival_type, 
-                            territory, 
-                            Coalesce((SELECT Max(A1.sts_changed_on) 
-                                      FROM   sc_case_state_master A1 
-                                      WHERE  A1.case_number = A2.case_number 
-                                             AND A1.from_status = 
-                                                 A2.to_status), 
-                            current_date) AS 
-                                    DateMoved 
-                     FROM   sc_case_state_master A2 
-                     ORDER  BY case_number, 
-                               sts_changed_on) resultset 
-             GROUP  BY case_number, 
-                       to_status, 
-                       datemoved, 
-                       territory,arrival_type)R2 
-     GROUP  BY to_status, 
-               territory,arrival_type 
-     ORDER  BY to_status) R3 
-  GROUP  BY status, 
-       territory,arrival_type 
-  ORDER  BY status_order`;
-  //call doConnect method in db_operations
-  conn.doConnect((err, dbConn) => {
-    if (err) { return next(err); }
-    //execute body using using connection instance returned by doConnect method
-    conn.doExecute(dbConn,
-      postgreSql, [],
-      function (err, result) {
-        if (err) {
-          conn.doRelease(dbConn);
-          //call error handler
-          return next(err);
-        }
-        response.data = result.rows;
-        res.json(response);
-        //release connection back to pool
-        conn.doRelease(dbConn);
-      });
-  });
-});
-
-
-
-
 // API for sc_case_territories
 router.get('/sc_territories', (req, res, next) => {
   //call doConnect method in db_operations
@@ -115,134 +26,6 @@ router.get('/sc_territories', (req, res, next) => {
       });
   });
 });
-
-// // API for sc_case_territories
-router.get('/sc_arrival_type', (req, res, next) => {
-  //call doConnect method in db_operations
-  conn.doConnect((err, dbConn) => {
-    if (err) { return next(err); }
-    //execute body using using connection instance returned by doConnect method
-    conn.doExecute(dbConn,
-      `SELECT DISTINCT( arrival_type ) 
-      FROM   sc_case_state_master 
-      ORDER  BY arrival_type ASC`, [],
-      function (err, result) {
-        if (err) {
-          conn.doRelease(dbConn);
-          //call error handler
-          return next(err);
-        }
-        response.data = result.rows;
-        res.json(response);
-        //release connection back to pool
-        conn.doRelease(dbConn);
-      });
-  });
-});
-
-// // API for sc_case_territories
-// router.post('/sc_new_cases', (req, res, next) => {
-//   //call doConnect method in db_operations
-//   conn.doConnect((err, dbConn) => {
-//     if (err) { return next(err); }
-//     //execute body using using connection instance returned by doConnect method
-//     conn.doExecute(dbConn,
-//       "Select distinct case_number,case_title,current_status,from_status,to_status,territory,case_creation_date,sts_changed_on,customer,       case_owner,arrival_type  FROM sc_case_state_master   where date_trunc('day',case_creation_date)>='" + req.body.from + "' AND date_trunc('day',case_creation_date)<='" + req.body.to +"' order by case_number asc ", [],
-//       function (err, result) {
-//         if (err) {
-//           conn.doRelease(dbConn);
-//           //call error handler
-//           return next(err);
-//         }
-//         response.data = result.rows;
-//         res.json(response);
-//         //release connection back to pool
-//         conn.doRelease(dbConn);
-//       });
-//   });
-// });
-
-
-// // API for sc_case_territories
-router.get('/sc_cases_drilldown', (req, res, next) => {
-  //call doConnect method in db_operations
-  var status = req.query;
-   var postgreSql;
-  //console.log("the status passed is:" + JSON.stringify(status));
-  conn.doConnect((err, dbConn) => {
-    if (err) { return next(err); }
-    //execute body using using connection instance returned by doConnect method
-    if (status.casestatus == 'Other') {
-      postgreSql = "Select distinct customer as Customer,case_number as Case_Number,to_status as Case_Status,case_owner as Case_Owner,case_creation_date as Case_Open_Date,contract_start_date as Contracts_Start_Date from sc_case_state_master  where to_status NOT IN ('Open','Insufficient Data','InProg Awt 3PS','InProg Awt SSC','InProg Awt Credit','InProg Awt Resource','InProg Awt 3PS','InProg Acknowledged','InProg','InProg Awt Bus Unit')"
-    } else {
-      postgreSql = "Select distinct customer as Customer,case_number as Case_Number,to_status as Case_Status,case_owner as Case_Owner,case_creation_date as Case_Open_Date,contract_start_date as Contracts_Start_Date from sc_case_state_master where to_status = '" + status.casestatus + "'";
-
-    }
-    conn.doExecute(dbConn,
-      postgreSql, [],
-      function (err, result) {
-        if (err) {
-          conn.doRelease(dbConn);
-          //call error handler
-          return next(err);
-        }
-        response.data = result.rows;
-        res.json(response);
-        //release connection back to pool
-        conn.doRelease(dbConn);
-      });
-  });
-});
-
-// // API for sc_case_territories
-router.post('/sc_cases_drilldownfilter', (req, res, next) => {
-  //call doConnect method in db_operations
-  var status = req.body;
-  console.log("the status passed is:" + JSON.stringify(status));
-  conn.doConnect((err, dbConn) => {
-    if (err) { return next(err); }
-    //execute body using using connection instance returned by doConnect method
-    conn.doExecute(dbConn,
-      "Select distinct customer ,case_number ,to_status ,case_owner ,case_creation_date,contract_start_date from sc_case_state_master where date_trunc('day',case_creation_date)  BETWEEN '" + req.body.first + "' AND '" + req.body.last + "' ", [],
-      function (err, result) {
-        if (err) {
-          conn.doRelease(dbConn);
-          //call error handler
-          return next(err);
-        }
-        response.data = result.rows;
-        res.json(response);
-        //release connection back to pool
-        conn.doRelease(dbConn);
-      });
-  });
-});
-
-
-// // API for sc_case_territories
-router.get('/sc_dates_max_min', (req, res, next) => {
-  //call doConnect method in db_operations
-  conn.doConnect((err, dbConn) => {
-    if (err) { return next(err); }
-    //execute body using using connection instance returned by doConnect method
-    conn.doExecute(dbConn,
-      "Select TO_CHAR(MAX(case_creation_date), 'yyyy-mm-dd') as max_date_cases, TO_CHAR(MIN(case_creation_date), 'yyyy-mm-dd')  as min_date_cases from sc_case_state_master", [],
-      function (err, result) {
-        if (err) {
-          conn.doRelease(dbConn);
-          //call error handler
-          return next(err);
-        }
-        response.data = result.rows;
-        res.json(response);
-        //release connection back to pool
-        conn.doRelease(dbConn);
-      });
-  });
-});
-
-
-
 // API for sc_workflow_status
 router.get('/sc_workflow_status', (req, res, next) => {
   //call doConnect method in db_operations
@@ -280,60 +63,16 @@ ORDER  BY status_order
       });
   });
 });
-
-//sc_case_status_avg api
-router.get('/sc_case_status_avg', (req, res, next) => {
+// // API for sc_case_territories
+router.get('/sc_arrival_type', (req, res, next) => {
   //call doConnect method in db_operations
   conn.doConnect((err, dbConn) => {
     if (err) { return next(err); }
     //execute body using using connection instance returned by doConnect method
     conn.doExecute(dbConn,
-      `SELECT status,
-      CASE 
-               WHEN status = 'Open' THEN '1' 
-               WHEN status = 'Insufficient Data' THEN '2' 
-               WHEN status = 'InProg' THEN '3' 
-               WHEN status = 'InProg Acknowledged' THEN '4' 
-               WHEN status = 'InProg Awt 3PS' THEN '5' 
-               WHEN status = 'InProg Awt Bus Unit' THEN '6' 
-               WHEN status = 'InProg Awt SSC' THEN '7' 
-               WHEN status = 'InProg Awt Credit' THEN '8' 
-               WHEN status = 'InProg Awt Resource' THEN '9' 
-               ELSE 'OTHER' 
-             END                         AS status_order,  
-             Trim(To_char(Avg(daysinstatus) :: interval, 'DD')) AS AverageDays, 
-             Count(case_number)                             AS contractPerStatus, 
-             territory,
-             arrival_type 
-      FROM   (SELECT case_number, 
-                     to_status as status, 
-                     Min(sts_changed_on), 
-                     datemoved, 
-                     datemoved - Min(sts_changed_on) AS DaysInStatus, 
-                     territory ,
-                     arrival_type
-              FROM   (SELECT A2.case_number, 
-                             A2.to_status, 
-                             A2.sts_changed_on, 
-                             territory, 
-                             arrival_type,
-                             Coalesce((SELECT Max(A1.sts_changed_on) 
-                                       FROM   sc_case_state_master A1 
-                                       WHERE  A1.case_number = A2.case_number 
-                                              AND A1.from_status = A2.to_status), 
-                             current_date) AS 
-                                     DateMoved 
-                      FROM   sc_case_state_master A2 
-                      ORDER  BY case_number, 
-                                sts_changed_on) resultset 
-              GROUP  BY case_number, 
-                        status, 
-                        datemoved, 
-                        territory,arrival_type)R2 
-      GROUP  BY status, 
-                territory,arrival_type 
-      ORDER  BY status_order
-`, [],
+      `SELECT DISTINCT( arrival_type ) 
+      FROM   sc_case_state_master 
+      ORDER  BY arrival_type ASC`, [],
       function (err, result) {
         if (err) {
           conn.doRelease(dbConn);
@@ -348,42 +87,14 @@ router.get('/sc_case_status_avg', (req, res, next) => {
   });
 });
 
-//sc_case_status_med_yr filter
-router.post('/sc_case_status_med_yr', (req, res, next) => {
-  //console.log("---"+JSON.stringify(req.body));
-  //call doConnect method in db_operations
-  conn.doConnect((err, dbConn) => {
-    if (err) {
-      //console.log("the error is:" + err)
-      return next(err);
-    }
-    //execute body using using connection instance returned by doConnect method
-    var postgreSql = "SELECT status, CASE WHEN status = 'Open' THEN '1' WHEN status = 'Insufficient Data' THEN '2' WHEN status = 'InProg' THEN '3' WHEN status = 'InProg Acknowledged' THEN '4' WHEN status = 'InProg Awt 3PS' THEN '5' WHEN status = 'InProg Awt Bus Unit' THEN '6' WHEN status = 'InProg Awt SSC' THEN '7' WHEN status = 'InProg Awt Credit' THEN '8' WHEN status = 'InProg Awt Resource' THEN '9' ELSE 'OTHER' END AS status_order, SUM (mediandays :: INTEGER) AS mediandays, SUM(contractperstatus)      AS contractscount, territory,arrival_type FROM   (SELECT to_status            AS Status, Median(daysinstatus) AS MedianDays, Count(case_number)   AS contractPerStatus, territory,arrival_type FROM   (SELECT case_number, to_status, Min(sts_changed_on), datemoved, To_number(Trim(To_char(datemoved - Min(sts_changed_on), 'DD')), '99G999D9S') AS DaysInStatus, territory,arrival_type FROM   (SELECT A2.case_number, A2.to_status, A2.sts_changed_on, territory,arrival_type, Coalesce((SELECT Max(A1.sts_changed_on) FROM   sc_case_state_master A1 WHERE  A1.case_number = A2.case_number AND A1.from_status = A2.to_status), current_date) AS DateMoved FROM   sc_case_state_master A2 where date_trunc('day',case_creation_date)>='" + req.body.from + "' AND date_trunc('day',case_creation_date)<='" + req.body.to + "' ORDER  BY case_number, sts_changed_on) resultset GROUP  BY case_number, to_status, datemoved, territory,arrival_type)R2 GROUP  BY to_status, territory,arrival_type ORDER  BY to_status) R3  GROUP  BY status,territory,arrival_type ORDER  BY status_order";
-    //console.log("postgreSql"+postgreSql)
-    conn.doExecute(dbConn,
-      postgreSql, [],
-      function (err, result) {
-        if (err) {
-          conn.doRelease(dbConn);
-          //call error handler
-          return next(err);
-        }
-        response.data = result.rows;
-        res.json(response);
-        //release connection back to pool
-        conn.doRelease(dbConn);
-      });
-  });
-});
-
-//sc_case_status_avg_yr filter
-router.post('/sc_case_status_avg_yr', (req, res, next) => {
+// // API for sc_case_territories
+router.get('/sc_dates_max_min', (req, res, next) => {
   //call doConnect method in db_operations
   conn.doConnect((err, dbConn) => {
     if (err) { return next(err); }
     //execute body using using connection instance returned by doConnect method
     conn.doExecute(dbConn,
-      "SELECT status, CASE WHEN status = 'Open' THEN '1' WHEN status = 'Insufficient Data' THEN '2' WHEN status = 'InProg' THEN '3' WHEN status = 'InProg Acknowledged' THEN '4' WHEN status = 'InProg Awt 3PS' THEN '5' WHEN status = 'InProg Awt Bus Unit' THEN '6' WHEN status = 'InProg Awt SSC' THEN '7' WHEN status = 'InProg Awt Credit' THEN '8' WHEN status = 'InProg Awt Resource' THEN '9' ELSE 'OTHER' END                         AS status_order, Trim(To_char(Avg(daysinstatus) :: interval, 'DD')) AS AverageDays, Count(case_number)                             AS contractPerStatus, territory,arrival_type FROM   (SELECT case_number, to_status as status, Min(sts_changed_on), datemoved, datemoved - Min(sts_changed_on) AS DaysInStatus, territory,arrival_type FROM   (SELECT A2.case_number, A2.to_status, A2.sts_changed_on, territory,arrival_type, Coalesce((SELECT Max(A1.sts_changed_on) FROM   sc_case_state_master A1 WHERE  A1.case_number = A2.case_number AND A1.from_status = A2.to_status), current_date) AS DateMoved FROM   sc_case_state_master A2 where date_trunc('day',case_creation_date)>='" + req.body.from + "' AND date_trunc('day',case_creation_date)<='" + req.body.to + "' ORDER  BY case_number, sts_changed_on) resultset GROUP  BY case_number, status, datemoved, territory,arrival_type)R2 GROUP  BY status, territory,arrival_type ORDER  BY status_order", [],
+      "Select TO_CHAR(MAX(case_creation_date), 'yyyy-mm-dd') as max_date_cases, TO_CHAR(MIN(case_creation_date), 'yyyy-mm-dd')  as min_date_cases from sc_case_state_master", [],
       function (err, result) {
         if (err) {
           conn.doRelease(dbConn);
@@ -397,8 +108,6 @@ router.post('/sc_case_status_avg_yr', (req, res, next) => {
       });
   });
 });
-
-
 router.post('/sc_new_cases', (req, res, next) => {
   //call doConnect method in db_operations
   conn.doConnect((err, dbConn) => {
@@ -421,7 +130,59 @@ router.post('/sc_new_cases', (req, res, next) => {
         ELSE ARRAY[$6::text[]] 
         END)
       group by date_trunc('month',m.case_creation_date)
-      order by date_trunc('month',m.case_creation_date)`, [req.body.from_date,req.body.to_date,req.body.territory_selected,req.body.territory_data,req.body.arrival_selected,req.body.arrival_data],
+      order by date_trunc('month',m.case_creation_date)`, [req.body.from_date, req.body.to_date, req.body.territory_selected, req.body.territory_data, req.body.arrival_selected, req.body.arrival_data],
+      function (err, result) {
+        if (err) {
+          conn.doRelease(dbConn);
+          //call error handler
+          return next(err);
+        }
+        response.data = result.rows;
+        res.json(response);
+        //release connection back to pool
+        conn.doRelease(dbConn);
+      });
+  });
+});
+
+router.post('/sc_new_cases_drilldown', (req, res, next) => {
+  //call doConnect method in db_operations
+  conn.doConnect((err, dbConn) => {
+    if (err) { return next(err); }
+    //execute body using using connection instance returned by doConnect method
+    conn.doExecute(dbConn,
+      `SELECT 
+      m1.customer
+      ,m1.case_number
+      ,m1.to_status
+      ,m1.case_owner
+      ,m1.case_creation_date
+      ,m1.contract_start_date 
+      ,m1.sts_changed_on
+      ,TO_CHAR(DATE (DATE_TRUNC('month',m1.case_creation_date)),'MON') || '-' ||EXTRACT(year FROM (DATE (DATE_TRUNC('month',m1.case_creation_date)))) AS byMonth
+      FROM sc_case_state_master m1
+      WHERE DATE (DATE_TRUNC('day',m1.case_creation_date)) >= coalesce($1::date,DATE (DATE_TRUNC('month',CURRENT_DATE) -INTERVAL '25 months'))
+      AND   DATE (DATE_TRUNC('day',m1.case_creation_date)) <=coalesce($2::date, DATE (DATE_TRUNC('month',CURRENT_DATE) -INTERVAL '1 months'))
+      and m1.sts_changed_on = ( select max(m2.sts_changed_on) from sc_case_state_master m2 where m1.case_number = m2.case_number)
+      and m1.territory = ANY(CASE
+        WHEN $3::boolean=false 
+        THEN ARRAY[m1.territory]
+        ELSE ARRAY[$4::text[]] 
+        END) 
+      AND   m1.arrival_type =ANY(CASE
+        WHEN $5::boolean=false
+        THEN ARRAY[m1.arrival_type]
+        ELSE ARRAY[$6::text[]] 
+        END)
+      GROUP BY DATE_TRUNC('month',m1.case_creation_date),m1.customer
+      ,m1.case_number
+      ,m1.to_status
+      ,m1.case_owner
+      ,m1.case_creation_date
+      ,m1.contract_start_date
+      ,m1.sts_changed_on
+      ORDER BY DATE_TRUNC('month',m1.case_creation_date)`
+      , [req.body.from_date, req.body.to_date, req.body.territory_selected, req.body.territory_data, req.body.arrival_selected, req.body.arrival_data],
       function (err, result) {
         if (err) {
           conn.doRelease(dbConn);
@@ -436,4 +197,380 @@ router.post('/sc_new_cases', (req, res, next) => {
   });
 });
 //{"OTHER","T2","T4E","T4W","T5N","T5S","T6","T7","T8","T3"}
+router.post('/sc_case_by_status', (req, res, next) => {
+  //call doConnect method in db_operations
+  conn.doConnect((err, dbConn) => {
+    if (err) { return next(err); }
+    //execute query using using connection instance returned by doConnect method
+    conn.doExecute(dbConn,
+      `SELECT r3.status1,
+      r3.status_order,
+      SUM(r3.mediandays::INTEGER) AS mediandays,
+      AVG(r3.AverageDays) AverageDays,
+      SUM(r3.caseperstatus) AS casecount
+FROM (SELECT r2.to_status AS status,
+            MEDIAN(r2.daysinstatus) AS mediandays,
+            AVG(daysinstatus) AS AverageDays,
+            COUNT(r2.case_number) AS caseperstatus,
+            r2.territory,
+            CASE
+              WHEN r2.to_status = 'Open' THEN 'Open'
+              WHEN r2.to_status = 'Insufficient Data' THEN 'Insufficient Data'
+              WHEN r2.to_status = 'InProg' THEN 'InProg'
+              WHEN r2.to_status = 'InProg Acknowledged' THEN 'InProg Acknowledged'
+              WHEN r2.to_status = 'InProg Awt 3PS' THEN 'InProg Awt 3PS'
+              WHEN r2.to_status = 'InProg Awt Bus Unit' THEN 'InProg Awt Bus Unit'
+              WHEN r2.to_status = 'InProg Awt SSC' THEN 'InProg Awt SSC'
+              WHEN r2.to_status = 'InProg Awt Credit' THEN 'InProg Awt Credit'
+              WHEN r2.to_status = 'InProg Awt Resource' THEN 'InProg Awt Resource'
+              ELSE 'OTHER'
+            END AS status1,
+            CASE
+              WHEN r2.to_status = 'Open' THEN '1'
+              WHEN r2.to_status = 'Insufficient Data' THEN '2'
+              WHEN r2.to_status = 'InProg' THEN '3'
+              WHEN r2.to_status = 'InProg Acknowledged' THEN '4'
+              WHEN r2.to_status = 'InProg Awt 3PS' THEN '5'
+              WHEN r2.to_status = 'InProg Awt Bus Unit' THEN '6'
+              WHEN r2.to_status = 'InProg Awt SSC' THEN '7'
+              WHEN r2.to_status = 'InProg Awt Credit' THEN '8'
+              WHEN r2.to_status = 'InProg Awt Resource' THEN '9'
+              ELSE 'OTHER'
+            END AS status_order,
+            r2.arrival_type
+     FROM (SELECT r1.case_number,
+                  r1.to_status,
+                  MIN(r1.sts_changed_on),
+                  r1.datemoved,
+                  TO_NUMBER(TRIM(TO_CHAR(r1.datemoved -MIN(r1.sts_changed_on),'DD')),'99G999D9S') AS daysinstatus,
+                  r1.territory,
+                  r1.arrival_type
+           FROM (SELECT a2.case_number,
+                        a2.to_status,
+                        a2.sts_changed_on,
+                        a2.territory,
+                        a2.arrival_type,
+                        COALESCE((SELECT MAX(a1.sts_changed_on) FROM sc_case_state_master a1 WHERE a1.case_number = a2.case_number AND TRIM(a1.from_status) = TRIM(a2.to_status)),CURRENT_DATE) AS datemoved
+                 FROM sc_case_state_master a2
+                 ORDER BY a2.case_number,
+                          a2.sts_changed_on) r1
+           GROUP BY r1.case_number,
+                    r1.to_status,
+                    r1.datemoved,
+                    r1.territory,
+                    r1.arrival_type) r2
+     GROUP BY r2.to_status,
+              r2.territory,
+              r2.arrival_type
+     ORDER BY r2.to_status) r3
+WHERE r3.territory = ANY(CASE
+  WHEN $1::boolean=false 
+  THEN ARRAY[r3.territory]
+  ELSE ARRAY[$2::text[]] 
+  END) 
+AND   r3.arrival_type =ANY(CASE
+  WHEN $3::boolean=false
+  THEN ARRAY[r3.arrival_type]
+  ELSE ARRAY[$4::text[]] 
+  END)
+AND   r3.status1=ANY(CASE
+  WHEN $5::boolean=false
+  THEN ARRAY[r3.status1]
+  ELSE ARRAY[$6::text[]] 
+  END) 
+GROUP BY r3.status1,
+        r3.status_order
+ORDER BY r3.status_order`,
+      [req.body.territory_selected, req.body.territory_data, req.body.arrival_selected, req.body.arrival_data, req.body.workflow_selected, req.body.workflow_data],
+      function (err, result) {
+        if (err) {
+          conn.doRelease(dbConn);
+          //call error handler
+          return next(err);
+        }
+        response.data = result.rows;
+        res.json(response);
+        //release connection back to pool
+        conn.doRelease(dbConn);
+      });
+  });
+});
+
+router.post('/sc_case_by_status_drilldown', (req, res, next) => {
+  //call doConnect method in db_operations
+  conn.doConnect((err, dbConn) => {
+    if (err) { return next(err); }
+    //execute query using using connection instance returned by doConnect method
+    conn.doExecute(dbConn,
+      `SELECT main.case_number,
+      main.territory,
+      main.arrival_type,
+      main.customer,
+      main.case_owner,
+      main.case_creation_date,
+      main.contract_start_date,
+      CASE
+        WHEN main.to_status = 'Open' THEN 'Open'
+        WHEN main.to_status = 'Insufficient Data' THEN 'Insufficient Data'
+        WHEN main.to_status = 'InProg' THEN 'InProg'
+        WHEN main.to_status = 'InProg Acknowledged' THEN 'InProg Acknowledged'
+        WHEN main.to_status = 'InProg Awt 3PS' THEN 'InProg Awt 3PS'
+        WHEN main.to_status = 'InProg Awt Bus Unit' THEN 'InProg Awt Bus Unit'
+        WHEN main.to_status = 'InProg Awt SSC' THEN 'InProg Awt SSC'
+        WHEN main.to_status = 'InProg Awt Credit' THEN 'InProg Awt Credit'
+        WHEN main.to_status = 'InProg Awt Resource' THEN 'InProg Awt Resource'
+        ELSE 'OTHER'
+      END AS status
+FROM (SELECT r1.case_number,
+            r1.to_status,
+            MIN(r1.sts_changed_on),
+            r1.datemoved,
+            TO_NUMBER(TRIM(TO_CHAR(r1.datemoved -MIN(r1.sts_changed_on),'DD')),'99G999D9S') AS daysinstatus,
+            r1.territory,
+            r1.arrival_type,
+            r1.customer,
+            r1.case_owner,
+            r1.case_creation_date,
+            r1.contract_start_date
+     FROM (SELECT a2.case_number,
+                  a2.to_status,
+                  a2.sts_changed_on,
+                  a2.territory,
+                  a2.arrival_type,
+                  a2.customer,
+                  a2.case_owner,
+                  a2.case_creation_date,
+                  a2.contract_start_date,
+                  COALESCE((SELECT MAX(a1.sts_changed_on) FROM sc_case_state_master a1 WHERE a1.case_number = a2.case_number AND TRIM(a1.from_status) = TRIM(a2.to_status)),CURRENT_DATE) AS datemoved
+           FROM sc_case_state_master a2
+           ORDER BY a2.case_number,
+                    a2.sts_changed_on) r1
+                    WHERE r1.territory = ANY(CASE
+                      WHEN $1::boolean=false 
+                      THEN ARRAY[r1.territory]
+                      ELSE ARRAY[$2::text[]] 
+                      END) 
+                    AND   r1.arrival_type =ANY(CASE
+                      WHEN $3::boolean=false
+                      THEN ARRAY[r1.arrival_type]
+                      ELSE ARRAY[$4::text[]] 
+                      END)
+                    AND   r1.to_status=ANY(CASE
+                      WHEN $5::boolean=false
+                      THEN ARRAY[r1.to_status]
+                      ELSE ARRAY[$6::text[]] 
+                      END)
+     GROUP BY r1.case_number,
+              r1.to_status,
+              r1.datemoved,
+              r1.territory,
+              r1.arrival_type,
+              r1.customer,
+              r1.case_owner,
+              r1.case_creation_date,
+              r1.contract_start_date) main`,
+      [req.body.territory_selected, req.body.territory_data, req.body.arrival_selected, req.body.arrival_data, req.body.workflow_selected, req.body.workflow_data],
+      function (err, result) {
+        if (err) {
+          conn.doRelease(dbConn);
+          //call error handler
+          return next(err);
+        }
+        response.data = result.rows;
+        res.json(response);
+        //release connection back to pool
+        conn.doRelease(dbConn);
+      });
+  });
+});
+
+router.post('/sc_cycle_times', (req, res, next) => {
+  //call doConnect method in db_operations
+  conn.doConnect((err, dbConn) => {
+    if (err) { return next(err); }
+    //execute body using using connection instance returned by doConnect method
+    conn.doExecute(dbConn,
+      `SELECT r3.status1,
+      r3.status_order,
+      SUM(r3.mediandays::INTEGER) AS mediandays,
+      AVG(r3.AverageDays) AverageDays,
+      SUM(r3.caseperstatus) AS casecount
+FROM (SELECT r2.to_status AS status,
+            MEDIAN(r2.daysinstatus) AS mediandays,
+            AVG(daysinstatus) AS AverageDays,
+            COUNT(r2.case_number) AS caseperstatus,
+            r2.territory,
+            CASE
+              WHEN r2.to_status = 'Open' THEN 'Open'
+              WHEN r2.to_status = 'Insufficient Data' THEN 'Insufficient Data'
+              WHEN r2.to_status = 'InProg' THEN 'InProg'
+              WHEN r2.to_status = 'InProg Acknowledged' THEN 'InProg Acknowledged'
+              WHEN r2.to_status = 'InProg Awt 3PS' THEN 'InProg Awt 3PS'
+              WHEN r2.to_status = 'InProg Awt Bus Unit' THEN 'InProg Awt Bus Unit'
+              WHEN r2.to_status = 'InProg Awt SSC' THEN 'InProg Awt SSC'
+              WHEN r2.to_status = 'InProg Awt Credit' THEN 'InProg Awt Credit'
+              WHEN r2.to_status = 'InProg Awt Resource' THEN 'InProg Awt Resource'
+              ELSE 'OTHER'
+            END AS status1,
+            CASE
+              WHEN r2.to_status = 'Open' THEN '1'
+              WHEN r2.to_status = 'Insufficient Data' THEN '2'
+              WHEN r2.to_status = 'InProg' THEN '3'
+              WHEN r2.to_status = 'InProg Acknowledged' THEN '4'
+              WHEN r2.to_status = 'InProg Awt 3PS' THEN '5'
+              WHEN r2.to_status = 'InProg Awt Bus Unit' THEN '6'
+              WHEN r2.to_status = 'InProg Awt SSC' THEN '7'
+              WHEN r2.to_status = 'InProg Awt Credit' THEN '8'
+              WHEN r2.to_status = 'InProg Awt Resource' THEN '9'
+              ELSE 'OTHER'
+            END AS status_order,
+            r2.arrival_type
+     FROM (SELECT r1.case_number,
+                  r1.to_status,
+                  MIN(r1.sts_changed_on),
+                  r1.datemoved,
+                  TO_NUMBER(TRIM(TO_CHAR(r1.datemoved -MIN(r1.sts_changed_on),'DD')),'99G999D9S') AS daysinstatus,
+                  r1.territory,
+                  r1.arrival_type
+           FROM (SELECT a2.case_number,
+                        a2.to_status,
+                        a2.sts_changed_on,
+                        a2.territory,
+                        a2.arrival_type,
+                        COALESCE((SELECT MAX(a1.sts_changed_on) FROM sc_case_state_master a1 WHERE a1.case_number = a2.case_number AND TRIM(a1.from_status) = TRIM(a2.to_status)),CURRENT_DATE) AS datemoved
+                 FROM sc_case_state_master a2
+                 where date(date_trunc('day',a2.case_creation_date))>= coalesce( $1::date, (date_trunc('month',CURRENT_DATE) - interval '25 months')) 
+                 AND date(date_trunc('day',a2.case_creation_date))<=  coalesce( $2::date,  (date_trunc('month',CURRENT_DATE) - interval '1 months'))
+                 ORDER BY a2.case_number,
+                          a2.sts_changed_on) r1
+           GROUP BY r1.case_number,
+                    r1.to_status,
+                    r1.datemoved,
+                    r1.territory,
+                    r1.arrival_type) r2
+     GROUP BY r2.to_status,
+              r2.territory,
+              r2.arrival_type
+     ORDER BY r2.to_status) r3
+WHERE r3.territory = ANY(CASE
+  WHEN $3::boolean=false 
+  THEN ARRAY[r3.territory]
+  ELSE ARRAY[$4::text[]] 
+  END) 
+AND   r3.arrival_type = ANY(CASE
+  WHEN $5::boolean=false
+  THEN ARRAY[r3.arrival_type]
+  ELSE ARRAY[$6::text[]] 
+  END)
+  AND r3.status1=ANY(CASE
+    WHEN $7::boolean=false
+    THEN ARRAY[r3.status1]
+    ELSE ARRAY[$8::text[]] 
+    END) 
+GROUP BY r3.status1,
+        r3.status_order
+ORDER BY r3.status_order;
+`, [req.body.from_date, req.body.to_date, req.body.territory_selected, req.body.territory_data, req.body.arrival_selected, req.body.arrival_data, req.body.workflow_selected, req.body.workflow_data], function (err, result) {
+        if (err) {
+          conn.doRelease(dbConn);
+          //call error handler
+          return next(err);
+        }
+        response.data = result.rows;
+        res.json(response);
+        //release connection back to pool
+        conn.doRelease(dbConn);
+      });
+  });
+});
+
+router.post('/sc_cycle_times_drilldown', (req, res, next) => {
+  //call doConnect method in db_operations
+  conn.doConnect((err, dbConn) => {
+    if (err) { return next(err); }
+    //execute body using using connection instance returned by doConnect method
+    conn.doExecute(dbConn,
+      `SELECT main.case_number,
+      main.territory,
+      main.arrival_type,
+      main.customer,
+      main.case_owner,
+      main.case_creation_date,
+      main.contract_start_date,
+      CASE
+        WHEN main.to_status = 'Open' THEN 'Open'
+        WHEN main.to_status = 'Insufficient Data' THEN 'Insufficient Data'
+        WHEN main.to_status = 'InProg' THEN 'InProg'
+        WHEN main.to_status = 'InProg Acknowledged' THEN 'InProg Acknowledged'
+        WHEN main.to_status = 'InProg Awt 3PS' THEN 'InProg Awt 3PS'
+        WHEN main.to_status = 'InProg Awt Bus Unit' THEN 'InProg Awt Bus Unit'
+        WHEN main.to_status = 'InProg Awt SSC' THEN 'InProg Awt SSC'
+        WHEN main.to_status = 'InProg Awt Credit' THEN 'InProg Awt Credit'
+        WHEN main.to_status = 'InProg Awt Resource' THEN 'InProg Awt Resource'
+        ELSE 'OTHER'
+      END AS status
+FROM (SELECT r1.case_number,
+            r1.to_status,
+            MIN(r1.sts_changed_on),
+            r1.datemoved,
+            TO_NUMBER(TRIM(TO_CHAR(r1.datemoved -MIN(r1.sts_changed_on),'DD')),'99G999D9S') AS daysinstatus,
+            r1.territory,
+            r1.arrival_type,
+            r1.customer,
+            r1.case_owner,
+            r1.case_creation_date,
+            r1.contract_start_date
+     FROM (SELECT a2.case_number,
+                  a2.to_status,
+                  a2.sts_changed_on,
+                  a2.territory,
+                  a2.arrival_type,
+                  a2.customer,
+                  a2.case_owner,
+                  a2.case_creation_date,
+                  a2.contract_start_date,
+                  COALESCE((SELECT MAX(a1.sts_changed_on) FROM sc_case_state_master a1 WHERE a1.case_number = a2.case_number AND TRIM(a1.from_status) = TRIM(a2.to_status)),CURRENT_DATE) AS datemoved
+           FROM sc_case_state_master a2
+           where date(date_trunc('day',a2.case_creation_date))>= coalesce( $1::date, (date_trunc('month',CURRENT_DATE) - interval '25 months')) 
+           AND date(date_trunc('day',a2.case_creation_date))<=  coalesce( $2::date,  (date_trunc('month',CURRENT_DATE) - interval '1 months'))
+           ORDER BY a2.case_number,
+                    a2.sts_changed_on) r1
+                    WHERE r1.territory = ANY(CASE
+                      WHEN $3::boolean=false 
+                      THEN ARRAY[r1.territory]
+                      ELSE ARRAY[$4::text[]] 
+                      END) 
+                    AND   r1.arrival_type =ANY(CASE
+                      WHEN $5::boolean=false
+                      THEN ARRAY[r1.arrival_type]
+                      ELSE ARRAY[$6::text[]] 
+                      END)
+                    AND   r1.to_status=ANY(CASE
+                      WHEN $7::boolean=false
+                      THEN ARRAY[r1.to_status]
+                      ELSE ARRAY[$8::text[]] 
+                      END) 
+     GROUP BY r1.case_number,
+              r1.to_status,
+              r1.datemoved,
+              r1.territory,
+              r1.arrival_type,
+              r1.customer,
+              r1.case_owner,
+              r1.case_creation_date,
+              r1.contract_start_date) main;
+;
+`, [req.body.from_date, req.body.to_date, req.body.territory_selected, req.body.territory_data, req.body.arrival_selected, req.body.arrival_data, req.body.workflow_selected, req.body.workflow_data], function (err, result) {
+        if (err) {
+          conn.doRelease(dbConn);
+          //call error handler
+          return next(err);
+        }
+        response.data = result.rows;
+        res.json(response);
+        //release connection back to pool
+        conn.doRelease(dbConn);
+      });
+  });
+});
 module.exports = router;
