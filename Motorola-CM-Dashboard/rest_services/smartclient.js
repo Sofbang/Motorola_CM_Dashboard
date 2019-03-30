@@ -298,6 +298,8 @@ ORDER BY r3.status_order`,
 
 router.post('/sc_case_by_status_drilldown', (req, res, next) => {
   //call doConnect method in db_operations
+  var status = req.body;
+  console.log("the data rec at back is:"+JSON.stringify(status));
   conn.doConnect((err, dbConn) => {
     if (err) { return next(err); }
     //execute query using using connection instance returned by doConnect method
