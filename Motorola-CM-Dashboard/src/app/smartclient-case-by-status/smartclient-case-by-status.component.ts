@@ -4,7 +4,7 @@ import { reject } from 'q';
 import { SideViewDropDowns } from '../beans/sideBarDropdown';
 import { DataHandlerService } from '../services/data-handler/data-handler.service';
 import { ViewChild, ElementRef } from '@angular/core';
-import { FilterFormatEBS } from '../beans/common_bean';
+import { FilterFormatEBS, FilterFormatSCNEWCASES } from '../beans/common_bean';
 import * as $ from 'jquery';
 import { ChartSelectEvent } from 'ng2-google-charts';
 import { appheading } from '../enums/enum';
@@ -19,7 +19,7 @@ import { ExcelServiceService } from '../services/convert_to_excel/excel-service.
 export class SmartclientCaseByStatusComponent implements OnInit {
   public barChartData: any;
   public drillDownData: any;
-
+  public status:any;
   //public cases: any;
   // public selectedTerritoriesCasetype: any = 'all';
   // public dropdownListCaseStatusTerritory = [];
@@ -54,65 +54,47 @@ export class SmartclientCaseByStatusComponent implements OnInit {
   }
 
 
-
   public selectBarScCaseByStatus(event: ChartSelectEvent) {
 
-    this.openScModel.nativeElement.click();
-    this.drillDown = [];
     //console.log("event.." + event.selectedRowValues[0].substring(0,j));
-    if (event.message == 'select') {
-      let drillDownStatusnew = ''; let status: any; let letters = /^[0-9a-zA-Z]\s+$/;
-      let statusStr = '', j = 0;
-      drillDownStatusnew = (event.selectedRowValues[0]).split(' ');
-      status = drillDownStatusnew[0];
-      // console.log("the drilldown status is:" + JSON.stringify(status));
-      for (let i = event.selectedRowValues[0].length; i > 0; i--) {
-        if (event.selectedRowValues[0][i] == ' ') {
-          j = i;
-          //console.log("i---"+j)
-          break;
-        }
-        //console.log("hhh--"+event.selectedRowValues[0][i].match(/^[a-zA-Z]\s+$/));
-      }
-      status = event.selectedRowValues[0].substring(0, j);
-      //console.log("in the selectBar"+JSON.stringify(e));
-      this.newModelCounts = event.selectedRowValues[1];
-      //console.log("the selectBar is:" + JSON.stringify(this.newModelCounts));
-      this.data = event.selectedRowValues[0];
-      //console.log("the second time cases are:" + JSON.stringify(event));
-      //console.log("the data is:",this.data);
-      $('.modal .modal-dialog').css('width', $(window).width() * 0.95);//fixed
-      $('.modal .modal-body').css('height', $(window).height() * 0.77);//fixed
-      $('tbody.SCModlTbody').css('max-height', $(window).height() * 0.69);
-      $('tbody.SCModlTbody').css('overflow-y', 'scroll');
-      $('tbody.SCModlTbody').css('overflow-x', 'hidden');
-      // $('tbody.SCModlTbody').css('display', 'block');
-      $('tbody.SCModlTbody').css('width', '100%');
-
-      this.getSCDrillDownData(status)
-        .then((res: any) => {
-          let currentDate: any = new Date();
-          for (let i = 0; i < res.length; i++) {
-            let caseCreationdate = new Date(moment(res[i].case_open_date).format('YYYY-MM-DD'));
-            let timeDiff = Math.abs(currentDate.getTime() - caseCreationdate.getTime());
-            let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
-            //console.log("diff----"+diffDays)
-            res[i]['nss_aging'] = diffDays + ' days';
-            res[i].case_open_date = res[i].case_open_date == null ? '-' : moment(res[i].case_open_date).format('YYYY-MM-DD');
-            res[i].contracts_start_date = res[i].contracts_start_date == null ? '-' : moment(res[i].contracts_start_date).format('YYYY-MM-DD');
-
-          }
-          //console.log("the res is:" + JSON.stringify(res));
-          //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(this.drillDown));
-          this.drillDownData = res;
-
-        }, error => {
-          //console.log("error getTerritories " + error);
-        });
-
-
-    }
-  }
+     if (event.message == 'select') {
+       this.openScModel.nativeElement.click();
+       this.drillDown = [];
+       let drillDownStatusnew = ''; let letters = /^[0-9a-zA-Z]\s+$/;
+       let statusStr = '', j = 0;
+       drillDownStatusnew = (event.selectedRowValues[0]).split(' ');
+       this.status = drillDownStatusnew[0];
+       // console.log("the drilldown status is:" + JSON.stringify(status));
+       for (let i = event.selectedRowValues[0].length; i > 0; i--) {
+         if (event.selectedRowValues[0][i] == ' ') {
+           j = i;
+           //console.log("i---"+j)
+           break;
+         }
+         //console.log("hhh--"+event.selectedRowValues[0][i].match(/^[a-zA-Z]\s+$/));
+       }
+       this.status = (event.selectedRowValues[0].substring(0, j).trim());
+       //console.log("in the selectBar"+JSON.stringify(e));
+       this.newModelCounts = event.selectedRowValues[1];
+       //console.log("the selectBar is:" + JSON.stringify(this.newModelCounts));
+       this.data = event.selectedRowValues[0];
+       console.log("the case data is:"+JSON.stringify(this.caseData));
+       //console.log("the second time cases are:" + JSON.stringify(event));
+       //console.log("the data is:",this.data);
+       $('.modal .modal-dialog').css('width', $(window).width() * 0.95);//fixed
+       $('.modal .modal-body').css('height', $(window).height() * 0.77);//fixed
+       $('tbody.SCModlTbody').css('max-height', $(window).height() * 0.69);
+       $('tbody.SCModlTbody').css('overflow-y', 'scroll');
+       $('tbody.SCModlTbody').css('overflow-x', 'hidden');
+       // $('tbody.SCModlTbody').css('display', 'block');
+       $('tbody.SCModlTbody').css('width', '100%');
+       console.log("the status to be passed is:"+JSON.stringify(this.status));
+       this.filterChartData('drilldown');
+      
+ 
+ 
+     }
+   }
 
   public exportToExcel() {
     this._excelService.exportAsExcelFile(this.drillDownData, 'Smart Client Cases');
@@ -375,7 +357,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
     }
     // console.log("territory" + JSON.stringify(this.territoriesArr));
     // console.log("workflow" + JSON.stringify(this.workFlowStatusArr));
-    this.filterChartData();
+    this.filterChartData('dropdown');
   }
 
   onItemDeSelect(item, from) {
@@ -388,7 +370,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
     }
     // console.log("territory" + JSON.stringify(this.territoriesArr));
     // console.log("workflow" + JSON.stringify(this.workFlowStatusArr));
-    this.filterChartData();
+    this.filterChartData('dropdown');
   }
 
   onSelectAll(item, from) {
@@ -402,7 +384,7 @@ export class SmartclientCaseByStatusComponent implements OnInit {
       this.arrivalTypesArr = [];
       this.arrivalTypesArr = item;
     }
-    this.filterChartData();
+    this.filterChartData('dropdown');
     // console.log("territory" + JSON.stringify(this.territoriesArr));
     // console.log("workflow" + JSON.stringify(this.workFlowStatusArr));
   }
@@ -416,31 +398,63 @@ export class SmartclientCaseByStatusComponent implements OnInit {
       this.arrivalTypesArr = [];
     }
     // console.log("onDeSelectAll" + JSON.stringify(item));
-    this.filterChartData();
+    this.filterChartData('dropdown');
   }
 
   /**
    * This method filters the data according selected territories and workflowstatus
    */
-  public filterChartData() {
+  public filterChartData(caseFrom) {
     let finalArr = [];
-    let scObj = new FilterFormatEBS();
-    //console.log("case data" + JSON.stringify(this.contractsData));
+    let scObj = new FilterFormatSCNEWCASES();
+    
     if (this.territoriesArr.length == 0 && this.arrivalTypesArr.length == 0 && this.workFlowStatusArr.length > 0) {
+      
       scObj.territory_selected = false;
       scObj.territory_data = [];
       scObj.arrival_selected = false;
       scObj.arrival_data = [];
       scObj.workflow_selected = true;
       scObj.workflow_data = this.workFlowStatusArr;
+      if(caseFrom=='dropdown'){
 
-      this.getCaseData(scObj)
+        this.getCaseData(scObj)
         .then(result => {
           let arr = this.makeChartArr(result)
           this.drawchart(arr);
         }).catch(error => {
           console.log("error filterChartData getCaseData" + error)
         });
+
+      }else{
+        let arr = [];
+        console.log("check 1");
+        console.log("the obj is:"+JSON.stringify(scObj));
+         this.getSCDrillDownData(scObj)
+         .then((res: any) => {
+           console.log("the data is:"+JSON.stringify(res));
+      //     let currentDate: any = new Date();
+      //     for (let i = 0; i < res.length; i++) {
+      //       let caseCreationdate = new Date(moment(res[i].case_open_date).format('YYYY-MM-DD'));
+      //       let timeDiff = Math.abs(currentDate.getTime() - caseCreationdate.getTime());
+      //       let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+      //       //console.log("diff----"+diffDays)
+      //       res[i]['nss_aging'] = diffDays + ' days';
+      //       res[i].case_open_date =res[i].case_open_date==null?'-':  moment(res[i].case_open_date).format('YYYY-MM-DD');
+      //       res[i].contracts_start_date =res[i].contracts_start_date==null?'-':  moment(res[i].contracts_start_date).format('YYYY-MM-DD');
+
+      //     }
+      //     //console.log("the res is:" + JSON.stringify(res));
+      //     //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(this.drillDown));
+      //     this.drillDownData = res;
+
+        }, error => {
+         console.log("error getTerritories " + error);
+        });
+
+
+      }
+     
       // console.log("t0 s>0 a0");
       // for (let j in this.workFlowStatusArr) {
       //   let workflowItem = this.workFlowStatusArr[j];
@@ -474,6 +488,8 @@ export class SmartclientCaseByStatusComponent implements OnInit {
       scObj.workflow_selected = false;
       scObj.workflow_data = [];
 
+      if(caseFrom=='dropdown'){
+
       this.getCaseData(scObj)
         .then(result => {
           let arr = this.makeChartArr(result)
@@ -481,6 +497,32 @@ export class SmartclientCaseByStatusComponent implements OnInit {
         }).catch(error => {
           console.log("error filterChartData getCaseData" + error)
         });
+      }else{
+        console.log("the obj is:"+JSON.stringify(scObj));
+
+        this.getSCDrillDownData(scObj)
+        .then((res: any) => {
+          console.log("the data is:"+JSON.stringify(res));
+     //     let currentDate: any = new Date();
+     //     for (let i = 0; i < res.length; i++) {
+     //       let caseCreationdate = new Date(moment(res[i].case_open_date).format('YYYY-MM-DD'));
+     //       let timeDiff = Math.abs(currentDate.getTime() - caseCreationdate.getTime());
+     //       let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+     //       //console.log("diff----"+diffDays)
+     //       res[i]['nss_aging'] = diffDays + ' days';
+     //       res[i].case_open_date =res[i].case_open_date==null?'-':  moment(res[i].case_open_date).format('YYYY-MM-DD');
+     //       res[i].contracts_start_date =res[i].contracts_start_date==null?'-':  moment(res[i].contracts_start_date).format('YYYY-MM-DD');
+
+     //     }
+     //     //console.log("the res is:" + JSON.stringify(res));
+     //     //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(this.drillDown));
+     //     this.drillDownData = res;
+
+       }, error => {
+        console.log("error getTerritories " + error);
+       });
+
+      }
     } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length == 0 && this.arrivalTypesArr.length == 0) {
       scObj.territory_selected = false;
       scObj.territory_data = [];
@@ -488,13 +530,40 @@ export class SmartclientCaseByStatusComponent implements OnInit {
       scObj.arrival_data = [];
       scObj.workflow_selected = false;
       scObj.workflow_data = [];
+      if(caseFrom=='dropdown'){
       this.getCaseData(scObj)
         .then(result => {
           let arr = this.makeChartArr(result)
           this.drawchart(arr);
         }).catch(error => {
           console.log("error filterChartData getCaseData" + error)
-        });
+        });}
+        else{
+          console.log("the obj is:"+JSON.stringify(scObj));
+
+          this.getSCDrillDownData(scObj)
+          .then((res: any) => {
+            console.log("the data is:"+JSON.stringify(res));
+       //     let currentDate: any = new Date();
+       //     for (let i = 0; i < res.length; i++) {
+       //       let caseCreationdate = new Date(moment(res[i].case_open_date).format('YYYY-MM-DD'));
+       //       let timeDiff = Math.abs(currentDate.getTime() - caseCreationdate.getTime());
+       //       let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+       //       //console.log("diff----"+diffDays)
+       //       res[i]['nss_aging'] = diffDays + ' days';
+       //       res[i].case_open_date =res[i].case_open_date==null?'-':  moment(res[i].case_open_date).format('YYYY-MM-DD');
+       //       res[i].contracts_start_date =res[i].contracts_start_date==null?'-':  moment(res[i].contracts_start_date).format('YYYY-MM-DD');
+  
+       //     }
+       //     //console.log("the res is:" + JSON.stringify(res));
+       //     //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(this.drillDown));
+       //     this.drillDownData = res;
+  
+         }, error => {
+          console.log("error getTerritories " + error);
+         });
+
+        }
     } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length == 0 && this.arrivalTypesArr.length > 0) {
       // for (let i in this.arrivalTypesArr) {
       //   let arrivalTypeItem = this.arrivalTypesArr[i];
@@ -512,14 +581,40 @@ export class SmartclientCaseByStatusComponent implements OnInit {
       scObj.arrival_data = this.arrivalTypesArr;
       scObj.workflow_selected = false;
       scObj.workflow_data = [];
-
+      if(caseFrom=='dropdown'){
       this.getCaseData(scObj)
         .then(result => {
           let arr = this.makeChartArr(result)
           this.drawchart(arr);
         }).catch(error => {
           console.log("error filterChartData getCaseData" + error)
-        });
+        });}
+        else{
+          console.log("the obj is:"+JSON.stringify(scObj));
+
+          this.getSCDrillDownData(scObj)
+          .then((res: any) => {
+            console.log("the data is:"+JSON.stringify(res));
+       //     let currentDate: any = new Date();
+       //     for (let i = 0; i < res.length; i++) {
+       //       let caseCreationdate = new Date(moment(res[i].case_open_date).format('YYYY-MM-DD'));
+       //       let timeDiff = Math.abs(currentDate.getTime() - caseCreationdate.getTime());
+       //       let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+       //       //console.log("diff----"+diffDays)
+       //       res[i]['nss_aging'] = diffDays + ' days';
+       //       res[i].case_open_date =res[i].case_open_date==null?'-':  moment(res[i].case_open_date).format('YYYY-MM-DD');
+       //       res[i].contracts_start_date =res[i].contracts_start_date==null?'-':  moment(res[i].contracts_start_date).format('YYYY-MM-DD');
+  
+       //     }
+       //     //console.log("the res is:" + JSON.stringify(res));
+       //     //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(this.drillDown));
+       //     this.drillDownData = res;
+  
+         }, error => {
+          console.log("error getTerritories " + error);
+         });
+          
+        }
     } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length > 0 && this.arrivalTypesArr.length > 0) {
       //console.log("t>0 s0 a>0");
       // for (let i in this.territoriesArr) {
@@ -546,14 +641,40 @@ export class SmartclientCaseByStatusComponent implements OnInit {
       scObj.arrival_data = this.arrivalTypesArr;
       scObj.workflow_selected = false;
       scObj.workflow_data = [];
-
+      if(caseFrom=='dropdown'){
       this.getCaseData(scObj)
         .then(result => {
           let arr = this.makeChartArr(result)
           this.drawchart(arr);
         }).catch(error => {
           console.log("error filterChartData getCaseData" + error)
-        });
+        });}
+        else{
+          console.log("the obj is:"+JSON.stringify(scObj));
+
+          this.getSCDrillDownData(scObj)
+          .then((res: any) => {
+            console.log("the data is:"+JSON.stringify(res));
+       //     let currentDate: any = new Date();
+       //     for (let i = 0; i < res.length; i++) {
+       //       let caseCreationdate = new Date(moment(res[i].case_open_date).format('YYYY-MM-DD'));
+       //       let timeDiff = Math.abs(currentDate.getTime() - caseCreationdate.getTime());
+       //       let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+       //       //console.log("diff----"+diffDays)
+       //       res[i]['nss_aging'] = diffDays + ' days';
+       //       res[i].case_open_date =res[i].case_open_date==null?'-':  moment(res[i].case_open_date).format('YYYY-MM-DD');
+       //       res[i].contracts_start_date =res[i].contracts_start_date==null?'-':  moment(res[i].contracts_start_date).format('YYYY-MM-DD');
+  
+       //     }
+       //     //console.log("the res is:" + JSON.stringify(res));
+       //     //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(this.drillDown));
+       //     this.drillDownData = res;
+  
+         }, error => {
+          console.log("error getTerritories " + error);
+         });
+
+        }
     } else if (this.workFlowStatusArr.length > 0 && this.territoriesArr.length == 0 && this.arrivalTypesArr.length > 0) {
       //console.log("t0 s>0 a>0");
       // for (let j in this.workFlowStatusArr) {
@@ -577,14 +698,40 @@ export class SmartclientCaseByStatusComponent implements OnInit {
       scObj.arrival_data = this.arrivalTypesArr;
       scObj.workflow_selected = true;
       scObj.workflow_data = this.workFlowStatusArr;
-
+      if(caseFrom=='dropdown'){
       this.getCaseData(scObj)
         .then(result => {
           let arr = this.makeChartArr(result)
           this.drawchart(arr);
         }).catch(error => {
           console.log("error filterChartData getCaseData" + error)
-        });
+        });}
+        else{
+          console.log("the obj is:"+JSON.stringify(scObj));
+
+          this.getSCDrillDownData(scObj)
+          .then((res: any) => {
+            console.log("the data is:"+JSON.stringify(res));
+       //     let currentDate: any = new Date();
+       //     for (let i = 0; i < res.length; i++) {
+       //       let caseCreationdate = new Date(moment(res[i].case_open_date).format('YYYY-MM-DD'));
+       //       let timeDiff = Math.abs(currentDate.getTime() - caseCreationdate.getTime());
+       //       let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+       //       //console.log("diff----"+diffDays)
+       //       res[i]['nss_aging'] = diffDays + ' days';
+       //       res[i].case_open_date =res[i].case_open_date==null?'-':  moment(res[i].case_open_date).format('YYYY-MM-DD');
+       //       res[i].contracts_start_date =res[i].contracts_start_date==null?'-':  moment(res[i].contracts_start_date).format('YYYY-MM-DD');
+  
+       //     }
+       //     //console.log("the res is:" + JSON.stringify(res));
+       //     //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(this.drillDown));
+       //     this.drillDownData = res;
+  
+         }, error => {
+          console.log("error getTerritories " + error);
+         });
+
+        }
     } else if (this.workFlowStatusArr.length > 0 && this.territoriesArr.length > 0 && this.arrivalTypesArr.length == 0) {
       // console.log("t>0 s>0 a0");
       // for (let i in this.territoriesArr) {
@@ -612,14 +759,40 @@ export class SmartclientCaseByStatusComponent implements OnInit {
       scObj.arrival_data = [];
       scObj.workflow_selected = true;
       scObj.workflow_data = this.workFlowStatusArr;
-
+      if(caseFrom=='dropdown'){
       this.getCaseData(scObj)
         .then(result => {
           let arr = this.makeChartArr(result)
           this.drawchart(arr);
         }).catch(error => {
           console.log("error filterChartData getCaseData" + error)
-        });
+        });}
+        else{
+          console.log("the obj is:"+JSON.stringify(scObj));
+
+          this.getSCDrillDownData(scObj)
+          .then((res: any) => {
+            console.log("the data is:"+JSON.stringify(res));
+       //     let currentDate: any = new Date();
+       //     for (let i = 0; i < res.length; i++) {
+       //       let caseCreationdate = new Date(moment(res[i].case_open_date).format('YYYY-MM-DD'));
+       //       let timeDiff = Math.abs(currentDate.getTime() - caseCreationdate.getTime());
+       //       let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+       //       //console.log("diff----"+diffDays)
+       //       res[i]['nss_aging'] = diffDays + ' days';
+       //       res[i].case_open_date =res[i].case_open_date==null?'-':  moment(res[i].case_open_date).format('YYYY-MM-DD');
+       //       res[i].contracts_start_date =res[i].contracts_start_date==null?'-':  moment(res[i].contracts_start_date).format('YYYY-MM-DD');
+  
+       //     }
+       //     //console.log("the res is:" + JSON.stringify(res));
+       //     //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(this.drillDown));
+       //     this.drillDownData = res;
+  
+         }, error => {
+          console.log("error getTerritories " + error);
+         });
+
+        }
     }
     else {
       //console.log("t>0 s>0 a>0");
@@ -654,14 +827,40 @@ export class SmartclientCaseByStatusComponent implements OnInit {
       scObj.arrival_data = this.arrivalTypesArr;
       scObj.workflow_selected = true;
       scObj.workflow_data = this.workFlowStatusArr;
-
+      if(caseFrom=='dropdown'){
       this.getCaseData(scObj)
         .then(result => {
           let arr = this.makeChartArr(result)
           this.drawchart(arr);
         }).catch(error => {
           console.log("error filterChartData getCaseData" + error)
-        });
+        });}
+        else{
+          console.log("the obj is:"+JSON.stringify(scObj));
+
+          this.getSCDrillDownData(scObj)
+          .then((res: any) => {
+            console.log("the data is:"+JSON.stringify(res));
+       //     let currentDate: any = new Date();
+       //     for (let i = 0; i < res.length; i++) {
+       //       let caseCreationdate = new Date(moment(res[i].case_open_date).format('YYYY-MM-DD'));
+       //       let timeDiff = Math.abs(currentDate.getTime() - caseCreationdate.getTime());
+       //       let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+       //       //console.log("diff----"+diffDays)
+       //       res[i]['nss_aging'] = diffDays + ' days';
+       //       res[i].case_open_date =res[i].case_open_date==null?'-':  moment(res[i].case_open_date).format('YYYY-MM-DD');
+       //       res[i].contracts_start_date =res[i].contracts_start_date==null?'-':  moment(res[i].contracts_start_date).format('YYYY-MM-DD');
+  
+       //     }
+       //     //console.log("the res is:" + JSON.stringify(res));
+       //     //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(this.drillDown));
+       //     this.drillDownData = res;
+  
+         }, error => {
+          console.log("error getTerritories " + error);
+         });
+
+        }
     }
 
     // let cases = this.makeChartData(finalArr);

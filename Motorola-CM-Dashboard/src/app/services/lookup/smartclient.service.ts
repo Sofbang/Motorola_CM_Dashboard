@@ -36,11 +36,14 @@ export class SmartclientService {
   }
 
   // drilldowmn service
-  getScDrillDown(status){
-    return this.http.get('api/sc_cases_drilldown?casestatus='+status)
+  getScDrillDown(jsonobj){
+    console.log("the data passed is:"+JSON.stringify(jsonobj));
+    return this.http.post('api/sc_case_by_status_drilldown',JSON.stringify(jsonobj),this.options)
       .map(result => this.result = result.json().data);
+
   }
 
+  
   getScDrillDownDates(jsonObj){
      return this.http.post('api/sc_cases_drilldownfilter',JSON.stringify(jsonObj),this.options)
       .map(result => this.result = result.json().data);
