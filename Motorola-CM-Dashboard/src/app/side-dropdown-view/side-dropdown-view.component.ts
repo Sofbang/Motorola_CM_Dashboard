@@ -119,7 +119,7 @@ export class SideDropdownViewComponent implements OnInit {
     this.fromModel = null;
     this.toModel = null;
     this.casetimeModel = 'Median';
-    this.contractTimeModel='Median';
+    this.contractTimeModel = 'Median';
   }
 
   /**
@@ -165,7 +165,8 @@ export class SideDropdownViewComponent implements OnInit {
     //   let options = { year: 'numeric', month: 'short' };
     //   this.fromDates.push(event.toLocaleString('en', options));
     // }
-    for (let i = 0; i <dateArr.length; i++) {
+    this.fromDates = [];
+    for (let i = 0; i < dateArr.length; i++) {
       // console.log("in the for loop", +i)
       let event = new Date(dateArr[i]);
       let options = { year: 'numeric', month: 'short' };
@@ -188,9 +189,11 @@ export class SideDropdownViewComponent implements OnInit {
    * @param filterVal-date value selected 
    */
   public onChangeFrom(filterVal: any) {
+    this.toModel = null;
     let options = { year: 'numeric', month: 'short' };
     let date = new Date();;
     let dt = date.toLocaleString('en', options);
+    console.log("dt"+dt);
     this.selectedYear = moment(filterVal).format('YY');
     this.toYear = [];
     this.selectedFrom = filterVal;
@@ -198,7 +201,13 @@ export class SideDropdownViewComponent implements OnInit {
     // console.log("the index is :" + this.n);
     for (let i = this.n; i <= this.n + 23; i++) {
       //if(this.fromDates[i]==dt)break;
-      this.toYear.push(this.fromDates[i]);
+      //console.log("jjj"+this.fromDates[i]);
+      //console.log("loop"+this.fromDates[i]);
+      if (this.fromDates[i] != undefined) {
+        //if (this.fromDates[i] == dt) break;
+        this.toYear.push(this.fromDates[i]);
+      }
+
     }
   }
 
