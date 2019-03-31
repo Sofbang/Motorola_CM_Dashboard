@@ -164,6 +164,7 @@ router.post('/ebs_contract_state', (req, res, next) => {
               , r2.arrival_type 
             FROM    
                   ( SELECT r1.contract_number
+                  , r1.contract_number_modifier
                   , r1.to_status
                   , MIN(r1.sts_changed_on)
                   , r1.datemoved
@@ -171,6 +172,7 @@ router.post('/ebs_contract_state', (req, res, next) => {
                   , r1.territory 
                   , r1.arrival_type
                     FROM   ( SELECT a2.contract_number
+                             , a2.contract_number_modifier
                             , a2.to_status
                             , a2.sts_changed_on
                             , a2.territory
@@ -181,24 +183,24 @@ router.post('/ebs_contract_state', (req, res, next) => {
                                                        AND a1.from_status = a2.to_status), current_date ) AS datemoved 
                                  FROM ebs_contracts_state_master a2 
                                  ORDER BY contract_number, sts_changed_on ) r1
-                    GROUP BY r1.contract_number, r1.to_status, r1.datemoved, r1.territory, r1.arrival_type) r2
+                    GROUP BY r1.contract_number,  r1.contract_number_modifier ,r1.to_status, r1.datemoved, r1.territory, r1.arrival_type) r2
               GROUP BY r2.to_status, r2.territory ,r2.arrival_type  
               ORDER BY r2.to_status) r3
-   WHERE r3.status = ANY(CASE
-           WHEN $5::boolean=false
-           THEN ARRAY['Generate PO', 'PO Issued', 'QA Hold', 'Modify PO']
-           ELSE ARRAY[$6::text[]] 
-           END) 
-   AND r3.territory = ANY(CASE
-           WHEN $1::boolean=false 
-           THEN ARRAY[r3.territory]
-           ELSE ARRAY[$2::text[]] 
-           END)
-   AND r3.arrival_type =ANY(CASE
-           WHEN $3::boolean=false
-           THEN ARRAY[r3.arrival_type]
-           ELSE ARRAY[$4::text[]] 
-           END)
+    WHERE r3.status = ANY(CASE
+              WHEN $5::boolean=false
+              THEN ARRAY['Generate PO', 'PO Issued', 'QA Hold', 'Modify PO']
+              ELSE ARRAY[$6::text[]] 
+              END) 
+      AND r3.territory = ANY(CASE
+              WHEN $1::boolean=false 
+              THEN ARRAY[r3.territory]
+              ELSE ARRAY[$2::text[]] 
+              END)
+      AND r3.arrival_type =ANY(CASE
+              WHEN $3::boolean=false
+              THEN ARRAY[r3.arrival_type]
+              ELSE ARRAY[$4::text[]] 
+              END)
    GROUP
        BY r3.status`, 
       [req.body.territory_selected,req.body.territory_data,req.body.arrival_selected,req.body.arrival_data,req.body.workflow_selected,req.body.workflow_data],
@@ -231,6 +233,7 @@ router.post('/ebs_contractbystatus_drilldown', (req, res, next) => {
       , (select distinct s1.contract_owner from ebs_contracts_state_master s1 where s1.contract_number = r1.contract_number limit 1 )
       , (select distinct s1.contract_creation_date from ebs_contracts_state_master s1 where s1.contract_number = r1.contract_number limit 1 )
 FROM   ( SELECT a2.contract_number
+         , a2.contract_number_modifier
                 , a2.to_status
                 , a2.sts_changed_on
                 , a2.territory
@@ -245,21 +248,22 @@ FROM   ( SELECT a2.contract_number
                      FROM ebs_contracts_state_master a2 
                      ORDER BY contract_number, sts_changed_on ) r1
 where r1.to_status =ANY(CASE
-  WHEN $5::boolean=false
-  THEN ARRAY['Generate PO', 'PO Issued', 'QA Hold', 'Modify PO']
-  ELSE ARRAY[$6::text[]] 
-  END) 
+WHEN $5::boolean=false
+THEN ARRAY['Generate PO', 'PO Issued', 'QA Hold', 'Modify PO']
+ELSE ARRAY[$6::text[]] 
+END) 
 and r1.territory = ANY(CASE
-  WHEN $1::boolean=false 
-  THEN ARRAY[r1.territory]
-  ELSE ARRAY[$2::text[]] 
-  END)
+WHEN $1::boolean=false 
+THEN ARRAY[r1.territory]
+ELSE ARRAY[$2::text[]] 
+END)
 and r1.arrival_type =ANY(CASE
-  WHEN $3::boolean=false
-  THEN ARRAY[r1.arrival_type]
-  ELSE ARRAY[$4::text[]] 
-  END)
+WHEN $3::boolean=false
+THEN ARRAY[r1.arrival_type]
+ELSE ARRAY[$4::text[]] 
+END)
 GROUP BY r1.contract_number
+,r1.contract_number_modifier
 , r1.to_status
 , r1.datemoved
 , r1.territory
