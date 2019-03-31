@@ -365,6 +365,8 @@ export class EbsContractByStatusComponent implements OnInit {
               //res[i].
               res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('YYYY-MM-DD');
             }
+            this.drillDownData=[];
+            this.drillDownData = res;
           }, error => {
             console.log("error getTerritories " + error);
           });
@@ -443,6 +445,8 @@ export class EbsContractByStatusComponent implements OnInit {
               //res[i].
               res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('YYYY-MM-DD');
             }
+            this.drillDownData=[];
+            this.drillDownData = res;
           }, error => {
             //console.log("error getTerritories " + error);
           });
@@ -485,6 +489,8 @@ export class EbsContractByStatusComponent implements OnInit {
               //res[i].
               res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('YYYY-MM-DD');
             }
+            this.drillDownData=[];
+            this.drillDownData = res;
           }, error => {
             //console.log("error getTerritories " + error);
           });
@@ -527,6 +533,8 @@ export class EbsContractByStatusComponent implements OnInit {
               //res[i].
               res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('YYYY-MM-DD');
             }
+            this.drillDownData=[];
+            this.drillDownData = res;
           }, error => {
             //console.log("error getTerritories " + error);
           });
@@ -569,6 +577,8 @@ export class EbsContractByStatusComponent implements OnInit {
               //res[i].
               res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('YYYY-MM-DD');
             }
+            this.drillDownData=[];
+            this.drillDownData = res;
           }, error => {
             //console.log("error getTerritories " + error);
           });
@@ -609,6 +619,8 @@ export class EbsContractByStatusComponent implements OnInit {
               //res[i].
               res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('YYYY-MM-DD');
             }
+            this.drillDownData=[];
+            this.drillDownData = res;
           }, error => {
             //console.log("error getTerritories " + error);
           });
@@ -649,8 +661,10 @@ export class EbsContractByStatusComponent implements OnInit {
               //res[i].
               res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('YYYY-MM-DD');
             }
+            this.drillDownData=[];
+            this.drillDownData = res;
             //   // console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(this.drillDown));
-            //   this.drillDownData = res;
+             
           }, error => {
             //console.log("error getTerritories " + error);
           });

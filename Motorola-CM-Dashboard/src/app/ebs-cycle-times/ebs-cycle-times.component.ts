@@ -70,7 +70,7 @@ export class EbsCycleTimesComponent implements OnInit {
       this.data = event.selectedRowValues[0];
       //console.log("the data is:" + JSON.stringify(this.data));
       this.status = this.fdld(drillDownStatusnew);
-
+      console.log("fd ld is:"+JSON.stringify(this.status));
       // console.log("the data is:",this.data);
       $('.modal .modal-dialog').css('width', $(window).width() * 0.95);//fixed
       $('.modal .modal-body').css('height', $(window).height() * 0.77);//fixed
@@ -156,8 +156,8 @@ export class EbsCycleTimesComponent implements OnInit {
       this._ebsService.getEBSArrivalType()
         .subscribe(data => {
           let array = [];
-          for (let i in workflowStatus) {
-            array.push({ 'item_id': workflowStatus[i].arrival_type, 'item_text': workflowStatus[i].arrival_type });
+          for (let i in data) {
+            array.push({ 'item_id': data[i].arrival_type, 'item_text': data[i].arrival_type });
           }
           resolve(array);
         }, error => {
@@ -367,7 +367,8 @@ export class EbsCycleTimesComponent implements OnInit {
               //this.drillDown(moment(res[i].contract_creation_date).format('YYY-MM-DD'));
             }
             //  console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(this.drillDown));
-            //this.drillDownData = res;
+            this.drillDownData=[];
+            this.drillDownData = res;
 
           }, error => {
             //console.log("error getTerritories " + error);
@@ -416,7 +417,8 @@ export class EbsCycleTimesComponent implements OnInit {
               //this.drillDown(moment(res[i].contract_creation_date).format('YYY-MM-DD'));
             }
             //  console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(this.drillDown));
-            //this.drillDownData = res;
+            this.drillDownData=[];
+            this.drillDownData = res;
 
           }, error => {
             //console.log("error getTerritories " + error);
@@ -467,7 +469,8 @@ export class EbsCycleTimesComponent implements OnInit {
               //this.drillDown(moment(res[i].contract_creation_date).format('YYY-MM-DD'));
             }
             //  console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(this.drillDown));
-            //this.drillDownData = res;
+            this.drillDownData=[];
+            this.drillDownData = res;
 
           }, error => {
             //console.log("error getTerritories " + error);
@@ -517,7 +520,8 @@ export class EbsCycleTimesComponent implements OnInit {
               //this.drillDown(moment(res[i].contract_creation_date).format('YYY-MM-DD'));
             }
             //  console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(this.drillDown));
-            //this.drillDownData = res;
+            this.drillDownData=[];
+            this.drillDownData = res;
 
           }, error => {
             //console.log("error getTerritories " + error);

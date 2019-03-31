@@ -102,6 +102,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       //console.log("the status is:" + JSON.stringify(status));
       this.drillDown = [];
       this.filterChartData('drilldown');
+      this.newModelCounts='';
     }
   }
 
@@ -414,11 +415,29 @@ export class SmartclientAverageRenewalComponent implements OnInit {
         cycleTimeObj.workflow_selected = true;
         cycleTimeObj.workflow_data = arr;
         this.getSCCycleDrillDownData(cycleTimeObj)
-          .then(result => {
+          .then((result:any) => {
+            this.newModelCounts=result.length;
             this.drillDown = result;
+            let currentDate: any = new Date();
+          console.log("the data is:"+JSON.stringify(result));
+          for (let i = 0; i < result.length; i++) {
+            console.log("the res"+JSON.stringify(result));
+            let caseCreationdate = new Date(moment(result[i].case_creation_date).format('YYYY-MM-DD'));
+            let timeDiff = Math.abs(currentDate.getTime() - caseCreationdate.getTime());
+            let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            //console.log("diff----"+diffDays)
+            result[i]['nss_aging'] = diffDays + ' days';
+            result[i].case_creation_date =result[i].case_creation_date==null?'-':  moment(result[i].case_creation_date).format('YYYY-MM-DD');
+            result[i].contract_start_date =result[i].contract_start_date==null?'-': moment(result[i].contract_start_date).format('YYYY-MM-DD');
+
+          }
+          this.drillDownData=[];
+          this.drillDownData=result;
           }).catch(error => {
             console.log("error in getSCCycleDrillDownData " + error);
           });
+          this.newModelCounts='';
+
       }
     } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length > 0 && this.arrivalTypesArr.length == 0) {
       //console.log("t>1 ws0 a0");
@@ -443,11 +462,29 @@ export class SmartclientAverageRenewalComponent implements OnInit {
         cycleTimeObj.workflow_selected = true;
         cycleTimeObj.workflow_data = arr;
         this.getSCCycleDrillDownData(cycleTimeObj)
-          .then(result => {
-            this.drillDown = result;
+        .then((result:any) => {
+          this.newModelCounts=result.length;
+          this.drillDown = result;
+          let currentDate: any = new Date();
+        console.log("the data is:"+JSON.stringify(result));
+        for (let i = 0; i < result.length; i++) {
+          console.log("the res"+JSON.stringify(result));
+          let caseCreationdate = new Date(moment(result[i].case_creation_date).format('YYYY-MM-DD'));
+          let timeDiff = Math.abs(currentDate.getTime() - caseCreationdate.getTime());
+          let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+          //console.log("diff----"+diffDays)
+          result[i]['nss_aging'] = diffDays + ' days';
+          result[i].case_creation_date =result[i].case_creation_date==null?'-':  moment(result[i].case_creation_date).format('YYYY-MM-DD');
+          result[i].contract_start_date =result[i].contract_start_date==null?'-': moment(result[i].contract_start_date).format('YYYY-MM-DD');
+
+        }
+        this.drillDownData=[];
+        this.drillDownData=result;
           }).catch(error => {
             console.log("error in getSCCycleDrillDownData " + error);
           });
+          this.newModelCounts='';
+
       }
     } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length == 0 && this.arrivalTypesArr.length == 0) {
       //console.log("t0 s0 a0");
@@ -471,11 +508,29 @@ export class SmartclientAverageRenewalComponent implements OnInit {
         cycleTimeObj.workflow_selected = true;
         cycleTimeObj.workflow_data = arr;
         this.getSCCycleDrillDownData(cycleTimeObj)
-          .then(result => {
-            this.drillDown = result;
+        .then((result:any) => {
+          this.newModelCounts=result.length;
+          this.drillDown = result;
+          let currentDate: any = new Date();
+        console.log("the data is:"+JSON.stringify(result));
+        for (let i = 0; i < result.length; i++) {
+          console.log("the res"+JSON.stringify(result));
+          let caseCreationdate = new Date(moment(result[i].case_creation_date).format('YYYY-MM-DD'));
+          let timeDiff = Math.abs(currentDate.getTime() - caseCreationdate.getTime());
+          let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+          //console.log("diff----"+diffDays)
+          result[i]['nss_aging'] = diffDays + ' days';
+          result[i].case_creation_date =result[i].case_creation_date==null?'-':  moment(result[i].case_creation_date).format('YYYY-MM-DD');
+          result[i].contract_start_date =result[i].contract_start_date==null?'-': moment(result[i].contract_start_date).format('YYYY-MM-DD');
+
+        }
+        this.drillDownData=[];
+        this.drillDownData=result;
           }).catch(error => {
             console.log("error in getSCCycleDrillDownData " + error);
           });
+          this.newModelCounts='';
+
       }
     } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length > 0 && this.arrivalTypesArr.length > 0) {
       //console.log("t>0 s0 a>0");
@@ -499,11 +554,29 @@ export class SmartclientAverageRenewalComponent implements OnInit {
         cycleTimeObj.workflow_selected = true;
         cycleTimeObj.workflow_data = arr;
         this.getSCCycleDrillDownData(cycleTimeObj)
-          .then(result => {
-            this.drillDown = result;
+        .then((result:any) => {
+          this.newModelCounts=result.length;
+          this.drillDown = result;
+          let currentDate: any = new Date();
+        console.log("the data is:"+JSON.stringify(result));
+        for (let i = 0; i < result.length; i++) {
+          console.log("the res"+JSON.stringify(result));
+          let caseCreationdate = new Date(moment(result[i].case_creation_date).format('YYYY-MM-DD'));
+          let timeDiff = Math.abs(currentDate.getTime() - caseCreationdate.getTime());
+          let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+          //console.log("diff----"+diffDays)
+          result[i]['nss_aging'] = diffDays + ' days';
+          result[i].case_creation_date =result[i].case_creation_date==null?'-':  moment(result[i].case_creation_date).format('YYYY-MM-DD');
+          result[i].contract_start_date =result[i].contract_start_date==null?'-': moment(result[i].contract_start_date).format('YYYY-MM-DD');
+
+        }
+        this.drillDownData=[];
+        this.drillDownData=result;
           }).catch(error => {
             console.log("error in getSCCycleDrillDownData " + error);
           });
+          this.newModelCounts='';
+
       }
     } else if (this.workFlowStatusArr.length > 0 && this.territoriesArr.length == 0 && this.arrivalTypesArr.length > 0) {
       //console.log("t0 s>0 a>0");
@@ -527,11 +600,29 @@ export class SmartclientAverageRenewalComponent implements OnInit {
         cycleTimeObj.workflow_selected = true;
         cycleTimeObj.workflow_data = arr;
         this.getSCCycleDrillDownData(cycleTimeObj)
-          .then(result => {
-            this.drillDown = result;
+        .then((result:any) => {
+          this.newModelCounts=result.length;
+          this.drillDown = result;
+          let currentDate: any = new Date();
+        console.log("the data is:"+JSON.stringify(result));
+        for (let i = 0; i < result.length; i++) {
+          console.log("the res"+JSON.stringify(result));
+          let caseCreationdate = new Date(moment(result[i].case_creation_date).format('YYYY-MM-DD'));
+          let timeDiff = Math.abs(currentDate.getTime() - caseCreationdate.getTime());
+          let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+          //console.log("diff----"+diffDays)
+          result[i]['nss_aging'] = diffDays + ' days';
+          result[i].case_creation_date =result[i].case_creation_date==null?'-':  moment(result[i].case_creation_date).format('YYYY-MM-DD');
+          result[i].contract_start_date =result[i].contract_start_date==null?'-': moment(result[i].contract_start_date).format('YYYY-MM-DD');
+
+        }
+        this.drillDownData=[];
+        this.drillDownData=result;
           }).catch(error => {
             console.log("error in getSCCycleDrillDownData " + error);
           });
+          this.newModelCounts='';
+
       }
 
     } else if (this.workFlowStatusArr.length > 0 && this.territoriesArr.length > 0 && this.arrivalTypesArr.length == 0) {
@@ -556,11 +647,29 @@ export class SmartclientAverageRenewalComponent implements OnInit {
         cycleTimeObj.workflow_selected = true;
         cycleTimeObj.workflow_data = arr;
         this.getSCCycleDrillDownData(cycleTimeObj)
-          .then(result => {
-            this.drillDown = result;
+        .then((result:any) => {
+          this.newModelCounts=result.length;
+          this.drillDown = result;
+          let currentDate: any = new Date();
+        console.log("the data is:"+JSON.stringify(result));
+        for (let i = 0; i < result.length; i++) {
+          console.log("the res"+JSON.stringify(result));
+          let caseCreationdate = new Date(moment(result[i].case_creation_date).format('YYYY-MM-DD'));
+          let timeDiff = Math.abs(currentDate.getTime() - caseCreationdate.getTime());
+          let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+          //console.log("diff----"+diffDays)
+          result[i]['nss_aging'] = diffDays + ' days';
+          result[i].case_creation_date =result[i].case_creation_date==null?'-':  moment(result[i].case_creation_date).format('YYYY-MM-DD');
+          result[i].contract_start_date =result[i].contract_start_date==null?'-': moment(result[i].contract_start_date).format('YYYY-MM-DD');
+
+        }
+        this.drillDownData=[];
+        this.drillDownData=result;
           }).catch(error => {
             console.log("error in getSCCycleDrillDownData " + error);
           });
+          this.newModelCounts='';
+
       }
     } else if (this.workFlowStatusArr.length == 0 && this.territoriesArr.length == 0 && this.arrivalTypesArr.length > 0) {
       //console.log("t0 s0 a>0");
@@ -584,11 +693,29 @@ export class SmartclientAverageRenewalComponent implements OnInit {
         cycleTimeObj.workflow_selected = true;
         cycleTimeObj.workflow_data = arr;
         this.getSCCycleDrillDownData(cycleTimeObj)
-          .then(result => {
-            this.drillDown = result;
+        .then((result:any) => {
+          this.newModelCounts=result.length;
+          this.drillDown = result;
+          let currentDate: any = new Date();
+        console.log("the data is:"+JSON.stringify(result));
+        for (let i = 0; i < result.length; i++) {
+          console.log("the res"+JSON.stringify(result));
+          let caseCreationdate = new Date(moment(result[i].case_creation_date).format('YYYY-MM-DD'));
+          let timeDiff = Math.abs(currentDate.getTime() - caseCreationdate.getTime());
+          let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+          //console.log("diff----"+diffDays)
+          result[i]['nss_aging'] = diffDays + ' days';
+          result[i].case_creation_date =result[i].case_creation_date==null?'-':  moment(result[i].case_creation_date).format('YYYY-MM-DD');
+          result[i].contract_start_date =result[i].contract_start_date==null?'-': moment(result[i].contract_start_date).format('YYYY-MM-DD');
+
+        }
+        this.drillDownData=[];
+        this.drillDownData=result;
           }).catch(error => {
             console.log("error in getSCCycleDrillDownData " + error);
           });
+          this.newModelCounts='';
+
       }
     }
     else if (this.workFlowStatusArr.length > 0 && this.territoriesArr.length > 0 && this.arrivalTypesArr.length > 0) {
@@ -613,11 +740,29 @@ export class SmartclientAverageRenewalComponent implements OnInit {
         cycleTimeObj.workflow_selected = true;
         cycleTimeObj.workflow_data = arr;
         this.getSCCycleDrillDownData(cycleTimeObj)
-          .then(result => {
+         .then((result:any) => {
+          this.newModelCounts=result.length;
             this.drillDown = result;
+            let currentDate: any = new Date();
+          console.log("the data is:"+JSON.stringify(result));
+          for (let i = 0; i < result.length; i++) {
+            console.log("the res"+JSON.stringify(result));
+            let caseCreationdate = new Date(moment(result[i].case_creation_date).format('YYYY-MM-DD'));
+            let timeDiff = Math.abs(currentDate.getTime() - caseCreationdate.getTime());
+            let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            //console.log("diff----"+diffDays)
+            result[i]['nss_aging'] = diffDays + ' days';
+            result[i].case_creation_date =result[i].case_creation_date==null?'-':  moment(result[i].case_creation_date).format('YYYY-MM-DD');
+            result[i].contract_start_date =result[i].contract_start_date==null?'-': moment(result[i].contract_start_date).format('YYYY-MM-DD');
+
+          }
+          this.drillDownData=[];
+          this.drillDownData=result;
           }).catch(error => {
             console.log("error in getSCCycleDrillDownData " + error);
           });
+          this.newModelCounts='';
+
       }
     }
   }
