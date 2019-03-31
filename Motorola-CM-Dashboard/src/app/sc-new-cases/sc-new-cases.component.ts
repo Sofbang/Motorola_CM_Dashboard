@@ -463,8 +463,8 @@ export class ScNewCasesComponent implements OnInit {
       newCasesObj.territory_selected = false;
       newCasesObj.arrival_selected = true;
       newCasesObj.arrival_data = this.arrivalTypesArr;
-      newCasesObj.from_date = this.status[0];
-      newCasesObj.to_date = this.status[1];
+      // newCasesObj.from_date = this.status[0];
+      // newCasesObj.to_date = this.status[1];
       if (caseFrom == 'dropdown') {
         this.checkDateDropdownSelected(newCasesObj)
           .then(result => {
