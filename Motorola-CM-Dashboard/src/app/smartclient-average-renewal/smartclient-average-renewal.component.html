@@ -18,7 +18,7 @@
 
         </div>
         <div class="col-lg-6">
-          <span class="fontCss pull-left"><b>{{newModelCounts}} </b></span>
+          <span class="fontCss pull-left"><b>Number Of Cases : {{newModelCounts}} </b></span>
           <button class="pull-right btn btn-sucess btn-sm" title="Export To Excel" type="button"
             (click)="exportToExcel()"><i class="fas fa-file-export "></i></button>
         </div>
@@ -46,7 +46,7 @@
               <td>{{item.case_owner==null?'_':item.case_owner}}</td>
               <td>{{item.case_creation_date}}</td>
               <td>{{item.nss_aging}}</td>
-              <td>{{item.contract_start_date}}</td>
+              <td>{{item.contract_start_date==null?'-':item.contract_start_date}}</td>
 
             </tr>
 
