@@ -388,10 +388,10 @@ export class SmartclientCaseByStatusComponent implements OnInit {
 
             this.newModelCounts = res.length;
             //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(res));
-            for (let i in res) {
-              //res[i].
-              res[i].case_creation_date = res[i].case_creation_date == null ? '-' : moment(res[i].case_creation_date).format('YYYY-MM-DD');
-              res[i].contract_start_date = res[i].contract_start_date == null ? '-' : moment(res[i].contract_start_date).format('YYYY-MM-DD');            }
+            // for (let i in res) {
+            //   //res[i].
+            //   res[i].case_creation_date = res[i].case_creation_date == null ? '-' : moment(res[i].case_creation_date).format('YYYY-MM-DD');
+            //   res[i].contract_start_date = res[i].contract_start_date == null ? '-' : moment(res[i].contract_start_date).format('YYYY-MM-DD');            }
             this.drillDown=[];
             this.drillDown = res;
           }, error => {
@@ -426,10 +426,10 @@ export class SmartclientCaseByStatusComponent implements OnInit {
 
             this.newModelCounts = res.length;
             //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(res));
-            for (let i in res) {
-              //res[i].
-              res[i].case_creation_date = res[i].case_creation_date == null ? '-' : moment(res[i].case_creation_date).format('YYYY-MM-DD');
-              res[i].contract_start_date = res[i].contract_start_date == null ? '-' : moment(res[i].contract_start_date).format('YYYY-MM-DD');            }
+            // for (let i in res) {
+            //   //res[i].
+            //   res[i].case_creation_date = res[i].case_creation_date == null ? '-' : moment(res[i].case_creation_date).format('YYYY-MM-DD');
+            //   res[i].contract_start_date = res[i].contract_start_date == null ? '-' : moment(res[i].contract_start_date).format('YYYY-MM-DD');            }
             this.drillDown=[];
             this.drillDown = res;
           }, error => {
@@ -464,10 +464,10 @@ export class SmartclientCaseByStatusComponent implements OnInit {
 
             this.newModelCounts = res.length;
             //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(res));
-            for (let i in res) {
-              //res[i].
-              res[i].case_creation_date = res[i].case_creation_date == null ? '-' : moment(res[i].case_creation_date).format('YYYY-MM-DD');
-              res[i].contract_start_date = res[i].contract_start_date == null ? '-' : moment(res[i].contract_start_date).format('YYYY-MM-DD');            }
+            // for (let i in res) {
+            //   //res[i].
+            //   res[i].case_creation_date = res[i].case_creation_date == null ? '-' : moment(res[i].case_creation_date).format('YYYY-MM-DD');
+            //   res[i].contract_start_date = res[i].contract_start_date == null ? '-' : moment(res[i].contract_start_date).format('YYYY-MM-DD');            }
             this.drillDown=[];
             this.drillDown = res;
           }, error => {
@@ -503,10 +503,10 @@ export class SmartclientCaseByStatusComponent implements OnInit {
 
             this.newModelCounts = res.length;
             //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(res));
-            for (let i in res) {
-              //res[i].
-              res[i].case_creation_date = res[i].case_creation_date == null ? '-' : moment(res[i].case_creation_date).format('YYYY-MM-DD');
-              res[i].contract_start_date = res[i].contract_start_date == null ? '-' : moment(res[i].contract_start_date).format('YYYY-MM-DD');            }
+            // for (let i in res) {
+            //   //res[i].
+            //   res[i].case_creation_date = res[i].case_creation_date == null ? '-' : moment(res[i].case_creation_date).format('YYYY-MM-DD');
+            //   res[i].contract_start_date = res[i].contract_start_date == null ? '-' : moment(res[i].contract_start_date).format('YYYY-MM-DD');            }
             this.drillDown=[];
             this.drillDown = res;
           }, error => {
@@ -543,10 +543,10 @@ export class SmartclientCaseByStatusComponent implements OnInit {
 
             this.newModelCounts = res.length;
             //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(res));
-            for (let i in res) {
-              //res[i].
-              res[i].case_creation_date = res[i].case_creation_date == null ? '-' : moment(res[i].case_creation_date).format('YYYY-MM-DD');
-              res[i].contract_start_date = res[i].contract_start_date == null ? '-' : moment(res[i].contract_start_date).format('YYYY-MM-DD');            }
+            // for (let i in res) {
+            //   //res[i].
+            //   res[i].case_creation_date = res[i].case_creation_date == null ? '-' : moment(res[i].case_creation_date).format('YYYY-MM-DD');
+            //   res[i].contract_start_date = res[i].contract_start_date == null ? '-' : moment(res[i].contract_start_date).format('YYYY-MM-DD');            }
             this.drillDown=[];
             this.drillDown = res;
           }, error => {
@@ -582,10 +582,10 @@ export class SmartclientCaseByStatusComponent implements OnInit {
 
             this.newModelCounts = res.length;
             //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(res));
-            for (let i in res) {
-              //res[i].
-              res[i].case_creation_date = res[i].case_creation_date == null ? '-' : moment(res[i].case_creation_date).format('YYYY-MM-DD');
-              res[i].contract_start_date = res[i].contract_start_date == null ? '-' : moment(res[i].contract_start_date).format('YYYY-MM-DD');            }
+            // for (let i in res) {
+            //   //res[i].
+            //   res[i].case_creation_date = res[i].case_creation_date == null ? '-' : moment(res[i].case_creation_date).format('YYYY-MM-DD');
+            //   res[i].contract_start_date = res[i].contract_start_date == null ? '-' : moment(res[i].contract_start_date).format('YYYY-MM-DD');            }
             this.drillDown=[];
             this.drillDown = res;
           }, error => {
@@ -621,10 +621,10 @@ export class SmartclientCaseByStatusComponent implements OnInit {
 
             this.newModelCounts = res.length;
             //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(res));
-            for (let i in res) {
-              //res[i].
-              res[i].case_creation_date = res[i].case_creation_date == null ? '-' : moment(res[i].case_creation_date).format('YYYY-MM-DD');
-              res[i].contract_start_date = res[i].contract_start_date == null ? '-' : moment(res[i].contract_start_date).format('YYYY-MM-DD');            }
+            // for (let i in res) {
+            //   //res[i].
+            //   res[i].case_creation_date = res[i].case_creation_date == null ? '-' : moment(res[i].case_creation_date).format('YYYY-MM-DD');
+            //   res[i].contract_start_date = res[i].contract_start_date == null ? '-' : moment(res[i].contract_start_date).format('YYYY-MM-DD');            }
             this.drillDown=[];
             this.drillDown = res;
           }, error => {
