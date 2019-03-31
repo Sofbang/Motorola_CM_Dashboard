@@ -92,10 +92,10 @@ export class EbsCycleTimesComponent implements OnInit {
    // console.log("date"+data)
     let month = data.split('-')[0];
     let year = data.split('-')[1];
-    let date = year + '-' + (this.monthArr.indexOf(month) + 1) + '-01';
-    console.log("ddd" + this.convertDateMoment(date));
-    let newDate = this.convertDateMoment(date)
-    var dates = new Date(newDate);
+    let date = year + '-' + (this.monthArr.indexOf(month)+1) + '-01';
+  //  console.log("ddd" + this.convertDateMoment(date));
+    var dates = new Date(date);
+   // console.log("dates - "+dates);
     var firstDay = new Date(dates.getFullYear(), dates.getMonth(), 1);
     var lastDay = new Date(dates.getFullYear(), dates.getMonth() + 1, 0);
     console.log("the firstDay is:" + firstDay);
