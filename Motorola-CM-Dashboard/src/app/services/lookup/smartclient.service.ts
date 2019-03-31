@@ -36,58 +36,52 @@ export class SmartclientService {
   }
 
   // drilldowmn service
-  getScDrillDown(jsonobj){
-    console.log("the data passed is:"+JSON.stringify(jsonobj));
-    return this.http.post('api/sc_case_by_status_drilldown',JSON.stringify(jsonobj),this.options)
+  getScDrillDown(jsonobj) {
+    return this.http.post('api/sc_case_by_status_drilldown', JSON.stringify(jsonobj), this.options)
       .map(result => this.result = result.json().data);
 
   }
-  getScCycleTimesDrillDown(jsonobj){
-   return this.http.post('api/sc_cycle_times_drilldown',JSON.stringify(jsonobj),this.options)
+  getScCycleTimesDrillDown(jsonobj) {
+    return this.http.post('api/sc_cycle_times_drilldown', JSON.stringify(jsonobj), this.options)
       .map(result => this.result = result.json().data);
 
   }
-  
-  getSCNewCasesDrillDown(jsonobj){
 
-    console.log("the data passed is:"+JSON.stringify(jsonobj));
-    
-    return this.http.post('api/sc_new_cases_drilldown',JSON.stringify(jsonobj),this.options)
-     
-     .map(result => this.result = result.json().data);
-  
-   
-   }
-  
-  getScDrillDownDates(jsonObj){
-     return this.http.post('api/sc_cases_drilldownfilter',JSON.stringify(jsonObj),this.options)
+  getSCNewCasesDrillDown(jsonobj) {
+    return this.http.post('api/sc_new_cases_drilldown', JSON.stringify(jsonobj), this.options)
+
       .map(result => this.result = result.json().data);
   }
 
-  getScMinMaxDates(){
+  getScDrillDownDates(jsonObj) {
+    return this.http.post('api/sc_cases_drilldownfilter', JSON.stringify(jsonObj), this.options)
+      .map(result => this.result = result.json().data);
+  }
+
+  getScMinMaxDates() {
     return this.http.get("api/sc_dates_max_min")
-    .map(response => this.result = response.json().data);
+      .map(response => this.result = response.json().data);
   }
 
-  getScDateFilteredReults(dates,uri){
-    return this.http.post("api/"+uri, JSON.stringify(dates), this.options)
-    .map(response => this.result = response.json().data);
+  getScDateFilteredReults(dates, uri) {
+    return this.http.post("api/" + uri, JSON.stringify(dates), this.options)
+      .map(response => this.result = response.json().data);
   }
 
-  getScNewCases(dates){
-    return this.http.post('api/sc_new_cases',JSON.stringify(dates),this.options)
-    .map(result => this.result = result.json().data);
+  getScNewCases(dates) {
+    return this.http.post('api/sc_new_cases', JSON.stringify(dates), this.options)
+      .map(result => this.result = result.json().data);
   }
-  getScArrivalType(){
+  getScArrivalType() {
     return this.http.get('api/sc_arrival_type')
-    .map(result => this.result = result.json().data);
+      .map(result => this.result = result.json().data);
   }
   getSCByStatus(scObj) {
-    return this.http.post('api/sc_case_by_status',JSON.stringify(scObj),this.options)
+    return this.http.post('api/sc_case_by_status', JSON.stringify(scObj), this.options)
       .map(result => this.result = result.json().data);
   }
   getSCCycleTimes(scObj) {
-    return this.http.post('api/sc_cycle_times',JSON.stringify(scObj),this.options)
+    return this.http.post('api/sc_cycle_times', JSON.stringify(scObj), this.options)
       .map(result => this.result = result.json().data);
   }
 }

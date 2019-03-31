@@ -99,30 +99,32 @@ router.get('/ebs_arrival_type', (req, res, next) => {
 router.post('/ebs_cycle_times', (req, res, next) => {
   // console.log("the status passed is:"+JSON.stringify(status));
   //call doConnect method in db_operations
-  var postgresql = `select count(distinct main.contract_number) Contract_count
-  ,to_char(date (date_trunc('month',main.contract_creation_date)),'MON')||'-'|| extract (year from (date (date_trunc('month',main.contract_creation_date)))) as by_Month
-  ,median(main.numofdays) Median_days
-  ,avg(main.numofdays)Average_NumofDays
-  from
-  (
-  select m.*
-  ,extract(day from coalesce(m.date_signed,CURRENT_DATE) - date_trunc('day',m.contract_creation_date)) NumofDays,m.territory,m.arrival_type
-  from ebs_contracts_state_master m
-  where m.sts_changed_on = (select max(m2.sts_changed_on) from ebs_contracts_state_master m2 where m2.contract_number = m.contract_number)
-  and date(date_trunc('day',m.contract_creation_date))>= coalesce(  $1::date, (date_trunc('month',CURRENT_DATE) - interval '25 months')) 
-  AND date(date_trunc('day',m.contract_creation_date))<=  coalesce(  $2::date,  (date_trunc('month',CURRENT_DATE) - interval '1 months'))
-  and m.territory = ANY(CASE
-    WHEN $3::boolean=false 
-    THEN ARRAY[m.territory]
-    ELSE ARRAY[$4::text[]] 
-    END)
-  and m.arrival_type = ANY(CASE
-    WHEN $5::boolean=false
-    THEN ARRAY[m.arrival_type]
-    ELSE ARRAY[$6::text[]] 
-    END)
-  ) main
-  Group by date_trunc('month',main.contract_creation_date)`;
+  var postgresql = `select count(distinct main.contract_number||coalesce(main.contract_number_modifier,' ')) Contract_count
+  --main.contract_number, coalesce(main.contract_number_modifier,'A')
+  --select count(main.contract_modifier_number)Contract_count
+    ,to_char(date (date_trunc('month',main.contract_creation_date)),'MON')||'-'|| extract (year from (date (date_trunc('month',main.contract_creation_date)))) as by_Month
+    ,median(main.numofdays) Median_days
+    ,avg(main.numofdays)Average_NumofDays
+    from
+    (
+    select m.*
+    ,extract(day from coalesce(m.date_signed,CURRENT_DATE) - date_trunc('day',m.contract_creation_date)) NumofDays,m.territory,m.arrival_type
+    from ebs_contracts_state_master m
+    where m.sts_changed_on = (select max(m2.sts_changed_on) from ebs_contracts_state_master m2 where m2.contract_number = m.contract_number)
+    and date(date_trunc('day',m.contract_creation_date))>= coalesce(  $1::date, (date_trunc('month',CURRENT_DATE) - interval '25 months')) 
+    AND date(date_trunc('day',m.contract_creation_date))<=  coalesce( $2::date,  (date_trunc('month',CURRENT_DATE) - interval '1 months'))
+    and m.territory = ANY(CASE
+      WHEN $3::boolean=false 
+      THEN ARRAY[m.territory]
+      ELSE ARRAY[$4::text[]] 
+      END)
+    and m.arrival_type = ANY(CASE
+      WHEN $5::boolean=false
+      THEN ARRAY[m.arrival_type]
+      ELSE ARRAY[$6::text[]] 
+      END)
+    ) main
+    Group by date_trunc('month',main.contract_creation_date)`;
   //console.log("the query is:"+postgresql)
   conn.doConnect((err, dbConn) => {
     if (err) { return next(err); }
@@ -281,6 +283,7 @@ router.post('/ebs_cycletime_drilldown', (req, res, next) => {
   //call doConnect method in db_operations
   conn.doConnect((err, dbConn) => {
     var postgresql = `select distinct m.contract_number
+    , m.contract_number_modifier
     , m.customer_name
     , m.contract_owner
     , m.contract_creation_date
@@ -293,16 +296,18 @@ router.post('/ebs_cycletime_drilldown', (req, res, next) => {
     and date(date_trunc('day',m.contract_creation_date))>= coalesce( $1::date, (date_trunc('month',CURRENT_DATE) - interval '25 months')) 
     AND date(date_trunc('day',m.contract_creation_date))<=  coalesce( $2::date,  (date_trunc('month',CURRENT_DATE) - interval '1 months'))
     and m.territory =ANY(CASE
-      WHEN $3::boolean=false 
-      THEN ARRAY[m.territory]
-      ELSE ARRAY[$4::text[]] 
-      END)
-    and m.arrival_type =ANY(CASE
-      WHEN $5::boolean=false
-      THEN ARRAY[m.arrival_type]
-      ELSE ARRAY[$6::text[]] 
-      END) 
-    Group by date_trunc('month',m.contract_creation_date),m.contract_number
+          WHEN $3::boolean=false 
+          THEN ARRAY[m.territory]
+          ELSE ARRAY[$4::text[]] 
+          END)
+        and m.arrival_type =ANY(CASE
+          WHEN $5::boolean=false
+          THEN ARRAY[m.arrival_type]
+          ELSE ARRAY[$6::text[]] 
+          END) 
+    Group by date_trunc('month',m.contract_creation_date)
+    ,m.contract_number
+    , m.contract_number_modifier
     , m.customer_name
     , m.contract_owner
     , m.contract_creation_date
