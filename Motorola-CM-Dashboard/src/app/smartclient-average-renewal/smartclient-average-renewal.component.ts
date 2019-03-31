@@ -107,8 +107,8 @@ export class SmartclientAverageRenewalComponent implements OnInit {
   }
 
   public exportToExcel() {
-    console.log("the data is:" + JSON.stringify(this.drillDownData));
-    this._excelService.exportAsExcelFile(this.drillDownData, 'Smart Client Cases');
+    //console.log("the data is:" + JSON.stringify(this.drillDown));
+    this._excelService.exportAsExcelFile(this.drillDown, 'Smart Client Cases');
 
   }
 
