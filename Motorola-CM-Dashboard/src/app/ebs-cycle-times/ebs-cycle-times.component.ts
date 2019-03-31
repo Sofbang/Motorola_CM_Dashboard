@@ -362,7 +362,7 @@ export class EbsCycleTimesComponent implements OnInit {
 
             for (let i in res) {
               //res[i].
-              res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('YYYY-MM-DD');
+              res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('MM-DD-YYYY');
               //res[i].sts_changed_on = moment(res[i].sts_changed_on).format('YYYY-MM-DD');
               //this.drillDown(moment(res[i].contract_creation_date).format('YYY-MM-DD'));
             }
@@ -412,7 +412,7 @@ export class EbsCycleTimesComponent implements OnInit {
 
             for (let i in res) {
               //res[i].
-              res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('YYYY-MM-DD');
+              res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('MM-DD-YYYY');
               //res[i].sts_changed_on = moment(res[i].sts_changed_on).format('YYYY-MM-DD');
               //this.drillDown(moment(res[i].contract_creation_date).format('YYY-MM-DD'));
             }
@@ -464,7 +464,7 @@ export class EbsCycleTimesComponent implements OnInit {
 
             for (let i in res) {
               //res[i].
-              res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('YYYY-MM-DD');
+              res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('MM-DD-YYYY');
               //res[i].sts_changed_on = moment(res[i].sts_changed_on).format('YYYY-MM-DD');
               //this.drillDown(moment(res[i].contract_creation_date).format('YYY-MM-DD'));
             }
@@ -515,7 +515,7 @@ export class EbsCycleTimesComponent implements OnInit {
 
             for (let i in res) {
               //res[i].
-              res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('YYYY-MM-DD');
+              res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('MM-DD-YYYY');
               //res[i].sts_changed_on = moment(res[i].sts_changed_on).format('YYYY-MM-DD');
               //this.drillDown(moment(res[i].contract_creation_date).format('YYY-MM-DD'));
             }
@@ -560,6 +560,8 @@ export class EbsCycleTimesComponent implements OnInit {
     } else {
       let barColor = '#4A90E2';
       for (let i in data) {
+        // console.log("Value of i"+ i);
+        // console.log(" Value of the no of contracts "+data[i].contract_count);
         array.push([data[i].by_month, this.fromMedOrAvg == 'median' ? parseInt(data[i].median_days) : parseInt(data[i].average_numofdays), parseInt(data[i].contract_count), barColor]);
         //array.push([this.fromMedOrAvg == 'median' ? parseInt(data[i].median_days) : parseInt(data[i].average_numofdays),data[i].by_month , " No. Of Contracts - " + parseInt(data[i].contract_count), barColor]);   
         //array.push([data[i].by_month,parseInt(data[i].median_days) , parseInt(data[i].contract_count), barColor]); 

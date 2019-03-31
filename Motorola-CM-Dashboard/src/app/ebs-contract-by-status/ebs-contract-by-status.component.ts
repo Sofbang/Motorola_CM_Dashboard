@@ -405,7 +405,7 @@ export class EbsContractByStatusComponent implements OnInit {
             //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(res));
             for (let i in res) {
               //res[i].
-              res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('YYYY-MM-DD');
+              res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('MM-DD-YYYY');
             }
           }, error => {
             //console.log("error getTerritories " + error);

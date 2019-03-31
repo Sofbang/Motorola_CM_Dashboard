@@ -32,6 +32,7 @@
             <tr>
               <th>Customer </th>
               <th>Contract Number</th>
+              <th>Contract Number Modifier</th>
               <th>Contract Status</th>
               <th>Contract Owner</th>
               
@@ -43,6 +44,7 @@
             <tr *ngFor="let drilldown of this.drillDown" >
               <td>{{drilldown.customer_name==null?'-':drilldown.customer_name}}</td>
                 <td>{{drilldown.contract_number}}</td>
+                <td>{{drilldown.contract_number_modifier}}</td>
                 <td>{{drilldown.to_status}}</td>
                 <td>{{drilldown.contract_owner==null?'-':drilldown.contract_owner}}</td>
                 <td>{{drilldown.contract_creation_date}}</td>
