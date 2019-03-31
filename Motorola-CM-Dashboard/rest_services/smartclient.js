@@ -175,6 +175,7 @@ router.post('/sc_new_cases_drilldown', (req, res, next) => {
         THEN ARRAY[m1.arrival_type]
         ELSE ARRAY[$6::text[]] 
         END)
+        
       GROUP BY DATE_TRUNC('month',m1.case_creation_date),m1.customer
       ,m1.case_number
       ,m1.to_status
@@ -581,7 +582,7 @@ FROM (SELECT r1.case_number,
         if (err) {
           conn.doRelease(dbConn);
           //call error handler
-          return next(err);
+          return next(err);  
         }
         response.data = result.rows;
         res.json(response);
