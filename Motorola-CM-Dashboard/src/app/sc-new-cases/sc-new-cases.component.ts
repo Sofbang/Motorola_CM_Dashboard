@@ -528,17 +528,19 @@ export class ScNewCasesComponent implements OnInit {
   calculateNssAging(res) {
     let currentDate: any = new Date();
     console.log("the data is:" + JSON.stringify(res));
-    for (let i = 0; i < res.length; i++) {
-      //console.log("the res" + JSON.stringify(res));
-      let caseCreationdate = new Date(moment(res[i].case_creation_date).format('YYYY-MM-DD'));
-      let timeDiff = Math.abs(currentDate.getTime() - caseCreationdate.getTime());
-      let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
-      //console.log("diff----"+diffDays)
-      res[i]['nss_aging'] = diffDays + ' days';
-      res[i].case_creation_date = res[i].case_creation_date == null ? '-' : moment(res[i].case_creation_date).format('YYYY-MM-DD');
-      res[i].contract_start_date = res[i].contract_start_date == null ? '-' : moment(res[i].contract_start_date).format('YYYY-MM-DD');
-
-    }
+          for (let i in res) {
+            let caseCreationdate = new Date(moment(res[i].case_creation_date).format('YYYY-MM-DD'));
+            let statusChangedOnDate = new Date(moment(res[i].sts_changed_on).format('YYYY-MM-DD'));
+            let timeDiff = Math.abs(currentDate.getTime() - caseCreationdate.getTime());
+          if ( res[i].case_condition=='CLOSED'){
+            timeDiff = Math.abs(statusChangedOnDate.getTime() - caseCreationdate.getTime());
+          }
+          let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+          //console.log("diff----"+diffDays)
+          res[i]['nss_aging'] = diffDays + ' days';
+          res[i].case_creation_date = res[i].case_creation_date == null ? '-' : moment(res[i].case_creation_date).format('MM-DD-YYYY');         
+          res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('MM-DD-YYYY');
+          }
     return res;
   }
 

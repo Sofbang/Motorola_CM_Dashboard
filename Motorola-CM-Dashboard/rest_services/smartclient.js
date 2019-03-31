@@ -159,6 +159,7 @@ router.post('/sc_new_cases_drilldown', (req, res, next) => {
       ,m1.case_creation_date
       ,m1.contract_start_date 
       ,m1.sts_changed_on
+      ,m1.case_condition
       ,TO_CHAR(DATE (DATE_TRUNC('month',m1.case_creation_date)),'MON') || '-' ||EXTRACT(year FROM (DATE (DATE_TRUNC('month',m1.case_creation_date)))) AS byMonth
       FROM sc_case_state_master m1
       WHERE DATE (DATE_TRUNC('day',m1.case_creation_date)) >= coalesce($1::date,DATE (DATE_TRUNC('month',CURRENT_DATE) -INTERVAL '25 months'))
@@ -181,6 +182,7 @@ router.post('/sc_new_cases_drilldown', (req, res, next) => {
       ,m1.case_creation_date
       ,m1.contract_start_date
       ,m1.sts_changed_on
+      ,m1.case_condition
       ORDER BY DATE_TRUNC('month',m1.case_creation_date)`
       , [req.body.from_date, req.body.to_date, req.body.territory_selected, req.body.territory_data, req.body.arrival_selected, req.body.arrival_data],
       function (err, result) {
@@ -310,7 +312,9 @@ router.post('/sc_case_by_status_drilldown', (req, res, next) => {
       main.customer,
       main.case_owner,
       main.case_creation_date,
+      main.sts_changed_on,
       main.contract_start_date,
+      main.case_condition,
       CASE
         WHEN main.to_status = 'Open' THEN 'Open'
         WHEN main.to_status = 'Insufficient Data' THEN 'Insufficient Data'
@@ -333,7 +337,9 @@ FROM (SELECT r1.case_number,
             r1.customer,
             r1.case_owner,
             r1.case_creation_date,
-            r1.contract_start_date
+            r1.contract_start_date,
+            r1.sts_changed_on,
+            r1.case_condition
      FROM (SELECT a2.case_number,
                   a2.to_status,
                   a2.sts_changed_on,
@@ -343,6 +349,7 @@ FROM (SELECT r1.case_number,
                   a2.case_owner,
                   a2.case_creation_date,
                   a2.contract_start_date,
+                  a2.case_condition,
                   COALESCE((SELECT MAX(a1.sts_changed_on) FROM sc_case_state_master a1 WHERE a1.case_number = a2.case_number AND TRIM(a1.from_status) = TRIM(a2.to_status)),CURRENT_DATE) AS datemoved
            FROM sc_case_state_master a2
            ORDER BY a2.case_number,
@@ -370,7 +377,9 @@ FROM (SELECT r1.case_number,
               r1.customer,
               r1.case_owner,
               r1.case_creation_date,
-              r1.contract_start_date) main`,
+              r1.contract_start_date,
+              r1.sts_changed_on,
+              r1.case_condition) main`,
       [req.body.territory_selected, req.body.territory_data, req.body.arrival_selected, req.body.arrival_data, req.body.workflow_selected, req.body.workflow_data],
       function (err, result) {
         if (err) {
@@ -499,6 +508,7 @@ router.post('/sc_cycle_times_drilldown', (req, res, next) => {
       main.case_owner,
       main.case_creation_date,
       main.contract_start_date,
+      main.case_condition,
       CASE
         WHEN main.to_status = 'Open' THEN 'Open'
         WHEN main.to_status = 'Insufficient Data' THEN 'Insufficient Data'
@@ -521,7 +531,9 @@ FROM (SELECT r1.case_number,
             r1.customer,
             r1.case_owner,
             r1.case_creation_date,
-            r1.contract_start_date
+            r1.contract_start_date,
+            r1.sts_changed_on,
+            r1.case_condition
      FROM (SELECT a2.case_number,
                   a2.to_status,
                   a2.sts_changed_on,
@@ -531,6 +543,7 @@ FROM (SELECT r1.case_number,
                   a2.case_owner,
                   a2.case_creation_date,
                   a2.contract_start_date,
+                  a2.case_condition,
                   COALESCE((SELECT MAX(a1.sts_changed_on) FROM sc_case_state_master a1 WHERE a1.case_number = a2.case_number AND TRIM(a1.from_status) = TRIM(a2.to_status)),CURRENT_DATE) AS datemoved
            FROM sc_case_state_master a2
            where date(date_trunc('day',a2.case_creation_date))>= coalesce( $1::date, (date_trunc('month',CURRENT_DATE) - interval '25 months')) 
@@ -560,7 +573,9 @@ FROM (SELECT r1.case_number,
               r1.customer,
               r1.case_owner,
               r1.case_creation_date,
-              r1.contract_start_date) main;
+              r1.contract_start_date,
+              r1.sts_changed_on,
+              r1.case_condition) main;
 ;
 `, [req.body.from_date, req.body.to_date, req.body.territory_selected, req.body.territory_data, req.body.arrival_selected, req.body.arrival_data, req.body.workflow_selected, req.body.workflow_data], function (err, result) {
         if (err) {

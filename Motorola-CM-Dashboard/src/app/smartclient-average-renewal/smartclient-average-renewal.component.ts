@@ -118,6 +118,20 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       this._smartclientService
         .getScCycleTimesDrillDown(cycleTimeObj)
         .subscribe(res => {
+          let currentDate: any = new Date();
+          for (let i in res) {
+            let caseCreationdate = new Date(moment(res[i].case_creation_date).format('YYYY-MM-DD'));
+            let statusChangedOnDate = new Date(moment(res[i].sts_changed_on).format('YYYY-MM-DD'));
+            let timeDiff = Math.abs(currentDate.getTime() - caseCreationdate.getTime());
+          if ( res[i].case_condition=='CLOSED'){
+            timeDiff = Math.abs(statusChangedOnDate.getTime() - caseCreationdate.getTime());
+          }
+          let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+          //console.log("diff----"+diffDays)
+          res[i]['nss_aging'] = diffDays + ' days';
+         
+            res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('YYYY-MM-DD');
+          }
           //console.log("getSCCycleDrillDownData" + JSON.stringify(res));
           resolve(res);
         }, error => {
@@ -465,19 +479,6 @@ export class SmartclientAverageRenewalComponent implements OnInit {
         .then((result:any) => {
           this.newModelCounts=result.length;
           this.drillDown = result;
-          let currentDate: any = new Date();
-        console.log("the data is:"+JSON.stringify(result));
-        for (let i = 0; i < result.length; i++) {
-          console.log("the res"+JSON.stringify(result));
-          let caseCreationdate = new Date(moment(result[i].case_creation_date).format('YYYY-MM-DD'));
-          let timeDiff = Math.abs(currentDate.getTime() - caseCreationdate.getTime());
-          let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
-          //console.log("diff----"+diffDays)
-          result[i]['nss_aging'] = diffDays + ' days';
-          result[i].case_creation_date =result[i].case_creation_date==null?'-':  moment(result[i].case_creation_date).format('YYYY-MM-DD');
-          result[i].contract_start_date =result[i].contract_start_date==null?'-': moment(result[i].contract_start_date).format('YYYY-MM-DD');
-
-        }
         this.drillDownData=[];
         this.drillDownData=result;
           }).catch(error => {
@@ -511,19 +512,6 @@ export class SmartclientAverageRenewalComponent implements OnInit {
         .then((result:any) => {
           this.newModelCounts=result.length;
           this.drillDown = result;
-          let currentDate: any = new Date();
-        console.log("the data is:"+JSON.stringify(result));
-        for (let i = 0; i < result.length; i++) {
-          console.log("the res"+JSON.stringify(result));
-          let caseCreationdate = new Date(moment(result[i].case_creation_date).format('YYYY-MM-DD'));
-          let timeDiff = Math.abs(currentDate.getTime() - caseCreationdate.getTime());
-          let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
-          //console.log("diff----"+diffDays)
-          result[i]['nss_aging'] = diffDays + ' days';
-          result[i].case_creation_date =result[i].case_creation_date==null?'-':  moment(result[i].case_creation_date).format('YYYY-MM-DD');
-          result[i].contract_start_date =result[i].contract_start_date==null?'-': moment(result[i].contract_start_date).format('YYYY-MM-DD');
-
-        }
         this.drillDownData=[];
         this.drillDownData=result;
           }).catch(error => {
@@ -557,19 +545,6 @@ export class SmartclientAverageRenewalComponent implements OnInit {
         .then((result:any) => {
           this.newModelCounts=result.length;
           this.drillDown = result;
-          let currentDate: any = new Date();
-        console.log("the data is:"+JSON.stringify(result));
-        for (let i = 0; i < result.length; i++) {
-          console.log("the res"+JSON.stringify(result));
-          let caseCreationdate = new Date(moment(result[i].case_creation_date).format('YYYY-MM-DD'));
-          let timeDiff = Math.abs(currentDate.getTime() - caseCreationdate.getTime());
-          let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
-          //console.log("diff----"+diffDays)
-          result[i]['nss_aging'] = diffDays + ' days';
-          result[i].case_creation_date =result[i].case_creation_date==null?'-':  moment(result[i].case_creation_date).format('YYYY-MM-DD');
-          result[i].contract_start_date =result[i].contract_start_date==null?'-': moment(result[i].contract_start_date).format('YYYY-MM-DD');
-
-        }
         this.drillDownData=[];
         this.drillDownData=result;
           }).catch(error => {
@@ -603,19 +578,6 @@ export class SmartclientAverageRenewalComponent implements OnInit {
         .then((result:any) => {
           this.newModelCounts=result.length;
           this.drillDown = result;
-          let currentDate: any = new Date();
-        console.log("the data is:"+JSON.stringify(result));
-        for (let i = 0; i < result.length; i++) {
-          console.log("the res"+JSON.stringify(result));
-          let caseCreationdate = new Date(moment(result[i].case_creation_date).format('YYYY-MM-DD'));
-          let timeDiff = Math.abs(currentDate.getTime() - caseCreationdate.getTime());
-          let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
-          //console.log("diff----"+diffDays)
-          result[i]['nss_aging'] = diffDays + ' days';
-          result[i].case_creation_date =result[i].case_creation_date==null?'-':  moment(result[i].case_creation_date).format('YYYY-MM-DD');
-          result[i].contract_start_date =result[i].contract_start_date==null?'-': moment(result[i].contract_start_date).format('YYYY-MM-DD');
-
-        }
         this.drillDownData=[];
         this.drillDownData=result;
           }).catch(error => {
@@ -650,19 +612,6 @@ export class SmartclientAverageRenewalComponent implements OnInit {
         .then((result:any) => {
           this.newModelCounts=result.length;
           this.drillDown = result;
-          let currentDate: any = new Date();
-        console.log("the data is:"+JSON.stringify(result));
-        for (let i = 0; i < result.length; i++) {
-          console.log("the res"+JSON.stringify(result));
-          let caseCreationdate = new Date(moment(result[i].case_creation_date).format('YYYY-MM-DD'));
-          let timeDiff = Math.abs(currentDate.getTime() - caseCreationdate.getTime());
-          let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
-          //console.log("diff----"+diffDays)
-          result[i]['nss_aging'] = diffDays + ' days';
-          result[i].case_creation_date =result[i].case_creation_date==null?'-':  moment(result[i].case_creation_date).format('YYYY-MM-DD');
-          result[i].contract_start_date =result[i].contract_start_date==null?'-': moment(result[i].contract_start_date).format('YYYY-MM-DD');
-
-        }
         this.drillDownData=[];
         this.drillDownData=result;
           }).catch(error => {
@@ -696,19 +645,6 @@ export class SmartclientAverageRenewalComponent implements OnInit {
         .then((result:any) => {
           this.newModelCounts=result.length;
           this.drillDown = result;
-          let currentDate: any = new Date();
-        console.log("the data is:"+JSON.stringify(result));
-        for (let i = 0; i < result.length; i++) {
-          console.log("the res"+JSON.stringify(result));
-          let caseCreationdate = new Date(moment(result[i].case_creation_date).format('YYYY-MM-DD'));
-          let timeDiff = Math.abs(currentDate.getTime() - caseCreationdate.getTime());
-          let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
-          //console.log("diff----"+diffDays)
-          result[i]['nss_aging'] = diffDays + ' days';
-          result[i].case_creation_date =result[i].case_creation_date==null?'-':  moment(result[i].case_creation_date).format('YYYY-MM-DD');
-          result[i].contract_start_date =result[i].contract_start_date==null?'-': moment(result[i].contract_start_date).format('YYYY-MM-DD');
-
-        }
         this.drillDownData=[];
         this.drillDownData=result;
           }).catch(error => {
@@ -743,19 +679,6 @@ export class SmartclientAverageRenewalComponent implements OnInit {
          .then((result:any) => {
           this.newModelCounts=result.length;
             this.drillDown = result;
-            let currentDate: any = new Date();
-          console.log("the data is:"+JSON.stringify(result));
-          for (let i = 0; i < result.length; i++) {
-            console.log("the res"+JSON.stringify(result));
-            let caseCreationdate = new Date(moment(result[i].case_creation_date).format('YYYY-MM-DD'));
-            let timeDiff = Math.abs(currentDate.getTime() - caseCreationdate.getTime());
-            let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
-            //console.log("diff----"+diffDays)
-            result[i]['nss_aging'] = diffDays + ' days';
-            result[i].case_creation_date =result[i].case_creation_date==null?'-':  moment(result[i].case_creation_date).format('YYYY-MM-DD');
-            result[i].contract_start_date =result[i].contract_start_date==null?'-': moment(result[i].contract_start_date).format('YYYY-MM-DD');
-
-          }
           this.drillDownData=[];
           this.drillDownData=result;
           }).catch(error => {
