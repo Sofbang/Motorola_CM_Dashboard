@@ -41,13 +41,13 @@
           </thead>
           <!-- outer for each  -->
           <tbody class="SCModlTbody" style="height: auto !important;min-height:52vh;">
-            <tr *ngFor="let drilldown of this.drillDown" >
-              <td>{{drilldown.customer_name==null?'-':drilldown.customer_name}}</td>
-                <td>{{drilldown.contract_number}}</td>
-                <td>{{drilldown.contract_number_modifier}}</td>
-                <td>{{drilldown.to_status}}</td>
-                <td>{{drilldown.contract_owner==null?'-':drilldown.contract_owner}}</td>
-                <td>{{drilldown.contract_creation_date}}</td>
+            <tr *ngFor="let item of drillDownData" >
+              <td>{{item.customer_name==null?'-':item.customer_name}}</td>
+                <td>{{item.contract_number}}</td>
+                <td>{{item.contract_number_modifier}}</td>
+                <td>{{item.to_status}}</td>
+                <td>{{item.contract_owner==null?'-':item.contract_owner}}</td>
+                <td>{{item.contract_creation_date}}</td>
             </tr>
             
           </tbody>

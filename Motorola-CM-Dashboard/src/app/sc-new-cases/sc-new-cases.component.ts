@@ -15,6 +15,7 @@ import { Title } from '@angular/platform-browser';
 import { ExcelServiceService } from '../services/convert_to_excel/excel-service.service';
 import { jsonpFactory } from '@angular/http/src/http_module';
 import { JsonPipe } from '@angular/common';
+import { last } from '@angular/router/src/utils/collection';
 
 
 @Component({
@@ -101,13 +102,8 @@ export class ScNewCasesComponent implements OnInit {
   }
 
   public exportToExcel() {
-
-    // for(let i in this.drillDownData){
-    //  this.drillDownData[i].to_status.replace('_','Case Status');
-    //   //this.drillDownData.replace('_',' ');
-
     // }
-    console.log("the data is:" + JSON.stringify(this.drillDownData));
+    //console.log("the data is:" + JSON.stringify(this.drillDownData));
     this._excelService.exportAsExcelFile(this.drillDownData, 'Smart Client New Cases');
   }
 
@@ -196,21 +192,39 @@ export class ScNewCasesComponent implements OnInit {
     })
   }
 
-
+  makeInitDataLoadObj() {
+    let now = new Date();
+    let lastyear = new Date();
+    lastyear.setMonth(now.getMonth() - 1);
+    lastyear.setFullYear(now.getFullYear() - 1);
+    lastyear.setDate(1);
+    let currentYear = new Date();
+    currentYear.setMonth(now.getMonth());
+    let newCasesObj = new FilterFormat();
+    newCasesObj.from_date = this.convertDateMoment(lastyear);
+    newCasesObj.to_date = this.convertDateMoment(currentYear);
+    newCasesObj.territory_selected = false;
+    newCasesObj.territory_data = [];
+    newCasesObj.arrival_selected = false;
+    newCasesObj.arrival_data = [];
+     console.log("makeInitDataLoadObj firstDate"+this.convertDateMoment(lastyear));
+     console.log("makeInitDataLoadObj lastdate"+this.convertDateMoment(currentYear));
+    return newCasesObj;
+  }
   public scNewCaseAllData: any;
   public datesInit = [];
   public getSCNewCases() {
     return new Promise((resolve, reject) => {
-      let lastDate = this.convertDateMoment(new Date());//current date
-      let firstDate = moment(new Date()).subtract(1, 'years');//earlier date
-      let newCasesObj = new FilterFormat();
-      newCasesObj.from_date = this.convertDateMoment(firstDate);
-      newCasesObj.to_date = lastDate;
-      newCasesObj.territory_selected = false;
-      newCasesObj.territory_data = [];
-      newCasesObj.arrival_selected = false;
-      newCasesObj.arrival_data = [];
-      this._smartclientService.getScNewCases(newCasesObj)
+      // let lastDate = this.convertDateMoment(new Date());//current date
+      // let firstDate = moment(new Date()).subtract(1, 'years');//earlier date
+      // let newCasesObj = new FilterFormat();
+      // newCasesObj.from_date = this.convertDateMoment(firstDate);
+      // newCasesObj.to_date = lastDate;
+      // newCasesObj.territory_selected = false;
+      // newCasesObj.territory_data = [];
+      // newCasesObj.arrival_selected = false;
+      // newCasesObj.arrival_data = [];
+      this._smartclientService.getScNewCases(this.makeInitDataLoadObj())
         .subscribe(res => {
           this.scNewCaseAllData = res;//to use in only territoy or arival type filter
           this.datesData = [];
@@ -527,7 +541,7 @@ export class ScNewCasesComponent implements OnInit {
 
   calculateNssAging(res) {
     let currentDate: any = new Date();
-    console.log("the data is:" + JSON.stringify(res));
+    //console.log("the data is:" + JSON.stringify(res));
           for (let i in res) {
             let caseCreationdate = new Date(moment(res[i].case_creation_date).format('YYYY-MM-DD'));
             let statusChangedOnDate = new Date(moment(res[i].sts_changed_on).format('YYYY-MM-DD'));

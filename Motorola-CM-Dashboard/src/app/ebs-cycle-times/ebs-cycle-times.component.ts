@@ -35,7 +35,7 @@ export class EbsCycleTimesComponent implements OnInit {
   public drillDownData: any;
   public restUrlFilterYr: string = 'ebs_cycle_times';
 
-  public monthArr = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  public monthArr =  ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
 
   @ViewChild('openSCModal') openScModel: ElementRef;
 
@@ -89,21 +89,40 @@ export class EbsCycleTimesComponent implements OnInit {
 
 
   public fdld(data) {
-    let v = data.split(' ');
-    let arr = [];
-    let newone = '01-' + v[0];
-    let newtwo = v[1];
-    let newthree = newone + newtwo;
-    //console.log("the date is:"+JSON.stringify(newthree));
-    let newModDate = new Date(newthree.replace('undefined', ''));
-    let FirstDay = new Date(newModDate.getFullYear(), newModDate.getMonth(), 1).toLocaleDateString();
-    let LastDay = new Date(newModDate.getFullYear(), newModDate.getMonth() + 1, 0).toLocaleDateString();
-    let fd = moment(FirstDay).format('YYYY-MM-DD');
-    let ld = moment(LastDay).format('YYYY-MM-DD');
-    arr.push(fd);
-    arr.push(ld);
-    return arr;
+   // console.log("date"+data)
+    let month = data.split('-')[0];
+    let year = data.split('-')[1];
+    let date = year + '-' + (this.monthArr.indexOf(month) + 1) + '-01';
+    console.log("ddd" + this.convertDateMoment(date));
+    let newDate = this.convertDateMoment(date)
+    var dates = new Date(newDate);
+    var firstDay = new Date(dates.getFullYear(), dates.getMonth(), 1);
+    var lastDay = new Date(dates.getFullYear(), dates.getMonth() + 1, 0);
+    console.log("the firstDay is:" + firstDay);
+    console.log("the lastDay is:" + lastDay);
+    let datesArr = [];
 
+    datesArr.push(this.convertDateMoment(firstDay));
+    datesArr.push(this.convertDateMoment(lastDay));
+
+    // let v = data.split(' ');
+    // //console.log("the v is:"+moment(data).format('yyyy-MM-dd'));
+    // let arr = [];
+    // let newone = '01-' + v[0];
+    // let newtwo = v[1];
+    // let newthree = newone + newtwo;
+    // console.log("the newone is:" + newone);
+    // console.log("hhhhhhkk" + this.convertDateMoment(newtwo));
+    // console.log("the date is:" + JSON.stringify(newthree));
+    // let newModDate = new Date(newthree.replace('undefined', ''));
+    // let FirstDay = new Date(newModDate.getFullYear(), newModDate.getMonth(), 1).toLocaleDateString();
+    // let LastDay = new Date(newModDate.getFullYear(), newModDate.getMonth() + 1, 0).toLocaleDateString();
+    // let fd = moment(FirstDay).format('YYYY-MM-DD');
+    // let ld = moment(LastDay).format('YYYY-MM-DD');
+    // arr.push(fd);
+    // arr.push(ld);
+    // console.log("arr" + arr);
+    return datesArr;
   }
   public datesData = [];
   public getCycleTimes() {
@@ -240,9 +259,10 @@ export class EbsCycleTimesComponent implements OnInit {
 
   makeInitDataLoadObj() {
     let now = new Date();
-    let lastyear = new Date()
+    let lastyear = new Date();
     lastyear.setMonth(now.getMonth() - 1);
     lastyear.setFullYear(now.getFullYear() - 1);
+    lastyear.setDate(1);
     let currentYear = new Date();
     currentYear.setMonth(now.getMonth());
     let newCasesObj = new FilterFormat();
@@ -252,8 +272,8 @@ export class EbsCycleTimesComponent implements OnInit {
     newCasesObj.territory_data = [];
     newCasesObj.arrival_selected = false;
     newCasesObj.arrival_data = [];
-    // console.log("makeInitDataLoadObj firstDate"+this.convertDateMoment(lastyear));
-    // console.log("makeInitDataLoadObj lastdate"+this.convertDateMoment(currentYear));
+     console.log("makeInitDataLoadObj firstDate"+this.convertDateMoment(lastyear));
+     console.log("makeInitDataLoadObj lastdate"+this.convertDateMoment(currentYear));
     return newCasesObj;
   }
 
