@@ -1,2 +1,6 @@
 2019-03-31T00:48:15.886Z [Info] error: bind message supplies 6 parameters, but prepared statement "" requires 0
 2019-03-31T00:50:06.966Z [Info] error: bind message supplies 6 parameters, but prepared statement "" requires 0
+2019-03-31T04:50:22.710Z [Info] error: getaddrinfo ENOTFOUND devsvcaws1.cab6kaidffre.us-east-1.rds.amazonaws.com devsvcaws1.cab6kaidffre.us-east-1.rds.amazonaws.com:5432
+2019-03-31T04:53:10.760Z [Info] error: syntax error at or near "WHERE"
+2019-03-31T04:54:19.138Z [Info] error: could not determine data type of parameter $1
+2019-03-31T04:56:12.747Z [Info] error: syntax error at or near "WHERE"

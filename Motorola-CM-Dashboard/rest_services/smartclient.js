@@ -436,19 +436,22 @@ FROM (SELECT r2.to_status AS status,
               WHEN r2.to_status = 'InProg Awt Resource' THEN '9'
               ELSE 'OTHER'
             END AS status_order,
-            r2.arrival_type
+            r2.arrival_type,
+            r2.case_condition
      FROM (SELECT r1.case_number,
                   r1.to_status,
                   MIN(r1.sts_changed_on),
                   r1.datemoved,
                   TO_NUMBER(TRIM(TO_CHAR(r1.datemoved -MIN(r1.sts_changed_on),'DD')),'99G999D9S') AS daysinstatus,
                   r1.territory,
-                  r1.arrival_type
+                  r1.arrival_type,
+                  r1.case_condition
            FROM (SELECT a2.case_number,
                         a2.to_status,
                         a2.sts_changed_on,
                         a2.territory,
                         a2.arrival_type,
+                        a2.case_condition,
                         COALESCE((SELECT MAX(a1.sts_changed_on) FROM sc_case_state_master a1 WHERE a1.case_number = a2.case_number AND TRIM(a1.from_status) = TRIM(a2.to_status)),CURRENT_DATE) AS datemoved
                  FROM sc_case_state_master a2
                  where date(date_trunc('day',a2.case_creation_date))>= coalesce( $1::date, (date_trunc('month',CURRENT_DATE) - interval '25 months')) 
@@ -459,30 +462,32 @@ FROM (SELECT r2.to_status AS status,
                     r1.to_status,
                     r1.datemoved,
                     r1.territory,
-                    r1.arrival_type) r2
+                    r1.arrival_type,
+                    r1.case_condition) r2
      GROUP BY r2.to_status,
               r2.territory,
-              r2.arrival_type
+              r2.arrival_type,
+              r2.case_condition
      ORDER BY r2.to_status) r3
 WHERE r3.territory = ANY(CASE
-  WHEN $3::boolean=false 
-  THEN ARRAY[r3.territory]
-  ELSE ARRAY[$4::text[]] 
-  END) 
+ WHEN $3::boolean=false 
+ THEN ARRAY[r3.territory]
+ ELSE ARRAY[$4::text[]] 
+ END) 
 AND   r3.arrival_type = ANY(CASE
-  WHEN $5::boolean=false
-  THEN ARRAY[r3.arrival_type]
-  ELSE ARRAY[$6::text[]] 
-  END)
-  AND r3.status1=ANY(CASE
-    WHEN $7::boolean=false
-    THEN ARRAY[r3.status1]
-    ELSE ARRAY[$8::text[]] 
-    END) 
+ WHEN $5::boolean=false
+ THEN ARRAY[r3.arrival_type]
+ ELSE ARRAY[$6::text[]] 
+ END)
+ AND r3.status1=ANY(CASE
+   WHEN $7::boolean=false
+   THEN ARRAY[r3.status1]
+   ELSE ARRAY[$8::text[]] 
+   END) 
 GROUP BY r3.status1,
         r3.status_order
-ORDER BY r3.status_order;
-`, [req.body.from_date, req.body.to_date, req.body.territory_selected, req.body.territory_data, req.body.arrival_selected, req.body.arrival_data, req.body.workflow_selected, req.body.workflow_data], function (err, result) {
+ORDER BY r3.status_order;`,
+ [req.body.from_date, req.body.to_date, req.body.territory_selected, req.body.territory_data, req.body.arrival_selected, req.body.arrival_data, req.body.workflow_selected, req.body.workflow_data], function (err, result) {
         if (err) {
           conn.doRelease(dbConn);
           //call error handler
@@ -533,7 +538,6 @@ FROM (SELECT r1.case_number,
             r1.case_owner,
             r1.case_creation_date,
             r1.contract_start_date,
-            r1.sts_changed_on,
             r1.case_condition
      FROM (SELECT a2.case_number,
                   a2.to_status,
@@ -551,21 +555,21 @@ FROM (SELECT r1.case_number,
            AND date(date_trunc('day',a2.case_creation_date))<=  coalesce( $2::date,  (date_trunc('month',CURRENT_DATE) - interval '1 months'))
            ORDER BY a2.case_number,
                     a2.sts_changed_on) r1
-                    WHERE r1.territory = ANY(CASE
-                      WHEN $3::boolean=false 
-                      THEN ARRAY[r1.territory]
-                      ELSE ARRAY[$4::text[]] 
-                      END) 
-                    AND   r1.arrival_type =ANY(CASE
-                      WHEN $5::boolean=false
-                      THEN ARRAY[r1.arrival_type]
-                      ELSE ARRAY[$6::text[]] 
-                      END)
-                    AND   r1.to_status=ANY(CASE
-                      WHEN $7::boolean=false
-                      THEN ARRAY[r1.to_status]
-                      ELSE ARRAY[$8::text[]] 
-                      END) 
+       WHERE r1.territory = ANY(CASE
+                    WHEN $3::boolean=false 
+                    THEN ARRAY[r1.territory]
+                    ELSE ARRAY[$4::text[]] 
+                    END) 
+                  AND   r1.arrival_type =ANY(CASE
+                    WHEN $5::boolean=false
+                    THEN ARRAY[r1.arrival_type]
+                    ELSE ARRAY[$6::text[]] 
+                    END)
+                  AND   r1.to_status=ANY(CASE
+                    WHEN $7::boolean=false
+                    THEN ARRAY[r1.to_status]
+                    ELSE ARRAY[$8::text[]] 
+                    END) 
      GROUP BY r1.case_number,
               r1.to_status,
               r1.datemoved,
@@ -575,10 +579,7 @@ FROM (SELECT r1.case_number,
               r1.case_owner,
               r1.case_creation_date,
               r1.contract_start_date,
-              r1.sts_changed_on,
-              r1.case_condition) main;
-;
-`, [req.body.from_date, req.body.to_date, req.body.territory_selected, req.body.territory_data, req.body.arrival_selected, req.body.arrival_data, req.body.workflow_selected, req.body.workflow_data], function (err, result) {
+              r1.case_condition) main`, [req.body.from_date, req.body.to_date, req.body.territory_selected, req.body.territory_data, req.body.arrival_selected, req.body.arrival_data, req.body.workflow_selected, req.body.workflow_data], function (err, result) {
         if (err) {
           conn.doRelease(dbConn);
           //call error handler
