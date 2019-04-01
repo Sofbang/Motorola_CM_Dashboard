@@ -561,7 +561,7 @@ export class EbsCycleTimesComponent implements OnInit {
           console.log("the res recievd is:"+JSON.stringify(res));
           for (let i in res) {
             res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('MM-DD-YYYY');
-            res[i].contract_age = res[i].contract_age == null ? '-':res[i].contract_age+' Days';
+            res[i].contract_age = res[i].contract_age == null ? '-':res[i].contract_age;
             res[i].contract_number_modifier = res[i].contract_number_modifier == null ? '-':res[i].contract_number_modifier;
           }
           resolve(res);
