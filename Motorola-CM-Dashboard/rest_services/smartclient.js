@@ -114,23 +114,23 @@ router.post('/sc_new_cases', (req, res, next) => {
     if (err) { return next(err); }
     //execute body using using connection instance returned by doConnect method
     conn.doExecute(dbConn,
-      `Select count (distinct m.case_number) as Case_Count
-      ,to_char(date (date_trunc('month',m.case_creation_date)),'MON')||'-'|| extract (year from (date (date_trunc('month',m.case_creation_date)))) as byMonth
-      FROM sc_case_state_master m
-      where date(date_trunc('day',m.case_creation_date))>= coalesce( $1::date, (date_trunc('month',CURRENT_DATE) - interval '25 months')) 
-      AND date(date_trunc('day',m.case_creation_date))<=  coalesce( $2::date,  (date_trunc('month',CURRENT_DATE) - interval '1 months'))
-      and m.territory = ANY(CASE
-        WHEN $3::boolean=false 
-        THEN ARRAY[m.territory]
-        ELSE ARRAY[$4::text[]] 
-        END)
-      and m.arrival_type = ANY(CASE
-        WHEN $5::boolean=false
-        THEN ARRAY[m.arrival_type]
-        ELSE ARRAY[$6::text[]] 
-        END)
-      group by date_trunc('month',m.case_creation_date)
-      order by date_trunc('month',m.case_creation_date)`, [req.body.from_date, req.body.to_date, req.body.territory_selected, req.body.territory_data, req.body.arrival_selected, req.body.arrival_data],
+      `SELECT COUNT(DISTINCT m.case_number) AS Case_Count,
+      TO_CHAR(DATE (DATE_TRUNC('month',m.case_creation_date)),'MON') || '-' ||EXTRACT(year FROM (DATE (DATE_TRUNC('month',m.case_creation_date)))) AS byMonth
+FROM sc_case_state_master m
+WHERE DATE (DATE_TRUNC('day',m.case_creation_date)) >= COALESCE( $1::date,(DATE_TRUNC('month',CURRENT_DATE) -INTERVAL '25 months'))
+AND   DATE (DATE_TRUNC('day',m.case_creation_date)) <= COALESCE($2::date,(DATE_TRUNC('month',CURRENT_DATE) -INTERVAL '0 months'))
+    and m.territory = ANY(CASE
+       WHEN $3::boolean=false 
+       THEN ARRAY[m.territory]
+       ELSE ARRAY[$4::text[]] 
+       END)
+     and m.arrival_type = ANY(CASE
+       WHEN $5::boolean=false
+       THEN ARRAY[m.arrival_type]
+       ELSE ARRAY[$6::text[]] 
+       END)
+GROUP BY DATE_TRUNC('month',m.case_creation_date)
+ORDER BY DATE_TRUNC('month',m.case_creation_date);`, [req.body.from_date, req.body.to_date, req.body.territory_selected, req.body.territory_data, req.body.arrival_selected, req.body.arrival_data],
       function (err, result) {
         if (err) {
           conn.doRelease(dbConn);
@@ -151,40 +151,33 @@ router.post('/sc_new_cases_drilldown', (req, res, next) => {
     if (err) { return next(err); }
     //execute body using using connection instance returned by doConnect method
     conn.doExecute(dbConn,
-      `SELECT 
-      m1.customer
-      ,m1.case_number
-      ,m1.to_status
-      ,m1.case_owner
-      ,m1.case_creation_date
-      ,m1.contract_start_date 
-      ,m1.sts_changed_on
-      ,m1.case_condition
-      ,TO_CHAR(DATE (DATE_TRUNC('month',m1.case_creation_date)),'MON') || '-' ||EXTRACT(year FROM (DATE (DATE_TRUNC('month',m1.case_creation_date)))) AS byMonth
-      FROM sc_case_state_master m1
-      WHERE DATE (DATE_TRUNC('day',m1.case_creation_date)) >= coalesce($1::date,DATE (DATE_TRUNC('month',CURRENT_DATE) -INTERVAL '25 months'))
-      AND   DATE (DATE_TRUNC('day',m1.case_creation_date)) <=coalesce($2::date, DATE (DATE_TRUNC('month',CURRENT_DATE) -INTERVAL '1 months'))
-      and m1.sts_changed_on = ( select max(m2.sts_changed_on) from sc_case_state_master m2 where m1.case_number = m2.case_number)
-      and m1.territory = ANY(CASE
-        WHEN $3::boolean=false 
-        THEN ARRAY[m1.territory]
-        ELSE ARRAY[$4::text[]] 
-        END) 
-      AND   m1.arrival_type =ANY(CASE
-        WHEN $5::boolean=false
-        THEN ARRAY[m1.arrival_type]
-        ELSE ARRAY[$6::text[]] 
-        END)
-        
-      GROUP BY DATE_TRUNC('month',m1.case_creation_date),m1.customer
-      ,m1.case_number
-      ,m1.to_status
-      ,m1.case_owner
-      ,m1.case_creation_date
-      ,m1.contract_start_date
-      ,m1.sts_changed_on
-      ,m1.case_condition
-      ORDER BY DATE_TRUNC('month',m1.case_creation_date)`
+      `SELECT m1.customer,
+      m1.case_number,
+      m1.to_status,
+      m1.case_owner,
+      m1.case_creation_date,
+      m1.contract_start_date,
+      m1.sts_changed_on,
+      m1.case_condition,
+      TO_CHAR(DATE (DATE_TRUNC('month',m1.case_creation_date)),'MON') || '-' ||EXTRACT(year FROM (DATE (DATE_TRUNC('month',m1.case_creation_date)))) AS byMonth
+FROM sc_case_state_master m1
+WHERE DATE (DATE_TRUNC('day',m1.case_creation_date)) >= COALESCE($1::DATE,DATE (DATE_TRUNC('month',CURRENT_DATE) -INTERVAL '25 months'))
+AND   DATE (DATE_TRUNC('day',m1.case_creation_date)) <= COALESCE($2::DATE,DATE (DATE_TRUNC('month',CURRENT_DATE) -INTERVAL '1 months'))
+AND   m1.sts_changed_on = (SELECT MAX(m2.sts_changed_on)
+                          FROM sc_case_state_master m2
+                          WHERE m1.case_number = m2.case_number)
+AND   m1.territory = ANY (CASE WHEN $3::BOOLEAN = FALSE THEN ARRAY[m1.territory] ELSE ARRAY[$4::TEXT[]] END)
+AND   m1.arrival_type = ANY (CASE WHEN $5::BOOLEAN = FALSE THEN ARRAY[m1.arrival_type] ELSE ARRAY[$6::TEXT[]] END)
+GROUP BY DATE_TRUNC('month',m1.case_creation_date),
+        m1.customer,
+        m1.case_number,
+        m1.to_status,
+        m1.case_owner,
+        m1.case_creation_date,
+        m1.contract_start_date,
+        m1.sts_changed_on,
+        m1.case_condition
+ORDER BY DATE_TRUNC('month',m1.case_creation_date);`
       , [req.body.from_date, req.body.to_date, req.body.territory_selected, req.body.territory_data, req.body.arrival_selected, req.body.arrival_data],
       function (err, result) {
         if (err) {
@@ -206,91 +199,70 @@ router.post('/sc_case_by_status', (req, res, next) => {
     if (err) { return next(err); }
     //execute query using using connection instance returned by doConnect method
     conn.doExecute(dbConn,
-      `SELECT r3.status1,
-      r3.status_order,
-      SUM(r3.mediandays::INTEGER) AS mediandays,
-      AVG(r3.AverageDays) AverageDays,
-      SUM(r3.caseperstatus) AS casecount
-FROM (SELECT r2.to_status AS status,
-            MEDIAN(r2.daysinstatus) AS mediandays,
-            AVG(daysinstatus) AS AverageDays,
-            COUNT(r2.case_number) AS caseperstatus,
-            r2.territory,
+      `SELECT m.status AS status1,
+      m.status_order AS status_order,
+      COUNT(DISTINCT m.case_number) AS casecount,
+      median(m.numofdays::INTEGER) AS mediandays,
+      AVG(m.numofdays::INTEGER) AS AverageDays
+FROM (SELECT DISTINCT a2.case_number AS case_number,
+            a2.territory AS territory,
+            a2.arrival_type AS arrival_type,
+            a2.customer AS customer,
+            a2.case_owner AS case_owner,
+            a2.case_creation_date AS case_creation_date,
+            a2.contract_start_date AS contract_start_date,
+            a2.case_condition AS case_condition,
             CASE
-              WHEN r2.to_status = 'Open' THEN 'Open'
-              WHEN r2.to_status = 'Insufficient Data' THEN 'Insufficient Data'
-              WHEN r2.to_status = 'InProg' THEN 'InProg'
-              WHEN r2.to_status = 'InProg Acknowledged' THEN 'InProg Acknowledged'
-              WHEN r2.to_status = 'InProg Awt 3PS' THEN 'InProg Awt 3PS'
-              WHEN r2.to_status = 'InProg Awt Bus Unit' THEN 'InProg Awt Bus Unit'
-              WHEN r2.to_status = 'InProg Awt SSC' THEN 'InProg Awt SSC'
-              WHEN r2.to_status = 'InProg Awt Credit' THEN 'InProg Awt Credit'
-              WHEN r2.to_status = 'InProg Awt Resource' THEN 'InProg Awt Resource'
-              ELSE 'OTHER'
-            END AS status1,
+              WHEN TRIM(a2.to_status) = 'Open' THEN 'Open'
+              WHEN TRIM(a2.to_status) = 'Insufficient Data' THEN 'Insufficient Data'
+              WHEN TRIM(a2.to_status) = 'InProg' THEN 'InProg'
+              WHEN TRIM(a2.to_status) = 'InProg Acknowledged' THEN 'InProg Acknowledged'
+              WHEN TRIM(a2.to_status) = 'InProg Awt 3PS' THEN 'InProg Awt 3PS'
+              WHEN TRIM(a2.to_status) = 'InProg Awt Bus Unit' THEN 'InProg Awt Bus Unit'
+              WHEN TRIM(a2.to_status) = 'InProg Awt SSC' THEN 'InProg Awt SSC'
+              WHEN TRIM(a2.to_status) = 'InProg Awt Credit' THEN 'InProg Awt Credit'
+              WHEN TRIM(a2.to_status) = 'InProg Awt Resource' THEN 'InProg Awt Resource'
+              ELSE 'Other'
+            END AS status,
             CASE
-              WHEN r2.to_status = 'Open' THEN '1'
-              WHEN r2.to_status = 'Insufficient Data' THEN '2'
-              WHEN r2.to_status = 'InProg' THEN '3'
-              WHEN r2.to_status = 'InProg Acknowledged' THEN '4'
-              WHEN r2.to_status = 'InProg Awt 3PS' THEN '5'
-              WHEN r2.to_status = 'InProg Awt Bus Unit' THEN '6'
-              WHEN r2.to_status = 'InProg Awt SSC' THEN '7'
-              WHEN r2.to_status = 'InProg Awt Credit' THEN '8'
-              WHEN r2.to_status = 'InProg Awt Resource' THEN '9'
-              ELSE 'OTHER'
+              WHEN TRIM(a2.to_status) = 'Open' THEN '1'
+              WHEN TRIM(a2.to_status) = 'Insufficient Data' THEN '2'
+              WHEN TRIM(a2.to_status) = 'InProg' THEN '3'
+              WHEN TRIM(a2.to_status) = 'InProg Acknowledged' THEN '4'
+              WHEN TRIM(a2.to_status) = 'InProg Awt 3PS' THEN '5'
+              WHEN TRIM(a2.to_status) = 'InProg Awt Bus Unit' THEN '6'
+              WHEN TRIM(a2.to_status) = 'InProg Awt SSC' THEN '7'
+              WHEN TRIM(a2.to_status) = 'InProg Awt Credit' THEN '8'
+              WHEN TRIM(a2.to_status) = 'InProg Awt Resource' THEN '9'
+              ELSE 'Other'
             END AS status_order,
-            r2.arrival_type,
-            r2.case_condition
-     FROM (SELECT r1.case_number,
-                  r1.to_status,
-                  MIN(r1.sts_changed_on),
-                  r1.datemoved,
-                  TO_NUMBER(TRIM(TO_CHAR(r1.datemoved -MIN(r1.sts_changed_on),'DD')),'99G999D9S') AS daysinstatus,
-                  r1.territory,
-                  r1.arrival_type,
-                  r1.case_condition
-           FROM (SELECT a2.case_number,
-                        a2.to_status,
-                        a2.sts_changed_on,
-                        a2.territory,
-                        a2.arrival_type,
-                        a2.case_condition,
-                        COALESCE((SELECT MAX(a1.sts_changed_on) FROM sc_case_state_master a1 WHERE a1.case_number = a2.case_number AND TRIM(a1.from_status) = TRIM(a2.to_status)),CURRENT_DATE) AS datemoved
-                 FROM sc_case_state_master a2
-                 where date(date_trunc('day',a2.case_creation_date))>= coalesce( null, (date_trunc('month',CURRENT_DATE) - interval '25 months')) 
-                 AND date(date_trunc('day',a2.case_creation_date))<=  coalesce( null,  (date_trunc('month',CURRENT_DATE) - interval '1 months'))
-                 ORDER BY a2.case_number,
-                          a2.sts_changed_on) r1
-           GROUP BY r1.case_number,
-                    r1.to_status,
-                    r1.datemoved,
-                    r1.territory,
-                    r1.arrival_type,
-                    r1.case_condition) r2
-     GROUP BY r2.to_status,
-              r2.territory,
-              r2.arrival_type,
-              r2.case_condition
-     ORDER BY r2.to_status) r3
-WHERE r3.territory = ANY(CASE
- WHEN $1::boolean=false 
- THEN ARRAY[r3.territory]
- ELSE ARRAY[$2::text[]] 
- END) 
-AND   r3.arrival_type =ANY(CASE
- WHEN $3::boolean=false
- THEN ARRAY[r3.arrival_type]
- ELSE ARRAY[$4::text[]] 
- END)
-AND   r3.status1=ANY(CASE
- WHEN $5::boolean=false
- THEN ARRAY[r3.status1]
- ELSE ARRAY[$6::text[]] 
- END) 
-GROUP BY r3.status1,
-        r3.status_order
-ORDER BY r3.status_order;`,
+            a2.sts_changed_on AS sts_changed_on,
+            EXTRACT(DAY FROM (CURRENT_DATE- DATE_TRUNC('day',a2.sts_changed_on))) NumofDays
+     FROM sc_case_state_master a2
+     WHERE a2.case_condition <> 'CLOSED'
+     --AND   DATE (DATE_TRUNC('day',a2.case_creation_date)) >= COALESCE(NULL,(DATE_TRUNC('month',CURRENT_DATE) -INTERVAL '25 months'))
+    --AND   DATE (DATE_TRUNC('day',a2.case_creation_date)) <= COALESCE(NULL,(DATE_TRUNC('month',CURRENT_DATE) -INTERVAL '0 months'))
+     AND   a2.sts_changed_on = (SELECT MAX(a1.sts_changed_on)
+                                FROM sc_case_state_master a1
+                                WHERE a1.case_number = a2.case_number)) m
+WHERE m.territory = ANY(CASE
+WHEN $1::boolean=false 
+THEN ARRAY[m.territory]
+ELSE ARRAY[$2::text[]] 
+END) 
+AND   m.arrival_type =ANY(CASE
+WHEN $3::boolean=false
+THEN ARRAY[m.arrival_type]
+ELSE ARRAY[$4::text[]] 
+END)
+AND   m.status=ANY(CASE
+WHEN $5::boolean=false
+THEN ARRAY[m.status]
+ELSE ARRAY[$6::text[]] 
+END) 
+GROUP BY m.status,
+        m.status_order
+ORDER BY m.status_order;`,
       [req.body.territory_selected, req.body.territory_data, req.body.arrival_selected, req.body.arrival_data, req.body.workflow_selected, req.body.workflow_data],
       function (err, result) {
         if (err) {
@@ -314,79 +286,63 @@ router.post('/sc_case_by_status_drilldown', (req, res, next) => {
     if (err) { return next(err); }
     //execute query using using connection instance returned by doConnect method
     conn.doExecute(dbConn,
-      `SELECT main.case_number,
-      main.territory,
-      main.arrival_type,
-      main.customer,
-      main.case_owner,
-      main.case_creation_date,
-      main.contract_start_date,
-      main.case_condition,
+      `SELECT DISTINCT a2.case_number AS case_number,
+      a2.territory AS territory,
+      a2.arrival_type AS arrival_type,
+      a2.customer AS customer,
+      a2.case_owner AS case_owner,
+      a2.case_creation_date AS case_creation_date,
+      a2.contract_start_date AS contract_start_date,
+      a2.case_condition AS case_condition,
       CASE
-        WHEN main.to_status = 'Open' THEN 'Open'
-        WHEN main.to_status = 'Insufficient Data' THEN 'Insufficient Data'
-        WHEN main.to_status = 'InProg' THEN 'InProg'
-        WHEN main.to_status = 'InProg Acknowledged' THEN 'InProg Acknowledged'
-        WHEN main.to_status = 'InProg Awt 3PS' THEN 'InProg Awt 3PS'
-        WHEN main.to_status = 'InProg Awt Bus Unit' THEN 'InProg Awt Bus Unit'
-        WHEN main.to_status = 'InProg Awt SSC' THEN 'InProg Awt SSC'
-        WHEN main.to_status = 'InProg Awt Credit' THEN 'InProg Awt Credit'
-        WHEN main.to_status = 'InProg Awt Resource' THEN 'InProg Awt Resource'
-        ELSE 'OTHER'
-      END AS status
-FROM (SELECT r1.case_number,
-            r1.to_status,
-            MIN(r1.sts_changed_on),
-            r1.datemoved,
-            TO_NUMBER(TRIM(TO_CHAR(r1.datemoved -MIN(r1.sts_changed_on),'DD')),'99G999D9S') AS daysinstatus,
-            r1.territory,
-            r1.arrival_type,
-            r1.customer,
-            r1.case_owner,
-            r1.case_creation_date,
-            r1.contract_start_date,
-            r1.case_condition
-     FROM (SELECT a2.case_number,
-                  a2.to_status,
-                  a2.sts_changed_on,
-                  a2.territory,
-                  a2.arrival_type,
-                  a2.customer,
-                  a2.case_owner,
-                  a2.case_creation_date,
-                  a2.contract_start_date,
-                  a2.case_condition,
-                  COALESCE((SELECT MAX(a1.sts_changed_on) FROM sc_case_state_master a1 WHERE a1.case_number = a2.case_number AND TRIM(a1.from_status) = TRIM(a2.to_status)),CURRENT_DATE) AS datemoved
-           FROM sc_case_state_master a2
-           where date(date_trunc('day',a2.case_creation_date))>= coalesce( null, (date_trunc('month',CURRENT_DATE) - interval '25 months')) 
-           AND date(date_trunc('day',a2.case_creation_date))<=  coalesce( null,  (date_trunc('month',CURRENT_DATE) - interval '1 months'))
-           ORDER BY a2.case_number,
-                    a2.sts_changed_on) r1
-      WHERE r1.territory = ANY(CASE
-                     WHEN $1::boolean=false 
-                     THEN ARRAY[r1.territory]
-                     ELSE ARRAY[$2::text[]] 
-                     END) 
-                   AND   r1.arrival_type =ANY(CASE
-                     WHEN $3::boolean=false
-                     THEN ARRAY[r1.arrival_type]
-                     ELSE ARRAY[$4::text[]] 
-                     END)
-                   AND   r1.to_status=ANY(CASE
-                     WHEN $5::boolean=false
-                     THEN ARRAY[r1.to_status]
-                     ELSE ARRAY[$6::text[]] 
-                     END)
-     GROUP BY r1.case_number,
-              r1.to_status,
-              r1.datemoved,
-              r1.territory,
-              r1.arrival_type,
-              r1.customer,
-              r1.case_owner,
-              r1.case_creation_date,
-              r1.contract_start_date,
-              r1.case_condition) main`,
+        WHEN TRIM(a2.to_status) = 'Open' THEN 'Open'
+        WHEN TRIM(a2.to_status) = 'Insufficient Data' THEN 'Insufficient Data'
+        WHEN TRIM(a2.to_status) = 'InProg' THEN 'InProg'
+        WHEN TRIM(a2.to_status) = 'InProg Acknowledged' THEN 'InProg Acknowledged'
+        WHEN TRIM(a2.to_status) = 'InProg Awt 3PS' THEN 'InProg Awt 3PS'
+        WHEN TRIM(a2.to_status) = 'InProg Awt Bus Unit' THEN 'InProg Awt Bus Unit'
+        WHEN TRIM(a2.to_status) = 'InProg Awt SSC' THEN 'InProg Awt SSC'
+        WHEN TRIM(a2.to_status) = 'InProg Awt Credit' THEN 'InProg Awt Credit'
+        WHEN TRIM(a2.to_status) = 'InProg Awt Resource' THEN 'InProg Awt Resource'
+        ELSE 'Other'
+      END AS status,
+      CASE
+        WHEN TRIM(a2.to_status) = 'Open' THEN '1'
+        WHEN TRIM(a2.to_status) = 'Insufficient Data' THEN '2'
+        WHEN TRIM(a2.to_status) = 'InProg' THEN '3'
+        WHEN TRIM(a2.to_status) = 'InProg Acknowledged' THEN '4'
+        WHEN TRIM(a2.to_status) = 'InProg Awt 3PS' THEN '5'
+        WHEN TRIM(a2.to_status) = 'InProg Awt Bus Unit' THEN '6'
+        WHEN TRIM(a2.to_status) = 'InProg Awt SSC' THEN '7'
+        WHEN TRIM(a2.to_status) = 'InProg Awt Credit' THEN '8'
+        WHEN TRIM(a2.to_status) = 'InProg Awt Resource' THEN '9'
+        ELSE 'Other'
+      END AS status_order,
+      a2.sts_changed_on AS sts_changed_on,
+      EXTRACT(DAY FROM (CURRENT_DATE- DATE_TRUNC('day',a2.sts_changed_on))) NumofDays
+FROM sc_case_state_master a2
+WHERE a2.case_condition <> 'CLOSED'
+--AND   DATE (DATE_TRUNC('day',a2.case_creation_date)) >= COALESCE(NULL,(DATE_TRUNC('month',CURRENT_DATE) -INTERVAL '25 months'))
+--AND   DATE (DATE_TRUNC('day',a2.case_creation_date)) <= COALESCE(NULL,(DATE_TRUNC('month',CURRENT_DATE) -INTERVAL '0 months'))
+--and trim(a2.to_status) not in ('Open','Insufficient Data','InProg', 'InProg Acknowledged','InProg Awt 3PS','InProg Awt Bus Unit','InProg Awt SSC','InProg Awt Credit', 'InProg Awt Resource')
+AND   a2.sts_changed_on = (SELECT MAX(a1.sts_changed_on)
+                          FROM sc_case_state_master a1
+                          WHERE a1.case_number = a2.case_number)
+AND   a2.territory = ANY(CASE
+                    WHEN $1::boolean=false 
+                    THEN ARRAY[a2.territory]
+                    ELSE ARRAY[$2::text[]] 
+                    END) 
+                  AND   a2.arrival_type =ANY(CASE
+                    WHEN $3::boolean=false
+                    THEN ARRAY[a2.arrival_type]
+                    ELSE ARRAY[$4::text[]] 
+                    END)
+                  AND   a2.to_status=ANY(CASE
+                    WHEN $5::boolean=false
+                    THEN ARRAY[a2.to_status]
+                    ELSE ARRAY[$6::text[]] 
+                    END)`,
       [req.body.territory_selected, req.body.territory_data, req.body.arrival_selected, req.body.arrival_data, req.body.workflow_selected, req.body.workflow_data],
       function (err, result) {
         if (err) {
@@ -408,91 +364,70 @@ router.post('/sc_cycle_times', (req, res, next) => {
     if (err) { return next(err); }
     //execute body using using connection instance returned by doConnect method
     conn.doExecute(dbConn,
-      `SELECT r3.status1,
-      r3.status_order,
-      SUM(r3.mediandays::INTEGER) AS mediandays,
-      AVG(r3.AverageDays) AverageDays,
-      SUM(r3.caseperstatus) AS casecount
-FROM (SELECT r2.to_status AS status,
-            MEDIAN(r2.daysinstatus) AS mediandays,
-            AVG(daysinstatus) AS AverageDays,
-            COUNT(r2.case_number) AS caseperstatus,
-            r2.territory,
+      `SELECT m.status AS status1,
+      m.status_order AS status_order,
+      COUNT(DISTINCT m.case_number) AS casecount,
+      median(m.numofdays::INTEGER) AS mediandays,
+      AVG(m.numofdays::INTEGER) AS AverageDays
+FROM (SELECT DISTINCT a2.case_number AS case_number,
+            a2.territory AS territory,
+            a2.arrival_type AS arrival_type,
+            a2.customer AS customer,
+            a2.case_owner AS case_owner,
+            a2.case_creation_date AS case_creation_date,
+            a2.contract_start_date AS contract_start_date,
+            a2.case_condition AS case_condition,
             CASE
-              WHEN r2.to_status = 'Open' THEN 'Open'
-              WHEN r2.to_status = 'Insufficient Data' THEN 'Insufficient Data'
-              WHEN r2.to_status = 'InProg' THEN 'InProg'
-              WHEN r2.to_status = 'InProg Acknowledged' THEN 'InProg Acknowledged'
-              WHEN r2.to_status = 'InProg Awt 3PS' THEN 'InProg Awt 3PS'
-              WHEN r2.to_status = 'InProg Awt Bus Unit' THEN 'InProg Awt Bus Unit'
-              WHEN r2.to_status = 'InProg Awt SSC' THEN 'InProg Awt SSC'
-              WHEN r2.to_status = 'InProg Awt Credit' THEN 'InProg Awt Credit'
-              WHEN r2.to_status = 'InProg Awt Resource' THEN 'InProg Awt Resource'
-              ELSE 'OTHER'
-            END AS status1,
+              WHEN TRIM(a2.to_status) = 'Open' THEN 'Open'
+              WHEN TRIM(a2.to_status) = 'Insufficient Data' THEN 'Insufficient Data'
+              WHEN TRIM(a2.to_status) = 'InProg' THEN 'InProg'
+              WHEN TRIM(a2.to_status) = 'InProg Acknowledged' THEN 'InProg Acknowledged'
+              WHEN TRIM(a2.to_status) = 'InProg Awt 3PS' THEN 'InProg Awt 3PS'
+              WHEN TRIM(a2.to_status) = 'InProg Awt Bus Unit' THEN 'InProg Awt Bus Unit'
+              WHEN TRIM(a2.to_status) = 'InProg Awt SSC' THEN 'InProg Awt SSC'
+              WHEN TRIM(a2.to_status) = 'InProg Awt Credit' THEN 'InProg Awt Credit'
+              WHEN TRIM(a2.to_status) = 'InProg Awt Resource' THEN 'InProg Awt Resource'
+              ELSE 'Other'
+            END AS status,
             CASE
-              WHEN r2.to_status = 'Open' THEN '1'
-              WHEN r2.to_status = 'Insufficient Data' THEN '2'
-              WHEN r2.to_status = 'InProg' THEN '3'
-              WHEN r2.to_status = 'InProg Acknowledged' THEN '4'
-              WHEN r2.to_status = 'InProg Awt 3PS' THEN '5'
-              WHEN r2.to_status = 'InProg Awt Bus Unit' THEN '6'
-              WHEN r2.to_status = 'InProg Awt SSC' THEN '7'
-              WHEN r2.to_status = 'InProg Awt Credit' THEN '8'
-              WHEN r2.to_status = 'InProg Awt Resource' THEN '9'
-              ELSE 'OTHER'
+              WHEN TRIM(a2.to_status) = 'Open' THEN '1'
+              WHEN TRIM(a2.to_status) = 'Insufficient Data' THEN '2'
+              WHEN TRIM(a2.to_status) = 'InProg' THEN '3'
+              WHEN TRIM(a2.to_status) = 'InProg Acknowledged' THEN '4'
+              WHEN TRIM(a2.to_status) = 'InProg Awt 3PS' THEN '5'
+              WHEN TRIM(a2.to_status) = 'InProg Awt Bus Unit' THEN '6'
+              WHEN TRIM(a2.to_status) = 'InProg Awt SSC' THEN '7'
+              WHEN TRIM(a2.to_status) = 'InProg Awt Credit' THEN '8'
+              WHEN TRIM(a2.to_status) = 'InProg Awt Resource' THEN '9'
+              ELSE 'Other'
             END AS status_order,
-            r2.arrival_type,
-            r2.case_condition
-     FROM (SELECT r1.case_number,
-                  r1.to_status,
-                  MIN(r1.sts_changed_on),
-                  r1.datemoved,
-                  TO_NUMBER(TRIM(TO_CHAR(r1.datemoved -MIN(r1.sts_changed_on),'DD')),'99G999D9S') AS daysinstatus,
-                  r1.territory,
-                  r1.arrival_type,
-                  r1.case_condition
-           FROM (SELECT a2.case_number,
-                        a2.to_status,
-                        a2.sts_changed_on,
-                        a2.territory,
-                        a2.arrival_type,
-                        a2.case_condition,
-                        COALESCE((SELECT MAX(a1.sts_changed_on) FROM sc_case_state_master a1 WHERE a1.case_number = a2.case_number AND TRIM(a1.from_status) = TRIM(a2.to_status)),CURRENT_DATE) AS datemoved
-                 FROM sc_case_state_master a2
-                 where date(date_trunc('day',a2.case_creation_date))>= coalesce( $1::date, (date_trunc('month',CURRENT_DATE) - interval '25 months')) 
-                 AND date(date_trunc('day',a2.case_creation_date))<=  coalesce( $2::date,  (date_trunc('month',CURRENT_DATE) - interval '1 months'))
-                 ORDER BY a2.case_number,
-                          a2.sts_changed_on) r1
-           GROUP BY r1.case_number,
-                    r1.to_status,
-                    r1.datemoved,
-                    r1.territory,
-                    r1.arrival_type,
-                    r1.case_condition) r2
-     GROUP BY r2.to_status,
-              r2.territory,
-              r2.arrival_type,
-              r2.case_condition
-     ORDER BY r2.to_status) r3
-WHERE r3.territory = ANY(CASE
- WHEN $3::boolean=false 
- THEN ARRAY[r3.territory]
- ELSE ARRAY[$4::text[]] 
- END) 
-AND   r3.arrival_type = ANY(CASE
- WHEN $5::boolean=false
- THEN ARRAY[r3.arrival_type]
- ELSE ARRAY[$6::text[]] 
- END)
- AND r3.status1=ANY(CASE
-   WHEN $7::boolean=false
-   THEN ARRAY[r3.status1]
-   ELSE ARRAY[$8::text[]] 
-   END) 
-GROUP BY r3.status1,
-        r3.status_order
-ORDER BY r3.status_order;`,
+            a2.sts_changed_on AS sts_changed_on,
+            EXTRACT(DAY FROM (CURRENT_DATE- DATE_TRUNC('day',a2.sts_changed_on))) NumofDays
+     FROM sc_case_state_master a2
+     WHERE a2.case_condition <> 'CLOSED'
+     AND   DATE (DATE_TRUNC('day',a2.case_creation_date)) >= COALESCE($1::date,(DATE_TRUNC('month',CURRENT_DATE) -INTERVAL '25 months'))
+     AND   DATE (DATE_TRUNC('day',a2.case_creation_date)) <= COALESCE($2::date,(DATE_TRUNC('month',CURRENT_DATE) -INTERVAL '0 months'))
+     AND   a2.sts_changed_on = (SELECT MAX(a1.sts_changed_on)
+                                FROM sc_case_state_master a1
+                                WHERE a1.case_number = a2.case_number)) m
+WHERE m.territory = ANY(CASE
+WHEN $3::boolean=false 
+THEN ARRAY[m.territory]
+ELSE ARRAY[$4::text[]] 
+END) 
+AND   m.arrival_type = ANY(CASE
+WHEN $5::boolean=false
+THEN ARRAY[m.arrival_type]
+ELSE ARRAY[$6::text[]] 
+END)
+AND m.status=ANY(CASE
+  WHEN $7::boolean=false
+  THEN ARRAY[m.status]
+  ELSE ARRAY[$8::text[]] 
+  END) 
+GROUP BY m.status,
+        m.status_order
+ORDER BY m.status_order;`,
  [req.body.from_date, req.body.to_date, req.body.territory_selected, req.body.territory_data, req.body.arrival_selected, req.body.arrival_data, req.body.workflow_selected, req.body.workflow_data], function (err, result) {
         if (err) {
           conn.doRelease(dbConn);
@@ -513,79 +448,64 @@ router.post('/sc_cycle_times_drilldown', (req, res, next) => {
     if (err) { return next(err); }
     //execute body using using connection instance returned by doConnect method
     conn.doExecute(dbConn,
-      `SELECT main.case_number,
-      main.territory,
-      main.arrival_type,
-      main.customer,
-      main.case_owner,
-      main.case_creation_date,
-      main.contract_start_date,
-      main.case_condition,
+      `SELECT DISTINCT a2.case_number AS case_number,
+      a2.territory AS territory,
+      a2.arrival_type AS arrival_type,
+      a2.customer AS customer,
+      a2.case_owner AS case_owner,
+      a2.case_creation_date AS case_creation_date,
+      a2.contract_start_date AS contract_start_date,
+      a2.case_condition AS case_condition,
       CASE
-        WHEN main.to_status = 'Open' THEN 'Open'
-        WHEN main.to_status = 'Insufficient Data' THEN 'Insufficient Data'
-        WHEN main.to_status = 'InProg' THEN 'InProg'
-        WHEN main.to_status = 'InProg Acknowledged' THEN 'InProg Acknowledged'
-        WHEN main.to_status = 'InProg Awt 3PS' THEN 'InProg Awt 3PS'
-        WHEN main.to_status = 'InProg Awt Bus Unit' THEN 'InProg Awt Bus Unit'
-        WHEN main.to_status = 'InProg Awt SSC' THEN 'InProg Awt SSC'
-        WHEN main.to_status = 'InProg Awt Credit' THEN 'InProg Awt Credit'
-        WHEN main.to_status = 'InProg Awt Resource' THEN 'InProg Awt Resource'
-        ELSE 'OTHER'
-      END AS status
-FROM (SELECT r1.case_number,
-            r1.to_status,
-            MIN(r1.sts_changed_on),
-            r1.datemoved,
-            TO_NUMBER(TRIM(TO_CHAR(r1.datemoved -MIN(r1.sts_changed_on),'DD')),'99G999D9S') AS daysinstatus,
-            r1.territory,
-            r1.arrival_type,
-            r1.customer,
-            r1.case_owner,
-            r1.case_creation_date,
-            r1.contract_start_date,
-            r1.case_condition
-     FROM (SELECT a2.case_number,
-                  a2.to_status,
-                  a2.sts_changed_on,
-                  a2.territory,
-                  a2.arrival_type,
-                  a2.customer,
-                  a2.case_owner,
-                  a2.case_creation_date,
-                  a2.contract_start_date,
-                  a2.case_condition,
-                  COALESCE((SELECT MAX(a1.sts_changed_on) FROM sc_case_state_master a1 WHERE a1.case_number = a2.case_number AND TRIM(a1.from_status) = TRIM(a2.to_status)),CURRENT_DATE) AS datemoved
-           FROM sc_case_state_master a2
-           where date(date_trunc('day',a2.case_creation_date))>= coalesce( $1::date, (date_trunc('month',CURRENT_DATE) - interval '25 months')) 
-           AND date(date_trunc('day',a2.case_creation_date))<=  coalesce( $2::date,  (date_trunc('month',CURRENT_DATE) - interval '1 months'))
-           ORDER BY a2.case_number,
-                    a2.sts_changed_on) r1
-       WHERE r1.territory = ANY(CASE
-                    WHEN $3::boolean=false 
-                    THEN ARRAY[r1.territory]
-                    ELSE ARRAY[$4::text[]] 
-                    END) 
-                  AND   r1.arrival_type =ANY(CASE
-                    WHEN $5::boolean=false
-                    THEN ARRAY[r1.arrival_type]
-                    ELSE ARRAY[$6::text[]] 
-                    END)
-                  AND   r1.to_status=ANY(CASE
-                    WHEN $7::boolean=false
-                    THEN ARRAY[r1.to_status]
-                    ELSE ARRAY[$8::text[]] 
-                    END) 
-     GROUP BY r1.case_number,
-              r1.to_status,
-              r1.datemoved,
-              r1.territory,
-              r1.arrival_type,
-              r1.customer,
-              r1.case_owner,
-              r1.case_creation_date,
-              r1.contract_start_date,
-              r1.case_condition) main`, [req.body.from_date, req.body.to_date, req.body.territory_selected, req.body.territory_data, req.body.arrival_selected, req.body.arrival_data, req.body.workflow_selected, req.body.workflow_data], function (err, result) {
+        WHEN TRIM(a2.to_status) = 'Open' THEN 'Open'
+        WHEN TRIM(a2.to_status) = 'Insufficient Data' THEN 'Insufficient Data'
+        WHEN TRIM(a2.to_status) = 'InProg' THEN 'InProg'
+        WHEN TRIM(a2.to_status) = 'InProg Acknowledged' THEN 'InProg Acknowledged'
+        WHEN TRIM(a2.to_status) = 'InProg Awt 3PS' THEN 'InProg Awt 3PS'
+        WHEN TRIM(a2.to_status) = 'InProg Awt Bus Unit' THEN 'InProg Awt Bus Unit'
+        WHEN TRIM(a2.to_status) = 'InProg Awt SSC' THEN 'InProg Awt SSC'
+        WHEN TRIM(a2.to_status) = 'InProg Awt Credit' THEN 'InProg Awt Credit'
+        WHEN TRIM(a2.to_status) = 'InProg Awt Resource' THEN 'InProg Awt Resource'
+        ELSE 'Other'
+      END AS status,
+      CASE
+        WHEN TRIM(a2.to_status) = 'Open' THEN '1'
+        WHEN TRIM(a2.to_status) = 'Insufficient Data' THEN '2'
+        WHEN TRIM(a2.to_status) = 'InProg' THEN '3'
+        WHEN TRIM(a2.to_status) = 'InProg Acknowledged' THEN '4'
+        WHEN TRIM(a2.to_status) = 'InProg Awt 3PS' THEN '5'
+        WHEN TRIM(a2.to_status) = 'InProg Awt Bus Unit' THEN '6'
+        WHEN TRIM(a2.to_status) = 'InProg Awt SSC' THEN '7'
+        WHEN TRIM(a2.to_status) = 'InProg Awt Credit' THEN '8'
+        WHEN TRIM(a2.to_status) = 'InProg Awt Resource' THEN '9'
+        ELSE 'Other'
+      END AS status_order,
+      a2.sts_changed_on AS sts_changed_on,
+      EXTRACT(DAY FROM (CURRENT_DATE- DATE_TRUNC('day',a2.sts_changed_on))) NumofDays
+FROM sc_case_state_master a2
+WHERE a2.case_condition <> 'CLOSED'
+AND   DATE (DATE_TRUNC('day',a2.case_creation_date)) >= COALESCE($1::date,(DATE_TRUNC('month',CURRENT_DATE) -INTERVAL '25 months'))
+AND   DATE (DATE_TRUNC('day',a2.case_creation_date)) <= COALESCE($2::date,(DATE_TRUNC('month',CURRENT_DATE) -INTERVAL '0 months'))
+--and trim(a2.to_status) not in ('Open','Insufficient Data','InProg', 'InProg Acknowledged','InProg Awt 3PS','InProg Awt Bus Unit','InProg Awt SSC','InProg Awt Credit', 'InProg Awt Resource')
+AND   a2.sts_changed_on = (SELECT MAX(a1.sts_changed_on)
+                          FROM sc_case_state_master a1
+                          WHERE a1.case_number = a2.case_number)
+AND  a2.territory = ANY(CASE
+                   WHEN $3::boolean=false 
+                   THEN ARRAY[a2.territory]
+                   ELSE ARRAY[$4::text[]] 
+                   END) 
+                 AND   a2.arrival_type =ANY(CASE
+                   WHEN $5::boolean=false
+                   THEN ARRAY[a2.arrival_type]
+                   ELSE ARRAY[$6::text[]] 
+                   END)
+                 AND   a2.to_status=ANY(CASE
+                   WHEN $7::boolean=false
+                   THEN ARRAY[a2.to_status]
+                   ELSE ARRAY[$8::text[]] 
+                   END)
+`, [req.body.from_date, req.body.to_date, req.body.territory_selected, req.body.territory_data, req.body.arrival_selected, req.body.arrival_data, req.body.workflow_selected, req.body.workflow_data], function (err, result) {
         if (err) {
           conn.doRelease(dbConn);
           //call error handler
