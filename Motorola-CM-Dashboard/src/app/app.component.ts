@@ -26,7 +26,7 @@ import { LoginComponent } from './login/login.component';
 export class AppComponent {
     title = 'Motorola-CM-Dashboard';
     verifyauthentication: boolean;
-    public count = 0;
+    public count = localStorage.getItem('countValues');
     oktaAuth = new OktaAuth({
         url: 'https://motorolasolutions.okta.com/oauth2/default',
         clientId: '0oaa7ok51xruc9PBy1t7',
