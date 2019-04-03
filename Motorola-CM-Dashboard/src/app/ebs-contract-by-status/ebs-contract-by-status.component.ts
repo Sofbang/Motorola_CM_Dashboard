@@ -80,7 +80,7 @@ export class EbsContractByStatusComponent implements OnInit {
       //console.log("the data is:", JSON.stringify(this.data));
       $('.modal .modal-dialog').css('width', $(window).width() * 0.95);//fixed
       $('.modal .modal-body').css('height', $(window).height() * 0.77);//fixed
-      $('tbody.SCModlTbody').css('max-height', $(window).height() * 0.69);
+      $('tbody.SCModlTbody').css('max-height', $(window).height() * 0.67);
       $('tbody.SCModlTbody').css('overflow-y', 'scroll');
       $('tbody.SCModlTbody').css('overflow-x', 'hidden');
       // $('tbody.SCModlTbody').css('display', 'block');
@@ -357,13 +357,19 @@ export class EbsContractByStatusComponent implements OnInit {
         arr.push(this.status);
         //console.log("the data is:"+JSON.stringify(ebsObj));
         ebsObj.workflow_data = arr;
+        console.log("the data is:"+JSON.stringify(ebsObj));
+
         this.getEBSDrillDownData(ebsObj)
           .then((res: any) => {
+            this.newModelCounts=[];
             this.newModelCounts = res.length;
-            // console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(res));
+            console.log("the res recievd is:"+JSON.stringify(res));
             for (let i in res) {
               //res[i].
               res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('MM-DD-YYYY');
+              res[i].contract_age = res[i].contract_age == null ? '-' : res[i].contract_age+' Days';
+              res[i].contract_number_modifier = res[i].contract_number_modifier == null ? '-':res[i].contract_number_modifier;
+
             }
             this.drillDownData=[];
             this.drillDownData = res;
@@ -399,13 +405,20 @@ export class EbsContractByStatusComponent implements OnInit {
         arr.push(this.status);
         //console.log("the data is:"+JSON.stringify(ebsObj));
         ebsObj.workflow_data = arr;
+        console.log("the data is:"+JSON.stringify(ebsObj));
+
         this.getEBSDrillDownData(ebsObj)
           .then((res: any) => {
+            this.newModelCounts=[];
+
             this.newModelCounts = res.length;
             //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(res));
             for (let i in res) {
               //res[i].
               res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('MM-DD-YYYY');
+              res[i].contract_age = res[i].contract_age == null ? '-':res[i].contract_age+' Days';
+              res[i].contract_number_modifier = res[i].contract_number_modifier == null ? '-':res[i].contract_number_modifier;
+
             }
           }, error => {
             //console.log("error getTerritories " + error);
@@ -437,13 +450,20 @@ export class EbsContractByStatusComponent implements OnInit {
         arr.push(this.status);
         //console.log("the data is:"+JSON.stringify(ebsObj));
         ebsObj.workflow_data = arr;
+        console.log("the data is:"+JSON.stringify(ebsObj));
+
         this.getEBSDrillDownData(ebsObj)
           .then((res: any) => {
+            this.newModelCounts=[];
+
             this.newModelCounts = res.length;
             //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(res));
             for (let i in res) {
               //res[i].
               res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('MM-DD-YYYY');
+              res[i].contract_age = res[i].contract_age == null ? '-':res[i].contract_age+' Days';
+              res[i].contract_number_modifier = res[i].contract_number_modifier == null ? '-':res[i].contract_number_modifier;
+
             }
             this.drillDownData=[];
             this.drillDownData = res;
@@ -481,13 +501,20 @@ export class EbsContractByStatusComponent implements OnInit {
         arr.push(this.status);
         //console.log("the data is:"+JSON.stringify(ebsObj));
         ebsObj.workflow_data = arr;
+        console.log("the data is:"+JSON.stringify(ebsObj));
+
         this.getEBSDrillDownData(ebsObj)
           .then((res: any) => {
+            this.newModelCounts=[];
+
             this.newModelCounts = res.length;
             //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(res));
             for (let i in res) {
               //res[i].
               res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('MM-DD-YYYY');
+              res[i].contract_age = res[i].contract_age == null ? '-':res[i].contract_age+' Days';
+              res[i].contract_number_modifier = res[i].contract_number_modifier == null ? '-':res[i].contract_number_modifier;
+
             }
             this.drillDownData=[];
             this.drillDownData = res;
@@ -525,13 +552,20 @@ export class EbsContractByStatusComponent implements OnInit {
         arr.push(this.status);
         //console.log("the data is:"+JSON.stringify(ebsObj));
         ebsObj.workflow_data = arr;
+        console.log("the data is:"+JSON.stringify(ebsObj));
+
         this.getEBSDrillDownData(ebsObj)
           .then((res: any) => {
+            this.newModelCounts=[];
+
             this.newModelCounts = res.length;
             //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(res));
             for (let i in res) {
               //res[i].
               res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('MM-DD-YYYY');
+              res[i].contract_age = res[i].contract_age == null ? '-':res[i].contract_age+' Days';
+              res[i].contract_number_modifier = res[i].contract_number_modifier == null ? '-':res[i].contract_number_modifier;
+
             }
             this.drillDownData=[];
             this.drillDownData = res;
@@ -569,13 +603,20 @@ export class EbsContractByStatusComponent implements OnInit {
         arr.push(this.status);
         //console.log("the data is:"+JSON.stringify(ebsObj));
         ebsObj.workflow_data = arr;
+        console.log("the data is:"+JSON.stringify(ebsObj));
+
         this.getEBSDrillDownData(ebsObj)
           .then((res: any) => {
+            this.newModelCounts=[];
+
             this.newModelCounts = res.length;
             //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(res));
             for (let i in res) {
               //res[i].
               res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('MM-DD-YYYY');
+              res[i].contract_age = res[i].contract_age == null ? '-':res[i].contract_age+' Days';
+              res[i].contract_number_modifier = res[i].contract_number_modifier == null ? '-':res[i].contract_number_modifier;
+
             }
             this.drillDownData=[];
             this.drillDownData = res;
@@ -611,13 +652,20 @@ export class EbsContractByStatusComponent implements OnInit {
         arr.push(this.status);
         //console.log("the data is:"+JSON.stringify(ebsObj));
         ebsObj.workflow_data = arr;
+        console.log("the data is:"+JSON.stringify(ebsObj));
+
         this.getEBSDrillDownData(ebsObj)
           .then((res: any) => {
+            this.newModelCounts=[];
+
             this.newModelCounts = res.length;
             //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(res));
             for (let i in res) {
               //res[i].
               res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('MM-DD-YYYY');
+              res[i].contract_age = res[i].contract_age == null ? '-':res[i].contract_age+' Days';
+              res[i].contract_number_modifier = res[i].contract_number_modifier == null ? '-':res[i].contract_number_modifier;
+
             }
             this.drillDownData=[];
             this.drillDownData = res;
@@ -651,15 +699,21 @@ export class EbsContractByStatusComponent implements OnInit {
         ebsObj.workflow_selected = true;
         let arr = [];
         arr.push(this.status);
-        //console.log("the data is:"+JSON.stringify(ebsObj));
         ebsObj.workflow_data = arr;
+        console.log("the data is:"+JSON.stringify(ebsObj));
         this.getEBSDrillDownData(ebsObj)
           .then((res: any) => {
+            this.newModelCounts=[];
+
             this.newModelCounts = res.length;
             //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(res));
             for (let i in res) {
               //res[i].
               res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('MM-DD-YYYY');
+              res[i].contract_age = res[i].contract_age == null ? '-':res[i].contract_age+' Days';
+              res[i].contract_number_modifier = res[i].contract_number_modifier == null ? '-':res[i].contract_number_modifier;
+
+
             }
             this.drillDownData=[];
             this.drillDownData = res;

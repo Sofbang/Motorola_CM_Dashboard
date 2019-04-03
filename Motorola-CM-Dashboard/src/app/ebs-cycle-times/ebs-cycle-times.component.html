@@ -35,8 +35,8 @@
               <th>Contract Number Modifier</th>
               <th>Contract Status</th>
               <th>Contract Owner</th>
-              
               <th>Contract Start Date</th>
+              <th>Contract Age</th>
             </tr>
           </thead>
           <!-- outer for each  -->
@@ -48,6 +48,7 @@
                 <td>{{item.to_status}}</td>
                 <td>{{item.contract_owner==null?'-':item.contract_owner}}</td>
                 <td>{{item.contract_creation_date}}</td>
+                <td>{{item.contract_age}}</td>
             </tr>
             
           </tbody>

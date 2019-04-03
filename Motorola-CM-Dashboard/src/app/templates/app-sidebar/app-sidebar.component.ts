@@ -39,9 +39,9 @@ export class AppSidebarComponent implements OnInit {
           $('.sidebar-elm-parent3').find('a.nav-link.nav-toggle ').find('span.arrow').addClass('open');
           $('.sidebar-elm-parent3').find('a.nav-link.nav-toggle').find('span.title-black').addClass('title-blue').removeClass('title-black');
         } else if (linkStr == 'ebs-contractByStatus') {
-          $('.sidebar-elm-parent3').find("ul").css("display", "block");
-          $('.sidebar-elm-parent3').find('a.nav-link.nav-toggle ').find('span.arrow').addClass('open');
-          $('.sidebar-elm-parent3').find('a.nav-link.nav-toggle').find('span.title-black').addClass('title-blue').removeClass('title-black');
+          $('.sidebar-elm-parent2').find("ul").css("display", "block");
+          $('.sidebar-elm-parent2').find('a.nav-link.nav-toggle ').find('span.arrow').addClass('open');
+          $('.sidebar-elm-parent2').find('a.nav-link.nav-toggle').find('span.title-black').addClass('title-blue').removeClass('title-black');
         }
 
       });

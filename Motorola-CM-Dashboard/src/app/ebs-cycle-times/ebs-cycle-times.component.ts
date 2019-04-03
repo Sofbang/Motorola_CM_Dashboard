@@ -72,9 +72,9 @@ export class EbsCycleTimesComponent implements OnInit {
       this.status = this.fdld(drillDownStatusnew);
       console.log("fd ld is:" + JSON.stringify(this.status));
       // console.log("the data is:",this.data);
-      $('.modal .modal-dialog').css('width', $(window).width() * 0.95);//fixed
+      $('.modal .modal-dialog').css('width', $(window).width() * 0.93);//fixed
       $('.modal .modal-body').css('height', $(window).height() * 0.77);//fixed
-      $('tbody.SCModlTbody').css('max-height', $(window).height() * 0.69);
+      $('tbody.SCModlTbody').css('max-height', $(window).height() * 0.67);
       $('tbody.SCModlTbody').css('overflow-y', 'scroll');
       $('tbody.SCModlTbody').css('overflow-x', 'hidden');
       // $('tbody.SCModlTbody').css('display', 'block');
@@ -84,27 +84,40 @@ export class EbsCycleTimesComponent implements OnInit {
     }
   }
   public exportToExcel() {
+    // for(let i in this.drillDownData){
+    //   this.drillDownData[i].Customer_Name=this.drillDownData[i].customer_name;
+    //   delete[this.drillDownData[i].customer_name];
+    //   this.drillDownData[i].Contract_Number=this.drillDownData[i].contract_number;
+    //   this.drillDownData[i].Contract_Number_Modifier=this.drillDownData[i].contract_number_modifier;
+    //   this.drillDownData[i].Case_Status=this.drillDownData[i].to_status;
+    //   this.drillDownData[i].Contract_Owner=this.drillDownData[i].contract_owner;
+    //   this.drillDownData[i].Contract_Creation_Date=this.drillDownData[i].contract_creation_date;
+    //   this.drillDownData[i].Contract_Age=this.drillDownData[i].contract_age;
+
+    // }
+    // console.log("the modified json is:"+JSON.stringify(this.drillDownData));
     this._excelService.exportAsExcelFile(this.drillDownData, 'EBS Cycle Times');
   }
 
 
   public fdld(data) {
-   // console.log("date"+data)
-    let month = data.split('-')[0];
-    let year = data.split('-')[1];
-    let date = year + '-' + (this.monthArr.indexOf(month)+1) + '-01';
-  //  console.log("ddd" + this.convertDateMoment(date));
-    var dates = new Date(date);
-   // console.log("dates - "+dates);
-    var firstDay = new Date(dates.getFullYear(), dates.getMonth(), 1);
-    var lastDay = new Date(dates.getFullYear(), dates.getMonth() + 1, 0);
-    console.log("the firstDay is:" + firstDay);
-    console.log("the lastDay is:" + lastDay);
-    let datesArr = [];
+   console.log("date"+data)
+  //   let month = data.split('-')[0];
+  //   let year = data.split('-')[1];
+  //   let date = year + '-' + (this.monthArr.indexOf(month)+1) + '-01';
+  // //  console.log("ddd" + this.convertDateMoment(date));
+  //   var dates = new Date(date);
+  //  // console.log("dates - "+dates);
+  //   var firstDay = new Date(dates.getFullYear(), dates.getMonth(), 1);
+  //   var lastDay = new Date(dates.getFullYear(), dates.getMonth() + 1, 0);
+  //   console.log("the firstDay is:" + firstDay);
+  //   console.log("the lastDay is:" + lastDay);
+     let datesArr = [];
 
-    datesArr.push(this.convertDateMoment(firstDay));
-    datesArr.push(this.convertDateMoment(lastDay));
-
+  //   datesArr.push(this.convertDateMoment(firstDay));
+  //   datesArr.push(this.convertDateMoment(lastDay));
+    let firstDay = moment(data).startOf('month').format('YYYY-MM-DD');
+    let lastDay = moment(data).endOf('month').format('YYYY-MM-DD');
     // let v = data.split(' ');
     // //console.log("the v is:"+moment(data).format('yyyy-MM-dd'));
     // let arr = [];
@@ -122,6 +135,11 @@ export class EbsCycleTimesComponent implements OnInit {
     // arr.push(fd);
     // arr.push(ld);
     // console.log("arr" + arr);
+    console.log("the first is :"+JSON.stringify(firstDay));
+    console.log("th last is:"+JSON.stringify(lastDay));
+    datesArr.push(firstDay);
+    datesArr.push(lastDay);
+
     return datesArr;
   }
   public datesData = [];
@@ -540,10 +558,11 @@ export class EbsCycleTimesComponent implements OnInit {
       //let jsonObj = { 'first': this.status[0], 'last': this.status[1] };
       this._ebsService.getEBCCycleTimesDrillDown(jsonobj)
         .subscribe(res => {
+          console.log("the res recievd is:"+JSON.stringify(res));
           for (let i in res) {
             res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('MM-DD-YYYY');
-            //res[i].sts_changed_on = moment(res[i].sts_changed_on).format('YYYY-MM-DD');
-            //this.drillDown(moment(res[i].contract_creation_date).format('YYY-MM-DD'));
+            res[i].contract_age = res[i].contract_age == null ? '-':res[i].contract_age+' Days';
+            res[i].contract_number_modifier = res[i].contract_number_modifier == null ? '-':res[i].contract_number_modifier;
           }
           resolve(res);
         }, error => {

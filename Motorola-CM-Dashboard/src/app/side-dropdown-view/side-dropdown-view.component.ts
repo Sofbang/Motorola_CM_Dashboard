@@ -28,6 +28,7 @@ export class SideDropdownViewComponent implements OnInit {
   public n: number;
   public dropdownSettingsCaseTime = {};
   workflowModel: any;
+  public finalarr=[];
   caseTypeModel: any;
   contractTypeModel: any;
   territoryModel: any;
@@ -55,7 +56,7 @@ export class SideDropdownViewComponent implements OnInit {
     //calls from component getting min max limit of dates
     this._dataHandlerService.SCMinMaxDates
       .subscribe(res => {
-        this.makeDate(res);
+        this.makeDates(res[0].min_date_cases,res[0].max_date_cases);
       });
 
   }
@@ -122,35 +123,31 @@ export class SideDropdownViewComponent implements OnInit {
     this.contractTimeModel = 'Median';
   }
 
-  /**
-   * Make dates data for from and to dropdowns
-   * @param data-min max dates 
-   */
-  public makeDate(data) {
-    let startDate = data[0].min_date_cases;
-    let endDate = data[0].max_date_cases;
-    let starting = new Date(startDate);
-    let ending = new Date(endDate);
+ 
+  public makeDates(startDate, endDate) {
+    console.log("in satart dates is:"+JSON.stringify(startDate));
+    let start = startDate.split('-');
+    let end = endDate.split('-');
+    let startYear = parseInt(start[0]);
+    let endYear = parseInt(end[0]);
     let dates = [];
-    for (let i = starting.getFullYear(); i < ending.getFullYear() + 1; i++) {
-      for (let j = 1; j <= 12; j++) {
-        if (i === ending.getFullYear() && j === ending.getMonth() + 3) {
-          break;
-        }
-        else if (i === 2012 && j < 4) {
-          continue;
-        }
-        else if (j < 10) {
-          let dateString = [i, '-', '0' + j, '-', '01'].join('');
-          dates.push(dateString)
-        }
-        else {
-          let dateString = [i, '-', j, '-', '01'].join('');
-          dates.push(dateString);
-        }
+    
+    for (let i = startYear; i <= endYear; i++) {
+      let endMonth = i != endYear ? 11 : parseInt(end[1]) - 1;
+      let startMon = i === startYear ? parseInt(start[1]) - 1 : 0;
+      for (let j = startMon; j <= endMonth; j = j > 12 ? j % 12 || 11 : j + 1) {
+        let month = j + 1;
+        let displayMonth = month < 10 ? '0' + month : month;
+        dates.push([i, displayMonth, '01'].join('-'));
       }
     }
-    this.makeDateFormat(dates);
+    console.log("in satart dates is:"+JSON.stringify(startDate));
+    console.log("in satart dates is:"+JSON.stringify(endDate));
+    console.log("the array of dates are :"+JSON.stringify(dates.length));
+    this.finalarr = this.makeDateFormat(dates);
+    console.log("the dates are:"+JSON.stringify(this.finalarr));
+    console.log("the dates are:"+JSON.stringify(this.finalarr.length));
+    return  this.finalarr;
   }
 
   /**
@@ -158,20 +155,14 @@ export class SideDropdownViewComponent implements OnInit {
    * @param arr-array of dates  YYYY-mm-dd
    */
   public makeDateFormat(arr) {
-    let dateArr = this.sortDate(arr)
-    // for (let i = dateArr.length - 1; i > 0; i--) {
-    //   // console.log("in the for loop", +i)
-    //   let event = new Date(dateArr[i]);
-    //   let options = { year: 'numeric', month: 'short' };
-    //   this.fromDates.push(event.toLocaleString('en', options));
-    // }
-    this.fromDates = [];
-    for (let i = 0; i < dateArr.length; i++) {
-      // console.log("in the for loop", +i)
-      let event = new Date(dateArr[i]);
-      let options = { year: 'numeric', month: 'short' };
-      this.fromDates.push(event.toLocaleString('en', options));
+    let r=[];
+    //let dateArr = this.sortDate(arr);
+    
+    for(let i in arr){
+      r.push(moment(arr[i]).format('MMM YYYY'));
+      
     }
+    return r;
   }
 
   /**
@@ -189,26 +180,40 @@ export class SideDropdownViewComponent implements OnInit {
    * @param filterVal-date value selected 
    */
   public onChangeFrom(filterVal: any) {
+    console.log("the data "+JSON.stringify(filterVal));
+    let current = moment();
+    let check = moment(current, 'YYYY/MM/DD');
+    let monthval = check.format('MMM YYYY');
+    //alert("the current is:"+monthval);
     this.toModel = null;
     let options = { year: 'numeric', month: 'short' };
     let date = new Date();;
     let dt = date.toLocaleString('en', options);
-    console.log("dt"+dt);
+    //console.log("dt"+dt);
     this.selectedYear = moment(filterVal).format('YY');
     this.toYear = [];
     this.selectedFrom = filterVal;
-    this.n = this.fromDates.indexOf(this.selectedFrom);
-    // console.log("the index is :" + this.n);
-    for (let i = this.n; i <= this.n + 23; i++) {
-      //if(this.fromDates[i]==dt)break;
-      //console.log("jjj"+this.fromDates[i]);
-      //console.log("loop"+this.fromDates[i]);
-      if (this.fromDates[i] != undefined) {
-        //if (this.fromDates[i] == dt) break;
-        this.toYear.push(this.fromDates[i]);
-      }
+    this.n = this.finalarr.indexOf(this.selectedFrom);
+    //console.log("the index is :" + this.n);
+    //this.finalarr.push("Apr 2019");
+    //this.finalarr.push("May 2019");
+    //console.log("the pushed array is:"+JSON.stringify(this.finalarr));
+    for (let i = this.n; i <= this.n+23; i++) {
+      if (this.finalarr[i] != null) {
+        // console.log(monthval)
+        // console.log(i)
+        // console.log("inside the if")
+        this.toYear.push(this.finalarr[i]);
 
+        //break;
+      }else{
+      }
+      
+      
+   
     }
+    
+    //console.log("the to array is:"+JSON.stringify(this.toYear));
   }
 
   /**

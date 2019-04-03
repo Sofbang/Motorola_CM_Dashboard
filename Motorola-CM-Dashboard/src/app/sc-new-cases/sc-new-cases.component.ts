@@ -110,38 +110,41 @@ export class ScNewCasesComponent implements OnInit {
 
 
   public fdld(data) {
-    let month = data.split('-')[0];
-    let year = data.split('-')[1];
-    let date = year + '-' + (this.monthArr.indexOf(month) + 1) + '-01';
-    console.log("ddd" + this.convertDateMoment(date));
+    // let month = data.split('-')[0];
+    // let year = data.split('-')[1];
+    // let date = year + '-' + (this.monthArr.indexOf(month) + 1) + '-01';
+    // console.log("ddd" + this.convertDateMoment(date));
  //   let newDate = this.convertDateMoment(date)
-    var dates = new Date(date);
-    var firstDay = new Date(dates.getFullYear(), dates.getMonth(), 1);
-    var lastDay = new Date(dates.getFullYear(), dates.getMonth() + 1, 0);
-    console.log("the firstDay is:" + firstDay);
-    console.log("the lastDay is:" + lastDay);
+    //var dates = new Date(date);
+    //var firstDay = new Date(dates.getFullYear(), dates.getMonth(), 1);
+    //var lastDay = new Date(dates.getFullYear(), dates.getMonth() + 1, 0);
+    //console.log("the firstDay is:" + firstDay);
+    //console.log("the lastDay is:" + lastDay);
     let datesArr = [];
 
-    datesArr.push(this.convertDateMoment(firstDay));
-    datesArr.push(this.convertDateMoment(lastDay));
+    let firstDay = moment(data).startOf('month').format('YYYY-MM-DD');
+    let lastDay = moment(data).endOf('month').format('YYYY-MM-DD');
 
-    let v = data.split(' ');
+    datesArr.push(firstDay);
+    datesArr.push(lastDay);
+
+   // let v = data.split(' ');
     //console.log("the v is:"+moment(data).format('yyyy-MM-dd'));
-    let arr = [];
-    let newone = '01-' + v[0];
-    let newtwo = v[1];
-    let newthree = newone + newtwo;
-    console.log("the newone is:" + newone);
-    console.log("hhhhhhkk" + this.convertDateMoment(newtwo));
-    console.log("the date is:" + JSON.stringify(newthree));
-    let newModDate = new Date(newthree.replace('undefined', ''));
-    let FirstDay = new Date(newModDate.getFullYear(), newModDate.getMonth(), 1).toLocaleDateString();
-    let LastDay = new Date(newModDate.getFullYear(), newModDate.getMonth() + 1, 0).toLocaleDateString();
-    let fd = moment(FirstDay).format('YYYY-MM-DD');
-    let ld = moment(LastDay).format('YYYY-MM-DD');
-    arr.push(fd);
-    arr.push(ld);
-    console.log("arr" + arr);
+    // let arr = [];
+    // let newone = '01-' + v[0];
+    // let newtwo = v[1];
+    // let newthree = newone + newtwo;
+    // console.log("the newone is:" + newone);
+    // console.log("hhhhhhkk" + this.convertDateMoment(newtwo));
+    // console.log("the date is:" + JSON.stringify(newthree));
+    // let newModDate = new Date(newthree.replace('undefined', ''));
+    // let FirstDay = new Date(newModDate.getFullYear(), newModDate.getMonth(), 1).toLocaleDateString();
+    // let LastDay = new Date(newModDate.getFullYear(), newModDate.getMonth() + 1, 0).toLocaleDateString();
+    // let fd = moment(FirstDay).format('YYYY-MM-DD');
+    // let ld = moment(LastDay).format('YYYY-MM-DD');
+    // arr.push(fd);
+    // arr.push(ld);
+    // console.log("arr" + arr);
     return datesArr;
 
   }
@@ -425,7 +428,7 @@ export class ScNewCasesComponent implements OnInit {
       else {
         newCasesObj.from_date = this.status[0];
         newCasesObj.to_date = this.status[1];
-        //this.drillDownData=[];
+        console.log("the data send is:"+JSON.stringify(newCasesObj));
         this.getSCDrillDownData(newCasesObj)
           .then((res: any) => {
             this.newModelCounts = res.length;
@@ -460,6 +463,8 @@ export class ScNewCasesComponent implements OnInit {
         newCasesObj.from_date = this.status[0];
         newCasesObj.to_date = this.status[1];
         //this.drillDownData=[];
+        console.log("the data send is:"+JSON.stringify(newCasesObj));
+
         this.getSCDrillDownData(newCasesObj)
           .then((res: any) => {
             this.newModelCounts = res.length;
@@ -493,6 +498,8 @@ export class ScNewCasesComponent implements OnInit {
         newCasesObj.from_date = this.status[0];
         newCasesObj.to_date = this.status[1];
         //this.drillDownData=[];
+        console.log("the data send is:"+JSON.stringify(newCasesObj));
+
         this.getSCDrillDownData(newCasesObj)
           .then((res: any) => {
             this.newModelCounts = res.length;
@@ -526,6 +533,8 @@ export class ScNewCasesComponent implements OnInit {
         newCasesObj.from_date = this.status[0];
         newCasesObj.to_date = this.status[1];
         //this.drillDownData=[];
+        console.log("the data send is:"+JSON.stringify(newCasesObj));
+
         this.getSCDrillDownData(newCasesObj)
           .then((res: any) => {
             this.newModelCounts = res.length;
