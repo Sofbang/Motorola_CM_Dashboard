@@ -587,7 +587,7 @@ export class ScNewCasesComponent implements OnInit {
           }
           let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
           //console.log("diff----"+diffDays)
-          res[i]['nss_aging'] = diffDays + ' days';
+          res[i]['nss_aging'] = diffDays ;
           res[i].case_creation_date = res[i].case_creation_date == null ? '-' : moment(res[i].case_creation_date).format('MM-DD-YYYY');         
           res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('MM-DD-YYYY');
           }
