@@ -369,6 +369,7 @@ export class EbsContractByStatusComponent implements OnInit {
               res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('MM-DD-YYYY');
               res[i].contract_age = res[i].contract_age == null ? '-' : res[i].contract_age;
               res[i].contract_number_modifier = res[i].contract_number_modifier == null ? '-':res[i].contract_number_modifier;
+              res[i].contract_start_date = res[i].contract_start_date == null ? '-' : moment(res[i].contract_start_date).format('MM-DD-YYYY');
 
             }
             this.drillDownData=[];
@@ -418,6 +419,7 @@ export class EbsContractByStatusComponent implements OnInit {
               res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('MM-DD-YYYY');
               res[i].contract_age = res[i].contract_age == null ? '-':res[i].contract_age;
               res[i].contract_number_modifier = res[i].contract_number_modifier == null ? '-':res[i].contract_number_modifier;
+              res[i].contract_start_date = res[i].contract_start_date == null ? '-' : moment(res[i].contract_start_date).format('MM-DD-YYYY');
 
             }
           }, error => {
@@ -463,6 +465,7 @@ export class EbsContractByStatusComponent implements OnInit {
               res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('MM-DD-YYYY');
               res[i].contract_age = res[i].contract_age == null ? '-':res[i].contract_age;
               res[i].contract_number_modifier = res[i].contract_number_modifier == null ? '-':res[i].contract_number_modifier;
+              res[i].contract_start_date = res[i].contract_start_date == null ? '-' : moment(res[i].contract_start_date).format('MM-DD-YYYY');
 
             }
             this.drillDownData=[];
@@ -514,6 +517,7 @@ export class EbsContractByStatusComponent implements OnInit {
               res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('MM-DD-YYYY');
               res[i].contract_age = res[i].contract_age == null ? '-':res[i].contract_age;
               res[i].contract_number_modifier = res[i].contract_number_modifier == null ? '-':res[i].contract_number_modifier;
+              res[i].contract_start_date = res[i].contract_start_date == null ? '-' : moment(res[i].contract_start_date).format('MM-DD-YYYY');
 
             }
             this.drillDownData=[];
@@ -567,6 +571,8 @@ export class EbsContractByStatusComponent implements OnInit {
               res[i].contract_number_modifier = res[i].contract_number_modifier == null ? '-':res[i].contract_number_modifier;              
               res[i].contract_start_date = res[i].contract_start_date == null ? '-' : moment(res[i].contract_start_date).format('MM-DD-YYYY');
 
+              
+
             }
             this.drillDownData=[];
             this.drillDownData = res;
@@ -617,6 +623,7 @@ export class EbsContractByStatusComponent implements OnInit {
               res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('MM-DD-YYYY');
               res[i].contract_age = res[i].contract_age == null ? '-':res[i].contract_age;
               res[i].contract_number_modifier = res[i].contract_number_modifier == null ? '-':res[i].contract_number_modifier;
+              res[i].contract_start_date = res[i].contract_start_date == null ? '-' : moment(res[i].contract_start_date).format('MM-DD-YYYY');
 
             }
             this.drillDownData=[];
@@ -666,6 +673,7 @@ export class EbsContractByStatusComponent implements OnInit {
               res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('MM-DD-YYYY');
               res[i].contract_age = res[i].contract_age == null ? '-':res[i].contract_age;
               res[i].contract_number_modifier = res[i].contract_number_modifier == null ? '-':res[i].contract_number_modifier;
+              res[i].contract_start_date = res[i].contract_start_date == null ? '-' : moment(res[i].contract_start_date).format('MM-DD-YYYY');
 
             }
             this.drillDownData=[];
@@ -713,6 +721,7 @@ export class EbsContractByStatusComponent implements OnInit {
               res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('MM-DD-YYYY');
               res[i].contract_age = res[i].contract_age == null ? '-':res[i].contract_age;
               res[i].contract_number_modifier = res[i].contract_number_modifier == null ? '-':res[i].contract_number_modifier;
+              res[i].contract_start_date = res[i].contract_start_date == null ? '-' : moment(res[i].contract_start_date).format('MM-DD-YYYY');
 
 
             }
