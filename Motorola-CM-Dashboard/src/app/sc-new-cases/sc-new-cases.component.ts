@@ -195,23 +195,37 @@ export class ScNewCasesComponent implements OnInit {
     })
   }
 
+  /* calculating current month last day and less last years first day   */
+
   makeInitDataLoadObj() {
-    let now = new Date();
-    let lastyear = new Date();
-    lastyear.setMonth(now.getMonth() - 1);
-    lastyear.setFullYear(now.getFullYear() - 1);
-    lastyear.setDate(1);
-    let currentYear = new Date();
-    currentYear.setMonth(now.getMonth());
+    // let now = new Date();
+    // let lastyear = new Date();
+    // lastyear.setMonth(now.getMonth() - 1);
+    // lastyear.setFullYear(now.getFullYear() - 1);
+    // lastyear.setDate(1);
+    // let currentYear = new Date();
+    // currentYear.setMonth(now.getMonth());
     let newCasesObj = new FilterFormat();
-    newCasesObj.from_date = this.convertDateMoment(lastyear);
-    newCasesObj.to_date = this.convertDateMoment(currentYear);
+    let fd = new Date();
+    let firstDay = moment(fd).startOf('month').format('YYYY-MM-DD');
+    let last = moment(firstDay).endOf('month').format('YYYY-MM-DD');
+    let result = moment(firstDay).subtract(1, 'years').format('YYYY-MM-DD');
+    //console.log("ld is:"+result);
+    //console.log("fd is:"+firstDay);
+    //console.log("fd this year last day  is:"+last);
+    newCasesObj.from_date =result ;
+    newCasesObj.to_date = last;
+    // uncomment to pass first day of current years month
+    //newCasesObj.to_date = firstDay; 
     newCasesObj.territory_selected = false;
     newCasesObj.territory_data = [];
     newCasesObj.arrival_selected = false;
     newCasesObj.arrival_data = [];
-     console.log("makeInitDataLoadObj firstDate"+this.convertDateMoment(lastyear));
-     console.log("makeInitDataLoadObj lastdate"+this.convertDateMoment(currentYear));
+     console.log("makeInitDataLoadObj firstDate"+this.convertDateMoment(result));
+     console.log("makeInitDataLoadObj lastdate"+this.convertDateMoment(last));
+      // uncomment to pass first day of current years month
+     //console.log("makeInitDataLoadObj lastdate"+this.convertDateMoment(firstDay));
+
     return newCasesObj;
   }
   public scNewCaseAllData: any;
@@ -244,10 +258,13 @@ export class ScNewCasesComponent implements OnInit {
   */
   combiningDataForChart(scDataByMonthYr) {
     let filterSCByDate = [], arr;
+    console.log("the data is:"+JSON.stringify(scDataByMonthYr));
     for (let i in scDataByMonthYr) {
       arr = []
       arr.push(scDataByMonthYr[i].bymonth);
       arr.push(parseInt(scDataByMonthYr[i].case_count));
+      arr.push(parseInt(scDataByMonthYr[i].case_count));
+      
       filterSCByDate.push(arr);
     }
     console.log("filterSCByDate" + JSON.stringify(filterSCByDate));
@@ -332,10 +349,16 @@ export class ScNewCasesComponent implements OnInit {
       this.drawChart(array);
 
     } else {
-      array.push(['Months', 'Cases Counts']);
+      
+      array.push(['Months', 'Cases Counts',{ role: "annotation" }]);
+      console.log("the array of months data is:"+JSON.stringify(data));
+
       for (let i in data) {
+        
         array.push(data[i]);
       }
+      console.log("the array of months data is:"+JSON.stringify(array));
+
       this.checkDataSCNC = false;
     }
     return array;
@@ -403,10 +426,14 @@ export class ScNewCasesComponent implements OnInit {
       newCasesObj.from_date = this.convertDateMoment(this.datesData[0]);
       newCasesObj.to_date = this.convertDateMoment(this.datesData[1]);
     } else {
-      let lastDate = this.convertDateMoment(new Date());//current date
-      let firstDate = moment(new Date()).subtract(1, 'years');//earlier date
-      newCasesObj.from_date = this.convertDateMoment(firstDate);
-      newCasesObj.to_date = lastDate;
+      let fd = new Date();
+      let firstDay = moment(fd).startOf('month').format('YYYY-MM-DD');
+      let last = moment(firstDay).endOf('month').format('YYYY-MM-DD');
+      let result = moment(firstDay).subtract(1, 'years').format('YYYY-MM-DD');
+      // let lastDate = this.convertDateMoment(new Date());//current date
+      // let firstDate = moment(new Date()).subtract(1, 'years');//earlier date
+      newCasesObj.from_date = result;
+      newCasesObj.to_date = last;
     }
     //console.log("case data" + JSON.stringify(this.caseData));
     if (this.territoriesArr.length > 0 && this.arrivalTypesArr.length == 0) {
