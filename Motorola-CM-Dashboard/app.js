@@ -6,11 +6,12 @@ const app = express();
 //for app logging
 const logger = require('./app_configuration/logger');
 const { Pool } = require('pg');
-const PropertiesReader = require('properties-reader');
-const properties = PropertiesReader('./app.properties');
+//put dev/uat(.env file names) to access particular env variables it will set in process.env
+require('custom-env').env('dev', './enviroment');
+console.log("ENV:"+process.env.APP_ENV);
 //create postgre sql connection pool
 const pool = new Pool({
-  connectionString: properties.get('database.postgres.connect')
+  connectionString: process.env.POSTGRES_CONNECT
 })
 //pass pool object to db_operations
 require('./app_configuration/db_operations')(pool);
@@ -20,8 +21,8 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }));
 //our rest services
 const lookupebs = require('./rest_services/ebs');
 const lookupsc = require('./rest_services/smartclient');
-app.use('/Motorola-CM-Dashboard/api', lookupebs,errorHandler);
-app.use('/Motorola-CM-Dashboard/api', lookupsc,errorHandler);
+app.use('/Motorola-CM-Dashboard/api', lookupebs, errorHandler);
+app.use('/Motorola-CM-Dashboard/api', lookupsc, errorHandler);
 
 
 /**
@@ -30,20 +31,19 @@ app.use('/Motorola-CM-Dashboard/api', lookupsc,errorHandler);
  * @param {*} req- req body 
  * @param {*} res -res body
  */
-function errorHandler(err, req, res,next) {
+function errorHandler(err, req, res, next) {
   //log error
   logger.log({
     level: 'error',
     message: err.message
   });
-  if (req.app.get('env') !== 'development') {
+  if (process.env.APP_ENV !== 'development') {
     delete err.stack;
   }
   //send error response
   res.status(err.status || 500);
   res.send({ message: err.message })
 }
-
 
 // Angular DIST output folder
 app.use(express.static(path.join(__dirname, 'dist')));
@@ -62,7 +62,7 @@ app.get('*', (req, res) => {
 
 //Set Port
 // const port = process.env.PORT || '3000';
-const port = process.env.PORT || properties.get('main.app.port');
+const port = process.env.APP_PORT;
 app.set('port', port);
 
 const server = http.createServer(app);
