@@ -10,6 +10,7 @@ import { ChartSelectEvent } from 'ng2-google-charts';
 import { appheading } from '../enums/enum';
 import * as moment from 'moment';
 import { ExcelServiceService } from '../services/convert_to_excel/excel-service.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-ebs-contract-by-status',
@@ -19,7 +20,6 @@ import { ExcelServiceService } from '../services/convert_to_excel/excel-service.
 export class EbsContractByStatusComponent implements OnInit {
 
   public contractsData: any = [];
-  // public selectedTerritories: any = 'all';
   public ebscolumnChartData: any;
   public drillDownData: any;
   public territories: any;
@@ -32,29 +32,40 @@ export class EbsContractByStatusComponent implements OnInit {
   public newModelCounts: any;
   public workFlowStatusArr: any = [];
   public Total: any;
-  // public comesFrom='';
-  // public status:any;
+
   public sideViewDropDowns = new SideViewDropDowns();
   @ViewChild('openSCModal') openScModel: ElementRef;
 
-  constructor(private _ebsService: EbsService, private _dataHandlerService: DataHandlerService, private _excelService: ExcelServiceService) {
+  constructor(private _ebsService: EbsService, private _dataHandlerService: DataHandlerService, private _excelService: ExcelServiceService,private router: Router) {
     this._dataHandlerService.dataFromSideView
       .subscribe(res => {
-        //console.log("sub ebs" + JSON.stringify(res));
-        let incomingData = res.data, event = res.event.toLowerCase(), from = res.from;
-        if (event == 'onitemselect') {
-          this.onItemSelect(incomingData, from)
-        } else if (event == 'onitemdeselect') {
-          this.onItemDeSelect(incomingData, from)
-        } else if (event == 'onselectall') {
-          this.onSelectAll(incomingData, from);
+        if(this.router.url=='/home/ebs-contractByStatus'){
+
+         // console.log("llll"+JSON.stringify(this.router.url))
+          //console.log("sub ebs" + JSON.stringify(res));
+          let incomingData = res.data, event = res.event.toLowerCase(), from = res.from;
+          if (event == 'onitemselect') {
+            this.onItemSelect(incomingData, from)
+          } else if (event == 'onitemdeselect') {
+            this.onItemDeSelect(incomingData, from)
+          } else if (event == 'onselectall') {
+            this.onSelectAll(incomingData, from);
+          }
+          else if (event == 'ondeselectall') {
+            this.onDeSelectAll(incomingData, from);
+          }
+
         }
-        else if (event == 'ondeselectall') {
-          this.onDeSelectAll(incomingData, from);
-        }
+       
       });
     this._dataHandlerService.setDataForMainLayout(true);
   }
+
+  /**
+  * google chart method for bar selection
+  * @param event -  returns the events json with data inside the bar
+  */
+
   public selectBar(event: ChartSelectEvent) {
     if (event.message == 'select') {
 
@@ -76,7 +87,7 @@ export class EbsContractByStatusComponent implements OnInit {
       this.status = (event.selectedRowValues[0].substring(0, j)).trim();
       this.newModelCounts = event.selectedRowValues[1];
       this.data = event.selectedRowValues[0];
-      //this.status = this.fdld(this.data);
+
       //console.log("the data is:", JSON.stringify(this.data));
       $('.modal .modal-dialog').css('width', $(window).width() * 0.95);//fixed
       $('.modal .modal-body').css('height', $(window).height() * 0.77);//fixed
@@ -85,18 +96,25 @@ export class EbsContractByStatusComponent implements OnInit {
       $('tbody.SCModlTbody').css('overflow-x', 'hidden');
       // $('tbody.SCModlTbody').css('display', 'block');
       $('tbody.SCModlTbody').css('width', '100%');
-      // console.log("the status passed is:" + JSON.stringify(this.status));
-      // this.comesFrom = 'drilldown'; 
+
       this.filterChartData('drilldown');
       this.newModelCounts = '';
     }
   }
+
+  /**
+   * Export to excel method used to bind data from drill down response to an excel file.
+   */
   public exportToExcel() {
     // console.log("the excel data is :"+JSON.stringify(this.drillDownData));
     this._excelService.exportAsExcelFile(this.drillDownData, 'EBS Contracts By Status');
 
   }
 
+  /**
+   * method for calculating percentages
+   * @param cases passed cases as data for calculating percentage
+   */
   public calculatePerc(cases) {
     for (let i in cases) {
       let calcPer = ((cases[i].contractscount / this.Total) * 100).toFixed(2)
@@ -105,34 +123,48 @@ export class EbsContractByStatusComponent implements OnInit {
     return cases;
   }
 
+  /**
+  * Array reduce function
+  * @param accumulator-array item summed value
+  * @param num -current array item
+  */
   public SUM(accumulator, num) {
     return accumulator + num;
   }
 
   public totalPerc = 0;
+
+  /**
+   * API for SC New Cases
+   * @param ebsObj - sending data as an Object
+   */
+
   public getContractData(ebsObj) {
     return new Promise((resolve, reject) => {
       this._ebsService.getEBSContractState(ebsObj)
         .subscribe(res => {
-          this.totalPerc=0;
+          this.totalPerc = 0;
           for (let i = 0; i < res.length; i++) {
             this.totalPerc = this.totalPerc + parseInt(res[i].contractscount)
           }
           resolve(res);
         }, error => {
-          // console.log("getEBSContractState" + error);
+          console.log("getEBSContractState" + error);
         })
     })
   }
 
+  /**
+   * API Call Method for Drill Down Window
+   * @param status -  passing data as an object
+   */
   public getEBSDrillDownData(status) {
     return new Promise((resolve, reject) => {
-      // let jsonObj = { 'first': this.status[0], 'last': this.status[1] };
       this._ebsService.getEBSDrillDownStatus(status).subscribe(data => {
         this.drillDown = data;
         // console.log("territories" + this.territories)
       }, err => console.error(err),
-        // the third argument is a function which runs on completion
+
         () => {
           // console.log("the drilldown data recived is:" + this.drillDown);
           resolve(this.drillDown);
@@ -140,10 +172,14 @@ export class EbsContractByStatusComponent implements OnInit {
       )
     }).catch((error) => {
       reject(error);
-      // console.log('errorin getting data :', error);
+      console.log('errorin getting data :', error);
     })
 
   }
+
+  /**
+ *  API Call for Territories
+ */
   public getebsTerritoriesData() {
     return new Promise((resolve, reject) => {
       let territories;
@@ -151,7 +187,7 @@ export class EbsContractByStatusComponent implements OnInit {
         territories = data;
         // console.log("territories" + this.territories)
       }, err => console.error(err),
-        // the third argument is a function which runs on completion
+
         () => {
           let array = [];
           let count = 0;
@@ -159,7 +195,7 @@ export class EbsContractByStatusComponent implements OnInit {
           for (let i in territories) {
             if (territories[i].territory == 'OTHER') {
               //console.log("The other territory " + territories[i].territory)
-              // otherTerritory = territories[i].territory
+
               otherTerritory = { 'item_id': territories[i].territory, 'item_text': territories[i].territory };
             } else {
               array.push({ 'item_id': territories[i].territory, 'item_text': territories[i].territory });
@@ -172,10 +208,15 @@ export class EbsContractByStatusComponent implements OnInit {
       )
     }).catch((error) => {
       reject(error);
-      //console.log('errorin getting data :', error);
+      console.log('errorin getting data :', error);
     })
   }
 
+
+
+  /**
+*  API Call for WorkflowStatus
+*/
   public getWorkflowStatus() {
     return new Promise((resolve, reject) => {
       let workflowStatus;
@@ -184,7 +225,7 @@ export class EbsContractByStatusComponent implements OnInit {
           workflowStatus = data;
           //console.log("territories" + territories)
         }, err => console.error(err),
-          // the third argument is a function which runs on completion
+
           () => {
             let array = [];
             let count = 0;
@@ -196,11 +237,15 @@ export class EbsContractByStatusComponent implements OnInit {
           }
         )
     }).catch((error) => {
-      // console.log('errorin getting data :', error);
+      console.log('errorin getting data :', error);
       reject(error);
     })
   }
 
+
+  /**
+*  API Call for ArrivalType
+*/
   public getArrivalType() {
     return new Promise((resolve, reject) => {
       let workflowStatus;
@@ -209,7 +254,7 @@ export class EbsContractByStatusComponent implements OnInit {
           workflowStatus = data;
           //console.log("territories" + territories)
         }, err => console.error(err),
-          // the third argument is a function which runs on completion
+
           () => {
             let array = [];
             let count = 0;
@@ -221,11 +266,16 @@ export class EbsContractByStatusComponent implements OnInit {
           }
         )
     }).catch((error) => {
-      //console.log('errorin getting data :', error);
+      console.log('errorin getting data :', error);
       reject(error);
     })
   }
 
+
+  /**
+ * drawing chart for plotting chart
+ * @param data passed an array for drawing chart for google chart
+ */
   public drawchart(res) {
     this.ebscolumnChartData = {
       chartType: 'BarChart',
@@ -264,7 +314,12 @@ export class EbsContractByStatusComponent implements OnInit {
       }
     }
   }
-  // ng multiselect events implemented by Vishal Sehgal 12/2/2019
+
+  /**
+ * event for multiselect dropdowns
+ * @param item data to be handled
+ * @param from data coming from sources like territory workflow etc.
+ */
   onItemSelect(item, from) {
     if (from == 'territory') {
       this.territoriesArr.push(item)
@@ -274,11 +329,16 @@ export class EbsContractByStatusComponent implements OnInit {
     else if (from == 'arrivalType') {
       this.arrivalTypesArr.push(item);
     }
-    //this.comesFrom = ;
+
     this.filterChartData('dropdown');
-    //this.comesFrom='';
+
   }
 
+  /**
+ * event for multiselect dropdowns
+ * @param item data to be handled
+ * @param from data coming from sources like territory workflow etc.
+ */
   onItemDeSelect(item, from) {
     if (from == 'territory') {
       this.territoriesArr = this.removeElementArr(this.territoriesArr, item);
@@ -288,11 +348,14 @@ export class EbsContractByStatusComponent implements OnInit {
     else if (from == 'arrivalType') {
       this.arrivalTypesArr = this.removeElementArr(this.arrivalTypesArr, item);
     }
-    //this.comesFrom = 'dropdown';
     this.filterChartData('dropdown');
-    //this.comesFrom='';
   }
 
+  /**
+ * event for multiselect dropdowns
+ * @param item data to be handled
+ * @param from data coming from sources like territory workflow etc.
+ */
   onSelectAll(item, from) {
     //console.log("the selectAll is:" + JSON.stringify(item) + JSON.stringify(from));
     if (from == 'territory') {
@@ -305,11 +368,14 @@ export class EbsContractByStatusComponent implements OnInit {
       this.arrivalTypesArr = [];
       this.arrivalTypesArr = item;
     }
-    //this.comesFrom = 'dropdown';
     this.filterChartData('dropdown');
-    //this.comesFrom='';
   }
 
+  /**
+ * event for multiselect dropdowns
+ * @param item data to be handled
+ * @param from data coming from sources like territory workflow etc.
+ */
   onDeSelectAll(item, from) {
     if (from == 'territory') {
       this.territoriesArr = [];
@@ -318,16 +384,16 @@ export class EbsContractByStatusComponent implements OnInit {
     } else if (from == 'arrivalType') {
       this.arrivalTypesArr = [];
     }
-    // this.comesFrom = 'dropdown';
     this.filterChartData('dropdown');
-    //this.comesFrom='';
 
   }
 
   /**
-   * This method filters the data according selected territories and workflowstatus
+   * Filters data from dropdown and drill down
+   * @param caseFrom check for called from drilldown or dropdown
    */
   public filterChartData(comesfrom) {
+    this.drillDownData = [];
     let finalArr = [];
     let ebsObj = new FilterFormatEBS();
     //console.log("in filter chatrt dataa" );
@@ -347,7 +413,7 @@ export class EbsContractByStatusComponent implements OnInit {
             let arr = this.makeChartArr(result)
             this.drawchart(arr);
           }).catch(error => {
-            //console.log("error filterChartData getContractData"+error)
+            console.log("error filterChartData getContractData" + error)
           });
       } else {
         //console.log("the comes from is:t a w>0"+JSON.stringify(comesfrom));
@@ -357,22 +423,21 @@ export class EbsContractByStatusComponent implements OnInit {
         arr.push(this.status);
         //console.log("the data is:"+JSON.stringify(ebsObj));
         ebsObj.workflow_data = arr;
-        console.log("the data is:"+JSON.stringify(ebsObj));
+        //console.log("the data is:"+JSON.stringify(ebsObj));
 
         this.getEBSDrillDownData(ebsObj)
           .then((res: any) => {
-            this.newModelCounts=[];
+            this.newModelCounts = [];
             this.newModelCounts = res.length;
-            console.log("the res recievd is:"+JSON.stringify(res));
+            // console.log("the res recievd is:"+JSON.stringify(res));
             for (let i in res) {
               //res[i].
               res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('MM-DD-YYYY');
               res[i].contract_age = res[i].contract_age == null ? '-' : res[i].contract_age;
-              res[i].contract_number_modifier = res[i].contract_number_modifier == null ? '-':res[i].contract_number_modifier;
+              res[i].contract_number_modifier = res[i].contract_number_modifier == null ? '-' : res[i].contract_number_modifier;
               res[i].contract_start_date = res[i].contract_start_date == null ? '-' : moment(res[i].contract_start_date).format('MM-DD-YYYY');
 
             }
-            this.drillDownData=[];
             this.drillDownData = res;
           }, error => {
             console.log("error getTerritories " + error);
@@ -396,7 +461,7 @@ export class EbsContractByStatusComponent implements OnInit {
             let arr = this.makeChartArr(result)
             this.drawchart(arr);
           }).catch(error => {
-            //console.log("error filterChartData getContractData"+error)
+            console.log("error filterChartData getContractData" + error)
           });
       } else {
         //console.log("the comes from is:t >0 a w"+JSON.stringify(comesfrom));
@@ -406,24 +471,24 @@ export class EbsContractByStatusComponent implements OnInit {
         arr.push(this.status);
         //console.log("the data is:"+JSON.stringify(ebsObj));
         ebsObj.workflow_data = arr;
-        console.log("the data is:"+JSON.stringify(ebsObj));
+        //console.log("the data is:"+JSON.stringify(ebsObj));
 
         this.getEBSDrillDownData(ebsObj)
           .then((res: any) => {
-            this.newModelCounts=[];
+            this.newModelCounts = [];
 
             this.newModelCounts = res.length;
             //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(res));
             for (let i in res) {
               //res[i].
               res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('MM-DD-YYYY');
-              res[i].contract_age = res[i].contract_age == null ? '-':res[i].contract_age;
-              res[i].contract_number_modifier = res[i].contract_number_modifier == null ? '-':res[i].contract_number_modifier;
+              res[i].contract_age = res[i].contract_age == null ? '-' : res[i].contract_age;
+              res[i].contract_number_modifier = res[i].contract_number_modifier == null ? '-' : res[i].contract_number_modifier;
               res[i].contract_start_date = res[i].contract_start_date == null ? '-' : moment(res[i].contract_start_date).format('MM-DD-YYYY');
 
             }
           }, error => {
-            //console.log("error getTerritories " + error);
+            console.log("error getTerritories " + error);
           });
         this.newModelCounts = '';
       }
@@ -442,7 +507,7 @@ export class EbsContractByStatusComponent implements OnInit {
             let arr = this.makeChartArr(result)
             this.drawchart(arr);
           }).catch(error => {
-            //console.log("error filterChartData getContractData"+error)
+            console.log("error filterChartData getContractData" + error)
           });
       } else {
         //console.log("the comes from is:t w a=0"+JSON.stringify(comesfrom));
@@ -452,26 +517,26 @@ export class EbsContractByStatusComponent implements OnInit {
         arr.push(this.status);
         //console.log("the data is:"+JSON.stringify(ebsObj));
         ebsObj.workflow_data = arr;
-        console.log("the data is:"+JSON.stringify(ebsObj));
+        //console.log("the data is:"+JSON.stringify(ebsObj));
 
         this.getEBSDrillDownData(ebsObj)
           .then((res: any) => {
-            this.newModelCounts=[];
+            this.newModelCounts = [];
 
             this.newModelCounts = res.length;
             //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(res));
             for (let i in res) {
               //res[i].
               res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('MM-DD-YYYY');
-              res[i].contract_age = res[i].contract_age == null ? '-':res[i].contract_age;
-              res[i].contract_number_modifier = res[i].contract_number_modifier == null ? '-':res[i].contract_number_modifier;
+              res[i].contract_age = res[i].contract_age == null ? '-' : res[i].contract_age;
+              res[i].contract_number_modifier = res[i].contract_number_modifier == null ? '-' : res[i].contract_number_modifier;
               res[i].contract_start_date = res[i].contract_start_date == null ? '-' : moment(res[i].contract_start_date).format('MM-DD-YYYY');
 
             }
-            this.drillDownData=[];
+            //this.drillDownData = [];
             this.drillDownData = res;
           }, error => {
-            //console.log("error getTerritories " + error);
+            console.log("error getTerritories " + error);
           });
         this.newModelCounts = '';
 
@@ -494,7 +559,7 @@ export class EbsContractByStatusComponent implements OnInit {
             let arr = this.makeChartArr(result)
             this.drawchart(arr);
           }).catch(error => {
-            //console.log("error filterChartData getContractData"+error)
+            console.log("error filterChartData getContractData" + error)
           });
       } else {
         //console.log("the comes from is:w t a >0"+JSON.stringify(comesfrom));
@@ -504,26 +569,25 @@ export class EbsContractByStatusComponent implements OnInit {
         arr.push(this.status);
         //console.log("the data is:"+JSON.stringify(ebsObj));
         ebsObj.workflow_data = arr;
-        console.log("the data is:"+JSON.stringify(ebsObj));
+        //console.log("the data is:"+JSON.stringify(ebsObj));
 
         this.getEBSDrillDownData(ebsObj)
           .then((res: any) => {
-            this.newModelCounts=[];
+            this.newModelCounts = [];
 
             this.newModelCounts = res.length;
             //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(res));
             for (let i in res) {
-              //res[i].
               res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('MM-DD-YYYY');
-              res[i].contract_age = res[i].contract_age == null ? '-':res[i].contract_age;
-              res[i].contract_number_modifier = res[i].contract_number_modifier == null ? '-':res[i].contract_number_modifier;
+              res[i].contract_age = res[i].contract_age == null ? '-' : res[i].contract_age;
+              res[i].contract_number_modifier = res[i].contract_number_modifier == null ? '-' : res[i].contract_number_modifier;
               res[i].contract_start_date = res[i].contract_start_date == null ? '-' : moment(res[i].contract_start_date).format('MM-DD-YYYY');
 
             }
-            this.drillDownData=[];
+            //this.drillDownData = [];
             this.drillDownData = res;
           }, error => {
-            //console.log("error getTerritories " + error);
+            console.log("error getTerritories " + error);
           });
         this.newModelCounts = '';
 
@@ -546,7 +610,7 @@ export class EbsContractByStatusComponent implements OnInit {
             let arr = this.makeChartArr(result)
             this.drawchart(arr);
           }).catch(error => {
-            //console.log("error filterChartData getContractData"+error)
+            console.log("error filterChartData getContractData" + error)
           });
       } else {
         // console.log("the comes from is:w t a >0"+JSON.stringify(comesfrom));
@@ -556,28 +620,27 @@ export class EbsContractByStatusComponent implements OnInit {
         arr.push(this.status);
         //console.log("the data is:"+JSON.stringify(ebsObj));
         ebsObj.workflow_data = arr;
-        console.log("the data is:"+JSON.stringify(ebsObj));
+        //console.log("the data is:"+JSON.stringify(ebsObj));
 
         this.getEBSDrillDownData(ebsObj)
           .then((res: any) => {
-            this.newModelCounts=[];
+            this.newModelCounts = [];
 
             this.newModelCounts = res.length;
             //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(res));
             for (let i in res) {
-              //res[i].
               res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('MM-DD-YYYY');
-              res[i].contract_age = res[i].contract_age == null ? '-':res[i].contract_age;
-              res[i].contract_number_modifier = res[i].contract_number_modifier == null ? '-':res[i].contract_number_modifier;              
+              res[i].contract_age = res[i].contract_age == null ? '-' : res[i].contract_age;
+              res[i].contract_number_modifier = res[i].contract_number_modifier == null ? '-' : res[i].contract_number_modifier;
               res[i].contract_start_date = res[i].contract_start_date == null ? '-' : moment(res[i].contract_start_date).format('MM-DD-YYYY');
 
-              
+
 
             }
-            this.drillDownData=[];
+            //this.drillDownData = [];
             this.drillDownData = res;
           }, error => {
-            //console.log("error getTerritories " + error);
+            console.log("error getTerritories " + error);
           });
         this.newModelCounts = '';
 
@@ -600,7 +663,7 @@ export class EbsContractByStatusComponent implements OnInit {
             let arr = this.makeChartArr(result)
             this.drawchart(arr);
           }).catch(error => {
-            //console.log("error filterChartData getContractData"+error)
+            console.log("error filterChartData getContractData" + error)
           });
       } else {
         //console.log("the comes from is:w>0 t a"+JSON.stringify(comesfrom));
@@ -610,26 +673,26 @@ export class EbsContractByStatusComponent implements OnInit {
         arr.push(this.status);
         //console.log("the data is:"+JSON.stringify(ebsObj));
         ebsObj.workflow_data = arr;
-        console.log("the data is:"+JSON.stringify(ebsObj));
+        //console.log("the data is:"+JSON.stringify(ebsObj));
 
         this.getEBSDrillDownData(ebsObj)
           .then((res: any) => {
-            this.newModelCounts=[];
+            this.newModelCounts = [];
 
             this.newModelCounts = res.length;
             //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(res));
             for (let i in res) {
               //res[i].
               res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('MM-DD-YYYY');
-              res[i].contract_age = res[i].contract_age == null ? '-':res[i].contract_age;
-              res[i].contract_number_modifier = res[i].contract_number_modifier == null ? '-':res[i].contract_number_modifier;
+              res[i].contract_age = res[i].contract_age == null ? '-' : res[i].contract_age;
+              res[i].contract_number_modifier = res[i].contract_number_modifier == null ? '-' : res[i].contract_number_modifier;
               res[i].contract_start_date = res[i].contract_start_date == null ? '-' : moment(res[i].contract_start_date).format('MM-DD-YYYY');
 
             }
-            this.drillDownData=[];
+            //this.drillDownData = [];
             this.drillDownData = res;
           }, error => {
-            //console.log("error getTerritories " + error);
+            console.log("error getTerritories " + error);
           });
         this.newModelCounts = '';
 
@@ -650,7 +713,7 @@ export class EbsContractByStatusComponent implements OnInit {
             let arr = this.makeChartArr(result)
             this.drawchart(arr);
           }).catch(error => {
-            // console.log("error filterChartData getContractData"+error)
+            console.log("error filterChartData getContractData" + error)
           });
       } else {
         //console.log("the comes from is:w>0 t>0 a"+JSON.stringify(comesfrom));
@@ -660,26 +723,26 @@ export class EbsContractByStatusComponent implements OnInit {
         arr.push(this.status);
         //console.log("the data is:"+JSON.stringify(ebsObj));
         ebsObj.workflow_data = arr;
-        console.log("the data is:"+JSON.stringify(ebsObj));
+        // console.log("the data is:"+JSON.stringify(ebsObj));
 
         this.getEBSDrillDownData(ebsObj)
           .then((res: any) => {
-            this.newModelCounts=[];
+            this.newModelCounts = [];
 
             this.newModelCounts = res.length;
             //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(res));
             for (let i in res) {
               //res[i].
               res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('MM-DD-YYYY');
-              res[i].contract_age = res[i].contract_age == null ? '-':res[i].contract_age;
-              res[i].contract_number_modifier = res[i].contract_number_modifier == null ? '-':res[i].contract_number_modifier;
+              res[i].contract_age = res[i].contract_age == null ? '-' : res[i].contract_age;
+              res[i].contract_number_modifier = res[i].contract_number_modifier == null ? '-' : res[i].contract_number_modifier;
               res[i].contract_start_date = res[i].contract_start_date == null ? '-' : moment(res[i].contract_start_date).format('MM-DD-YYYY');
 
             }
-            this.drillDownData=[];
+            //this.drillDownData = [];
             this.drillDownData = res;
           }, error => {
-            //console.log("error getTerritories " + error);
+            console.log("error getTerritories " + error);
           });
         this.newModelCounts = '';
 
@@ -701,7 +764,7 @@ export class EbsContractByStatusComponent implements OnInit {
             let arr = this.makeChartArr(result)
             this.drawchart(arr);
           }).catch(error => {
-            // console.log("error filterChartData getContractData"+error)
+            console.log("error filterChartData getContractData" + error)
           });
       } else {
         //console.log("the comes from is:w>0 t>0 a>0"+JSON.stringify(comesfrom));
@@ -709,28 +772,28 @@ export class EbsContractByStatusComponent implements OnInit {
         let arr = [];
         arr.push(this.status);
         ebsObj.workflow_data = arr;
-        console.log("the data is:"+JSON.stringify(ebsObj));
+        //console.log("the data is:"+JSON.stringify(ebsObj));
         this.getEBSDrillDownData(ebsObj)
           .then((res: any) => {
-            this.newModelCounts=[];
+            this.newModelCounts = [];
 
             this.newModelCounts = res.length;
             //console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(res));
             for (let i in res) {
               //res[i].
               res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('MM-DD-YYYY');
-              res[i].contract_age = res[i].contract_age == null ? '-':res[i].contract_age;
-              res[i].contract_number_modifier = res[i].contract_number_modifier == null ? '-':res[i].contract_number_modifier;
+              res[i].contract_age = res[i].contract_age == null ? '-' : res[i].contract_age;
+              res[i].contract_number_modifier = res[i].contract_number_modifier == null ? '-' : res[i].contract_number_modifier;
               res[i].contract_start_date = res[i].contract_start_date == null ? '-' : moment(res[i].contract_start_date).format('MM-DD-YYYY');
 
 
             }
-            this.drillDownData=[];
+            //this.drillDownData = [];
             this.drillDownData = res;
             //   // console.log("the drilldowndata for ebs contracts by status is:" + JSON.stringify(this.drillDown));
-             
+
           }, error => {
-            //console.log("error getTerritories " + error);
+            console.log("error getTerritories " + error);
           });
         this.newModelCounts = '';
 
@@ -743,13 +806,11 @@ export class EbsContractByStatusComponent implements OnInit {
    * @param cases -Case data.
    */
   public makeChartArr(ebsdata) {
-    // cases=[];
-    //console.log("the make chart data is :" + JSON.stringify(cases));
+
     let array = [];
     array.push(['Status', 'No. of Contracts', { role: "annotation" }, { role: "style" }]);
     let barColor = null;
     if (ebsdata.length > 0) {
-      //this.drawchart(ebsdata);
       this.checkDataEBS = false;
       for (let i in ebsdata) {
         barColor = '#4A90E2';
@@ -765,6 +826,12 @@ export class EbsContractByStatusComponent implements OnInit {
     return array;
   }
 
+  /**
+ * for calculating percentages of cases in accordance to each statuses
+ * @param remValue passing the remaining value 
+ * @param totalvalue  passing the sumtotal value 
+ * 
+ */
   calculatePercent(remValue, totalvalue) {
     let percentage = ((parseInt(remValue) / totalvalue) * 100).toFixed(2);
     return percentage + '%';
@@ -797,18 +864,17 @@ export class EbsContractByStatusComponent implements OnInit {
         let arr = this.makeChartArr(res)
         this.drawchart(arr);
       }, error => {
-        // console.log("error getCaseData " + error);
+        console.log("error getCaseData " + error);
       });
 
     this.getebsTerritoriesData()
       .then((res: any) => {
         //console.log("the res is:" + JSON.stringify(res));
-        //this.drawChart(res);
         this.sideViewDropDowns.showTerritory = true;
         this.sideViewDropDowns.territoryData = res;
         this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
       }, error => {
-        //console.log("error getTerritories " + error);
+        console.log("error getTerritories " + error);
       });
     this.getWorkflowStatus()
       .then((res: any) => {
@@ -817,7 +883,7 @@ export class EbsContractByStatusComponent implements OnInit {
         this.sideViewDropDowns.workFlowData = res;
         this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
       }, error => {
-        // console.log("error getWorkflowStatus " + error);
+        console.log("error getWorkflowStatus " + error);
       });
     this.getArrivalType()
       .then((res: any) => {
@@ -826,10 +892,9 @@ export class EbsContractByStatusComponent implements OnInit {
         this.sideViewDropDowns.arrivalTypeData = res;
         this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
       }, error => {
-        // console.log("error getArrivalType " + error);
+        console.log("error getArrivalType " + error);
       });
-    // this.sideViewDropDowns.showArrivalType = true;
-    // this.sideViewDropDowns.arrivalTypeData = ['SAOF', 'CPQ', 'Q2SC'];
+
     this.sideViewDropDowns.showYearDD = false;
     this.sideViewDropDowns.compHeading = appheading.graph2;
     this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);

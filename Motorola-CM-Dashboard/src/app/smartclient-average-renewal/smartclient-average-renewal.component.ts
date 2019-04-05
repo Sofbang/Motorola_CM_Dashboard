@@ -14,7 +14,7 @@ import { ChartSelectEvent } from 'ng2-google-charts';
 // import { last } from '@angular/router/src/utils/collection';
 import { appheading } from '../enums/enum';
 import { ExcelServiceService } from '../services/convert_to_excel/excel-service.service';
-
+import { Router } from '@angular/router';
 import * as moment from 'moment';
 
 @Component({
@@ -45,14 +45,17 @@ export class SmartclientAverageRenewalComponent implements OnInit {
   public sideViewDropDowns = new SideViewDropDowns();
   public barStatus;
   public restUrlFilterYr: string = 'sc_case_status_med_yr';
+  public fromMedOrAvg = 'median';
   @ViewChild('openSCModal') openScModel: ElementRef;
   @ViewChild('FromTo') FromTo;
 
-  constructor(private _smartclientService: SmartclientService, private _dataHandlerService: DataHandlerService, private _excelService: ExcelServiceService) {
+  constructor(private _smartclientService: SmartclientService, private _dataHandlerService: DataHandlerService, private _excelService: ExcelServiceService,private router: Router) {
     this._dataHandlerService.dataFromSideView
       .subscribe(res => {
         //console.log("suc smartclient avg-ren" + JSON.stringify(res));
+        if(this.router.url=='/home/smartclient-average-renewal'){
 
+          //console.log("llll"+JSON.stringify(this.router.url))
         let incomingData = res.data, event = res.event.toLowerCase(), from = res.from;
         if (event == 'onitemselect') {
           this.onItemSelect(incomingData, from)
@@ -66,11 +69,18 @@ export class SmartclientAverageRenewalComponent implements OnInit {
         } else if (event == 'onchangeto') {
           this.onToYearChange(incomingData);
         }
+        
+        }
+        
       });
     this._dataHandlerService.setDataForMainLayout(true);
 
   }
 
+  /**
+  * google chart method for bar selection
+  * @param event -  returns the events json with data inside the bar
+  */
 
   public selectBar(event: ChartSelectEvent) {
 
@@ -106,12 +116,19 @@ export class SmartclientAverageRenewalComponent implements OnInit {
     }
   }
 
+  /**
+   * Export to excel method used to bind data from drill down response to an excel file.
+   */
   public exportToExcel() {
     //console.log("the data is:" + JSON.stringify(this.drillDown));
     this._excelService.exportAsExcelFile(this.drillDown, 'Smart Client Cases');
 
   }
 
+  /**
+   * API Call Method for Drill Down Window
+   * @param cycleTimeObj -  passing data as an object
+   */
   public getSCCycleDrillDownData(cycleTimeObj) {
     // console.log("kkk"+JSON.stringify(cycleTimeObj));
     return new Promise((resolve, reject) => {
@@ -128,7 +145,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
             }
             let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
             //console.log("diff----"+diffDays)
-            res[i]['nss_aging'] = diffDays ;
+            res[i]['nss_aging'] = diffDays;
             res[i].case_creation_date = res[i].case_creation_date == null ? '-' : moment(res[i].case_creation_date).format('MM-DD-YYYY');
             res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('MM-DD-YYYY');
             res[i].contract_creation_date = moment(res[i].contract_creation_date).format('MM-DD-YYYY');
@@ -143,6 +160,9 @@ export class SmartclientAverageRenewalComponent implements OnInit {
 
   }
 
+  /**
+   *  Getting data from API Call for Territories
+   */
   public getTerritories() {
     return new Promise((resolve, reject) => {
       let territories;
@@ -178,6 +198,10 @@ export class SmartclientAverageRenewalComponent implements OnInit {
     })
   }
 
+
+  /**
+  *  Getting data from API Call for WorkflowStatus
+  */
   public getWorkflowStatus() {
     return new Promise((resolve, reject) => {
       let workflowStatus;
@@ -211,6 +235,10 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       reject(error);
     })
   }
+
+/**
+*  Getting data from API Call for ArrivalType
+*/
   public getArrivalTypeData() {
     return new Promise((resolve, reject) => {
       let arrivalType;
@@ -226,6 +254,11 @@ export class SmartclientAverageRenewalComponent implements OnInit {
         })
     })
   }
+
+  /**
+   * drawing chart for plotting chart
+   * @param data passed an array for drawing chart for google chart
+   */
   public drawChart(data) {
     //this.barChartData.dataTable = data;
     this.barChartData = {
@@ -265,8 +298,11 @@ export class SmartclientAverageRenewalComponent implements OnInit {
     };
   }
 
-  public fromMedOrAvg = 'median';
-  // ng multiselect events implemented by Vishal Sehgal 12/2/2019
+  /**
+   * event for multiselect dropdowns
+   * @param item data to be handled
+   * @param from data coming from sources like territory workflow etc.
+   */
   onItemSelect(item, from) {
     //console.log("onItemSelect"+item,"from"+from);
     this.contractTimeSelect = false;
@@ -294,6 +330,11 @@ export class SmartclientAverageRenewalComponent implements OnInit {
     this.filterChartData('dropdown');
   }
 
+  /**
+ * event for multiselect dropdowns
+ * @param item data to be handled
+ * @param from data coming from sources like territory workflow etc.
+ */
   onItemDeSelect(item, from) {
     if (from == 'territory') {
       this.territoriesArr = this.removeElementArr(this.territoriesArr, item);
@@ -305,6 +346,11 @@ export class SmartclientAverageRenewalComponent implements OnInit {
     this.filterChartData('dropdown');
   }
 
+  /**
+ * event for multiselect dropdowns
+ * @param item data to be handled
+ * @param from data coming from sources like territory workflow etc.
+ */
   onSelectAll(item, from) {
     if (from == 'territory') {
       this.territoriesArr = [];
@@ -320,8 +366,8 @@ export class SmartclientAverageRenewalComponent implements OnInit {
   }
 
   /**
-   * Calls when to dropdown change have both from and to date
-   * @param item 
+   * event for to Year dropdown
+   * @param item - Calls when to dropdown change have both from and to date 
    */
   onToYearChange(item) {
     this.datesData = [];
@@ -330,6 +376,11 @@ export class SmartclientAverageRenewalComponent implements OnInit {
     this.filterChartData('dropdown');
   }
 
+  /**
+ * event for multiselect dropdowns
+ * @param item data to be handled
+ * @param from data coming from sources like territory workflow etc.
+ */
   onDeSelectAll(item, from) {
     if (from == 'territory') {
       this.territoriesArr = [];
@@ -359,6 +410,11 @@ export class SmartclientAverageRenewalComponent implements OnInit {
     })
   }
   public contractTimeSelect;
+
+  /**
+   * checks the data From and to dropdown selected
+   * @param filterDataObj - This method check if From and to dropdown selected.
+   */
   checkDateDropdownSelected(filterDataObj): any {
     return new Promise((resolve, reject) => {
       let newObj = this.contractTimeSelect ? this.makeInitDataLoadObj() : filterDataObj;
@@ -376,6 +432,9 @@ export class SmartclientAverageRenewalComponent implements OnInit {
         })
     })
   }
+
+  /* calculating current month last day and less last years first day   */
+
   makeInitDataLoadObj() {
     let lastDate = this.convertDateMoment(new Date());//current date
     let firstDate = moment(new Date()).subtract(1, 'years');//earlier date
@@ -390,19 +449,29 @@ export class SmartclientAverageRenewalComponent implements OnInit {
     cycleTimeObj.workflow_data = [];
     return cycleTimeObj;
   }
+
+  /**
+   * dates conversion
+   * @param incominDate dates for conversion into YYYY-MM-DD Format 
+   */
   convertDateMoment(incominDate) {
     return moment(incominDate).format('YYYY-MM-DD');
   }
 
+
+  /**
+   * Filters data from dropdown and drill down
+   * @param from check for called from drilldown or dropdown
+   */
   public filterChartData(from) {
     this.drillDown = [];
     this.newModelCounts = '';
     let cycleTimeObj = new FilterFormatSCNEWCASES();
     if (this.datesData.length == 2) {
       cycleTimeObj.from_date = this.convertDateMoment(this.datesData[0]);
-      console.log("the from:" + JSON.stringify(cycleTimeObj.from_date));
+      // console.log("the from:" + JSON.stringify(cycleTimeObj.from_date));
       cycleTimeObj.to_date = this.convertDateMoment(this.datesData[1]);
-      console.log("the from:" + JSON.stringify(cycleTimeObj.to_date));
+      //console.log("the from:" + JSON.stringify(cycleTimeObj.to_date));
     } else {
       let lastDate = this.convertDateMoment(new Date());//current date
       let firstDate = moment(new Date()).subtract(1, 'years');//earlier date
@@ -700,6 +769,13 @@ export class SmartclientAverageRenewalComponent implements OnInit {
     }
     return array;
   }
+
+  /**
+   * for calculating percentages of cases in accordance to each statuses
+   * @param remValue passing the remaining value 
+   * @param totalvalue  passing the sumtotal value 
+   * 
+   */
   calculatePercent(remValue, totalvalue) {
     let percentage = ((parseInt(remValue) / totalvalue) * 100).toFixed(2);
     return percentage + '%';
@@ -717,7 +793,9 @@ export class SmartclientAverageRenewalComponent implements OnInit {
     return array;
   }
 
-
+  /**
+*  Getting data from API Call for Minimum and Maximum Dates
+*/
   public getMinMaxDates() {
     return new Promise((resolve, reject) => {
       this._smartclientService.getScMinMaxDates().subscribe(data => {
@@ -726,7 +804,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
       }, err => console.error(err),
         // the third argument is a function which runs on completion
         () => {
-          console.log("the drilldown data recived is:" + JSON.stringify(this.drillDown));
+          // console.log("the drilldown data recived is:" + JSON.stringify(this.drillDown));
           resolve(this.minmaxdates);
         }
       )
@@ -775,7 +853,7 @@ export class SmartclientAverageRenewalComponent implements OnInit {
     this.getArrivalTypeData()
       .then((res: any) => {
         //this.drawChart(res);
-        console.log("Arrival type" + JSON.stringify(res));
+        //console.log("Arrival type" + JSON.stringify(res));
         this.sideViewDropDowns.showArrivalType = true;
         this.sideViewDropDowns.arrivalTypeData = res;
         this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
@@ -785,10 +863,8 @@ export class SmartclientAverageRenewalComponent implements OnInit {
     this.sideViewDropDowns.showCaseTime = true;
     let caseTimeData = [{ 'item_id': 1, 'item_text': 'Median' },
     { 'item_id': 2, 'item_text': 'Average' }];
-    //let caseTimeData = ['Median' , 'Average' ];
     this.sideViewDropDowns.caseTimeData = caseTimeData;
-    // this.sideViewDropDowns.showArrivalType = true;
-    // this.sideViewDropDowns.arrivalTypeData = ['SAOF', 'CPQ', 'Q2SC'];
+
     this.sideViewDropDowns.showYearDD = true;
     this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
     this.sideViewDropDowns.compHeading = appheading.graph5;

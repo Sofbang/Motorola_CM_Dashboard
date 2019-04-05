@@ -10,6 +10,7 @@ import { ChartSelectEvent } from 'ng2-google-charts';
 import { appheading } from '../enums/enum';
 import { ExcelServiceService } from '../services/convert_to_excel/excel-service.service';
 import * as moment from 'moment';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-ebs-cycle-times',
@@ -35,13 +36,16 @@ export class EbsCycleTimesComponent implements OnInit {
   public drillDownData: any;
   public restUrlFilterYr: string = 'ebs_cycle_times';
 
-  public monthArr =  ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+  public monthArr = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
 
   @ViewChild('openSCModal') openScModel: ElementRef;
 
-  constructor(private _ebsService: EbsService, private _dataHandlerService: DataHandlerService, private _excelService: ExcelServiceService) {
+  constructor(private _ebsService: EbsService, private _dataHandlerService: DataHandlerService, private _excelService: ExcelServiceService,private router: Router) {
     this._dataHandlerService.dataFromSideView
       .subscribe(res => {
+         if(this.router.url=='/home/ebs-cycle-times'){
+
+          //console.log("llll"+JSON.stringify(this.router.url))
         //console.log("sub ebs" + JSON.stringify(res));
         let incomingData = res.data, event = res.event.toLowerCase(), from = res.from;
         if (event == 'onitemselect') {
@@ -56,9 +60,17 @@ export class EbsCycleTimesComponent implements OnInit {
         } else if (event == 'onchangeto') {
           this.onToYearChange(incomingData);
         }
+
+         }
+         
       });
     this._dataHandlerService.setDataForMainLayout(true);
   }
+
+  /**
+   * google chart method for bar selection
+   * @param event -  returns the events json with data inside the bar
+   */
 
   public selectBar(event: ChartSelectEvent) {
 
@@ -70,73 +82,42 @@ export class EbsCycleTimesComponent implements OnInit {
       this.data = event.selectedRowValues[0];
       //console.log("the data is:" + JSON.stringify(this.data));
       this.status = this.fdld(drillDownStatusnew);
-      console.log("fd ld is:" + JSON.stringify(this.status));
+      // console.log("fd ld is:" + JSON.stringify(this.status));
       // console.log("the data is:",this.data);
       $('.modal .modal-dialog').css('width', $(window).width() * 0.93);//fixed
       $('.modal .modal-body').css('height', $(window).height() * 0.77);//fixed
       $('tbody.SCModlTbody').css('max-height', $(window).height() * 0.67);
       $('tbody.SCModlTbody').css('overflow-y', 'scroll');
       $('tbody.SCModlTbody').css('overflow-x', 'hidden');
-      // $('tbody.SCModlTbody').css('display', 'block');
       $('tbody.SCModlTbody').css('width', '100%');
       this.filterChartData('drilldown');
       this.newModelCounts = '';
     }
   }
-  public exportToExcel() {
-    // for(let i in this.drillDownData){
-    //   this.drillDownData[i].Customer_Name=this.drillDownData[i].customer_name;
-    //   delete[this.drillDownData[i].customer_name];
-    //   this.drillDownData[i].Contract_Number=this.drillDownData[i].contract_number;
-    //   this.drillDownData[i].Contract_Number_Modifier=this.drillDownData[i].contract_number_modifier;
-    //   this.drillDownData[i].Case_Status=this.drillDownData[i].to_status;
-    //   this.drillDownData[i].Contract_Owner=this.drillDownData[i].contract_owner;
-    //   this.drillDownData[i].Contract_Creation_Date=this.drillDownData[i].contract_creation_date;
-    //   this.drillDownData[i].Contract_Age=this.drillDownData[i].contract_age;
 
-    // }
-    // console.log("the modified json is:"+JSON.stringify(this.drillDownData));
+  /**
+   * Export to excel method used to bind data from drill down response to an excel file.
+   */
+  public exportToExcel() {
+
     this._excelService.exportAsExcelFile(this.drillDownData, 'EBS Cycle Times');
   }
 
 
-  public fdld(data) {
-   console.log("date"+data)
-  //   let month = data.split('-')[0];
-  //   let year = data.split('-')[1];
-  //   let date = year + '-' + (this.monthArr.indexOf(month)+1) + '-01';
-  // //  console.log("ddd" + this.convertDateMoment(date));
-  //   var dates = new Date(date);
-  //  // console.log("dates - "+dates);
-  //   var firstDay = new Date(dates.getFullYear(), dates.getMonth(), 1);
-  //   var lastDay = new Date(dates.getFullYear(), dates.getMonth() + 1, 0);
-  //   console.log("the firstDay is:" + firstDay);
-  //   console.log("the lastDay is:" + lastDay);
-     let datesArr = [];
 
-  //   datesArr.push(this.convertDateMoment(firstDay));
-  //   datesArr.push(this.convertDateMoment(lastDay));
+
+  /**
+ * calculating current month last day and less last years first day
+ * @param data passed data for calculating month last day and less last years first day
+ */
+  public fdld(data) {
+
+    let datesArr = [];
+
+
     let firstDay = moment(data).startOf('month').format('YYYY-MM-DD');
     let lastDay = moment(data).endOf('month').format('YYYY-MM-DD');
-    // let v = data.split(' ');
-    // //console.log("the v is:"+moment(data).format('yyyy-MM-dd'));
-    // let arr = [];
-    // let newone = '01-' + v[0];
-    // let newtwo = v[1];
-    // let newthree = newone + newtwo;
-    // console.log("the newone is:" + newone);
-    // console.log("hhhhhhkk" + this.convertDateMoment(newtwo));
-    // console.log("the date is:" + JSON.stringify(newthree));
-    // let newModDate = new Date(newthree.replace('undefined', ''));
-    // let FirstDay = new Date(newModDate.getFullYear(), newModDate.getMonth(), 1).toLocaleDateString();
-    // let LastDay = new Date(newModDate.getFullYear(), newModDate.getMonth() + 1, 0).toLocaleDateString();
-    // let fd = moment(FirstDay).format('YYYY-MM-DD');
-    // let ld = moment(LastDay).format('YYYY-MM-DD');
-    // arr.push(fd);
-    // arr.push(ld);
-    // console.log("arr" + arr);
-    console.log("the first is :"+JSON.stringify(firstDay));
-    console.log("th last is:"+JSON.stringify(lastDay));
+
     datesArr.push(firstDay);
     datesArr.push(lastDay);
 
@@ -155,9 +136,17 @@ export class EbsCycleTimesComponent implements OnInit {
     });
   }
 
+  /**
+ * dates conversion
+ * @param incominDate dates for conversion into YYYY-MM-DD Format 
+ */
   convertDateMoment(incominDate) {
     return moment(incominDate).format('YYYY-MM-DD');
   }
+
+  /**
+ *  Getting data from API Call for Territories
+ */
   public getebsTerritoriesData() {
     return new Promise((resolve, reject) => {
       let territories = [];
@@ -182,6 +171,10 @@ export class EbsCycleTimesComponent implements OnInit {
       })
     })
   }
+
+  /**
+*   API Call for ArrivalType
+*/
   public getArrivalType() {
     return new Promise((resolve, reject) => {
       let workflowStatus;
@@ -198,6 +191,11 @@ export class EbsCycleTimesComponent implements OnInit {
         })
     })
   }
+
+  /**
+* drawing chart for plotting chart
+* @param data passed an array for drawing chart for google chart
+*/
   public drawchart(res) {
     this.ebscolumnChartData = {
       chartType: 'ComboChart',
@@ -242,7 +240,13 @@ export class EbsCycleTimesComponent implements OnInit {
 
   public fromMedOrAvg = 'median'; //using in setting data in graph
   public contractTimeSelect = false;
-  // ng multiselect events implemented by Vishal Sehgal 12/2/2019
+
+
+  /**
+ * event for multiselect dropdowns
+ * @param item data to be handled
+ * @param from data coming from sources like territory workflow etc.
+ */
   onItemSelect(item, from) {
     //console.log("the item is:"+JSON.stringify(item)+JSON.stringify(from));
     if (from == 'territory') {
@@ -274,16 +278,11 @@ export class EbsCycleTimesComponent implements OnInit {
     }
   }
 
-/* calculating current month last day and less last years first day   */
+  /* calculating current month last day and less last years first day   */
+
   makeInitDataLoadObj() {
-    // let now = new Date();
-    // let lastyear = new Date();
-    // lastyear.setMonth(now.getMonth() - 1);
-    // lastyear.setFullYear(now.getFullYear() - 1);
-    // lastyear.setDate(1);
-    // let currentYear = new Date();
-    // currentYear.setMonth(now.getMonth());
-    
+
+
     let newCasesObj = new FilterFormat();
     let fd = new Date();
     let firstDay = moment(fd).startOf('month').format('YYYY-MM-DD');
@@ -291,24 +290,28 @@ export class EbsCycleTimesComponent implements OnInit {
     let result = moment(firstDay).subtract(1, 'years').format('YYYY-MM-DD');
     newCasesObj.from_date = result;
     newCasesObj.to_date = last;
-    // uncomment to pass first day of current years month
-    //newCasesObj.to_date = firstDay; 
+
     newCasesObj.territory_selected = false;
     newCasesObj.territory_data = [];
     newCasesObj.arrival_selected = false;
     newCasesObj.arrival_data = [];
-     console.log("makeInitDataLoadObj firstDate"+this.convertDateMoment(result));
-     console.log("makeInitDataLoadObj lastdate"+this.convertDateMoment(last));
-       // uncomment to pass first day of current years month
-     //console.log("makeInitDataLoadObj lastdate"+this.convertDateMoment(firstDay));
+    //console.log("makeInitDataLoadObj firstDate"+this.convertDateMoment(result));
+    //console.log("makeInitDataLoadObj lastdate"+this.convertDateMoment(last));
+    // uncomment to pass first day of current years month
+    //console.log("makeInitDataLoadObj lastdate"+this.convertDateMoment(firstDay));
     return newCasesObj;
 
-   
-    
+
+
 
   }
 
 
+  /**
+ * event for multiselect dropdowns
+ * @param item data to be handled
+ * @param from data coming from sources like territory workflow etc.
+ */
   onItemDeSelect(item, from) {
     if (from == 'territory') {
       this.territoriesArr = this.removeElementArr(this.territoriesArr, item);
@@ -318,6 +321,11 @@ export class EbsCycleTimesComponent implements OnInit {
     this.filterChartData('dropdown');
   }
 
+  /**
+  * event for multiselect dropdowns
+  * @param item data to be handled
+  * @param from data coming from sources like territory workflow etc.
+  */
   onSelectAll(item, from) {
     if (from == 'territory') {
       this.territoriesArr = [];
@@ -331,6 +339,11 @@ export class EbsCycleTimesComponent implements OnInit {
     this.filterChartData('dropdown');
   }
 
+  /**
+ * event for multiselect dropdowns
+ * @param item data to be handled
+ * @param from data coming from sources like territory workflow etc.
+ */
   onDeSelectAll(item, from) {
     if (from == 'territory') {
       this.territoriesArr = [];
@@ -341,6 +354,10 @@ export class EbsCycleTimesComponent implements OnInit {
   }
 
 
+  /**
+ * event for to dates dropdown
+ * @param item passing data to be added to the array of dates
+ */
   onToYearChange(item) {
     // console.log("the item is:", item);
     this.datesData = [];
@@ -365,7 +382,8 @@ export class EbsCycleTimesComponent implements OnInit {
     })
   }
   /**
-   * This method filters the data according selected territories and workflowstatus
+   * Filters data from dropdown and drill down
+   * @param caseFrom check for called from drilldown or dropdown
    */
   public filterChartData(comesfrom) {
     this.drillDownData = [];
@@ -381,8 +399,7 @@ export class EbsCycleTimesComponent implements OnInit {
       let firstDay = moment(fd).startOf('month').format('YYYY-MM-DD');
       let last = moment(firstDay).endOf('month').format('YYYY-MM-DD');
       let result = moment(firstDay).subtract(1, 'years').format('YYYY-MM-DD');
-      // let lastDate = this.convertDateMoment(new Date());//current date
-      // let firstDate = moment(new Date()).subtract(1, 'years');//earlier date
+
       newCasesObj.from_date = result;
       newCasesObj.to_date = last;
     }
@@ -396,11 +413,10 @@ export class EbsCycleTimesComponent implements OnInit {
       if (comesfrom == 'dropdown') {
         this.checkDateDropdownSelected(newCasesObj)
           .then(result => {
-            //let res = this.combiningDataForChart(result);
             let chartData = this.makeChartData(result);
             this.drawchart(chartData);
           }).catch(error => {
-            //console.log("error in dateDropdownSelected " + error);
+            console.log("error in dateDropdownSelected " + error);
           });
       }
       else {
@@ -428,7 +444,7 @@ export class EbsCycleTimesComponent implements OnInit {
             let chartData = this.makeChartData(result);
             this.drawchart(chartData);
           }).catch(error => {
-            // console.log("error in dateDropdownSelected " + error);
+            console.log("error in dateDropdownSelected " + error);
           });
 
       }
@@ -444,7 +460,7 @@ export class EbsCycleTimesComponent implements OnInit {
           });
       }
     } else if (this.territoriesArr.length == 0 && this.arrivalTypesArr.length > 0) {
-      console.log("t0 a>0");
+      //console.log("t0 a>0");
       this.drillDown = [];
       newCasesObj.territory_selected = false;
       newCasesObj.arrival_selected = true;
@@ -453,11 +469,10 @@ export class EbsCycleTimesComponent implements OnInit {
       if (comesfrom == 'dropdown') {
         this.checkDateDropdownSelected(newCasesObj)
           .then(result => {
-            //let res = this.combiningDataForChart(result);
             let chartData = this.makeChartData(result);
             this.drawchart(chartData);
           }).catch(error => {
-            // console.log("error in dateDropdownSelected " + error);
+            console.log("error in dateDropdownSelected " + error);
           });
       }
       else {
@@ -487,7 +502,7 @@ export class EbsCycleTimesComponent implements OnInit {
             let chartData = this.makeChartData(result);
             this.drawchart(chartData);
           }).catch(error => {
-            //console.log("error in dateDropdownSelected " + error);
+            console.log("error in dateDropdownSelected " + error);
           });
 
       }
@@ -515,13 +530,14 @@ export class EbsCycleTimesComponent implements OnInit {
   }
 
 
-
+  /**
+   * common method for converting acceptable data format to be passed to draw chart method
+   * @param data passed data for conversion
+   */
   public makeChartData(data) {
     //console.log("makeChartData"+JSON.stringify(data));
     let array = [];
-    //array.push(['Month', this.fromMedOrAvg == 'median' ? 'No. of Median Days' : 'No. Of Average Days', 'Contracts Count',{ role: "annotation" }, { role: "style" }]);
     array.push(['Month', this.fromMedOrAvg == 'median' ? 'No. of Median Days' : 'No. Of Average Days', { role: "annotation" }, { role: "style" }]);
-    //array.push(['Month','No. of Median Days',{ role: "annotation" },{ role: "style" }]);
     if (data.length == 0) {
       // console.log("the if of check for length");
       this.checkData = true;
@@ -532,14 +548,17 @@ export class EbsCycleTimesComponent implements OnInit {
       let barColor = '#4A90E2';
       for (let i in data) {
         array.push([data[i].by_month, this.fromMedOrAvg == 'median' ? parseInt(data[i].median_days) : parseInt(data[i].average_numofdays), parseInt(data[i].contract_count), barColor]);
-        //array.push([this.fromMedOrAvg == 'median' ? parseInt(data[i].median_days) : parseInt(data[i].average_numofdays),data[i].by_month , " No. Of Contracts - " + parseInt(data[i].contract_count), barColor]);   
-        //array.push([data[i].by_month,parseInt(data[i].median_days) , parseInt(data[i].contract_count), barColor]); 
       }
       this.checkData = false;
     }
     return array;
   }
 
+  /**
+   * creating dynamic dates
+   * @param startDate passing start date bound
+   * @param endDate passing end date bound
+   */
   public dateRange(startDate, endDate) {
     let start = startDate.split('-');
     let end = endDate.split('-');
@@ -570,17 +589,20 @@ export class EbsCycleTimesComponent implements OnInit {
     return array;
   }
 
+  /**
+   * API Call Method for Drill Down Window 
+   * @param jsonobj - passing data as an object
+   */
   public getDrillDownData(jsonobj) {
     return new Promise((resolve, reject) => {
-      //let jsonObj = { 'first': this.status[0], 'last': this.status[1] };
       this._ebsService.getEBCCycleTimesDrillDown(jsonobj)
         .subscribe(res => {
-          console.log("the res recievd is:"+JSON.stringify(res));
+          //console.log("the res recievd is:"+JSON.stringify(res));
           for (let i in res) {
             res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('MM-DD-YYYY');
             res[i].contract_start_date = res[i].contract_start_date == null ? '-' : moment(res[i].contract_start_date).format('MM-DD-YYYY');
-            res[i].contract_age = res[i].contract_age == null ? '-':res[i].contract_age;
-            res[i].contract_number_modifier = res[i].contract_number_modifier == null ? '-':res[i].contract_number_modifier;
+            res[i].contract_age = res[i].contract_age == null ? '-' : res[i].contract_age;
+            res[i].contract_number_modifier = res[i].contract_number_modifier == null ? '-' : res[i].contract_number_modifier;
           }
           resolve(res);
         }, error => {
@@ -591,13 +613,15 @@ export class EbsCycleTimesComponent implements OnInit {
 
   }
 
+  /**
+*  Getting data from API Call for Minimum and Maximum Dates
+*/
   public getMinMaxDates() {
     return new Promise((resolve, reject) => {
       this._ebsService.getEBSMinMaxDates().subscribe(data => {
         this.minmaxdates = data;
         // console.log("territories" + this.territories)
       }, err => console.error(err),
-        // the third argument is a function which runs on completion
         () => {
           //console.log("the drilldown data recived is:"+JSON.stringify(this.drillDown));
           resolve(this.minmaxdates);
@@ -605,7 +629,7 @@ export class EbsCycleTimesComponent implements OnInit {
       )
     }).catch((error) => {
       reject(error);
-      //console.log('errorin getting data :', error);
+      console.log('errorin getting data :', error);
     })
   }
 
@@ -617,7 +641,7 @@ export class EbsCycleTimesComponent implements OnInit {
 
 
       }, error => {
-        //console.log("error getCaseData " + error);
+        console.log("error getCaseData " + error);
       });
 
 
@@ -633,26 +657,22 @@ export class EbsCycleTimesComponent implements OnInit {
         this.sideViewDropDowns.territoryData = res;
         this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
       }, error => {
-        // console.log("error getTerritories " + error);
+        console.log("error getTerritories " + error);
       });
     this.getArrivalType()
       .then((res: any) => {
-        //this.drawChart(res);
         this.sideViewDropDowns.showArrivalType = true;
         this.sideViewDropDowns.arrivalTypeData = res;
         this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
       }, error => {
-        // console.log("error getArrivalType " + error);
+        console.log("error getArrivalType " + error);
       });
-    //this.sideViewDropDowns.showArrivalType = true;
     this.sideViewDropDowns.showContractTime = true;
     this.sideViewDropDowns.showYearDD = true;
     this.sideViewDropDowns.compHeading = appheading.garph4;
     let caseTimeData = [{ 'item_id': 1, 'item_text': 'Median' },
     { 'item_id': 2, 'item_text': 'Average' }];
-    //let caseTimeData = ['Median' , 'Average' ];
     this.sideViewDropDowns.contractTimeData = caseTimeData;
-    //this.sideViewDropDowns.arrivalTypeData = ['SAOF', 'CPQ', 'Q2SC'];
     this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
   }
 

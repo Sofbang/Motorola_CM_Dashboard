@@ -20,7 +20,7 @@ export class DashboardComponent
   }
   linkClick(link) {
     this._dataHandlerService.clickDashboardLink(link);
-    console.log("click");
+    //console.log("click");
   }
   ngOnInit(){
 

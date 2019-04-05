@@ -53,7 +53,7 @@ export class EbsService {
   }
   
   getEBCCycleTimesDrillDown(jsonobj){
-    console.log("the rest service:"+JSON.stringify(jsonobj));
+   // console.log("the rest service:"+JSON.stringify(jsonobj));
     return this.http.post('api/ebs_cycletime_drilldown',JSON.stringify(jsonobj),this.options)
     .map(result => this.result = result.json().data);
   }

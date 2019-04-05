@@ -16,7 +16,7 @@ import { ExcelServiceService } from '../services/convert_to_excel/excel-service.
 import { jsonpFactory } from '@angular/http/src/http_module';
 import { JsonPipe } from '@angular/common';
 import { last } from '@angular/router/src/utils/collection';
-
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sc-new-cases',
@@ -45,36 +45,47 @@ export class ScNewCasesComponent implements OnInit {
   public status: any;
   public monthArr = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
   @ViewChild('openSCModal') openScModel: ElementRef;
-  constructor(private _smartclientService: SmartclientService, private _dataHandlerService: DataHandlerService, private _excelService: ExcelServiceService) {
+  constructor(private _smartclientService: SmartclientService, private _dataHandlerService: DataHandlerService, private _excelService: ExcelServiceService,private router: Router) {
     this._dataHandlerService.dataFromSideView
       .subscribe(res => {
+        if(this.router.url=='/home/sc-new-cases'){
+
+          let incomingData = res.data, event = res.event.toLowerCase(), from = res.from;
+          if (event == 'onitemselect') {
+            this.onItemSelect(incomingData, from)
+          } else if (event == 'onitemdeselect') {
+            this.onItemDeSelect(incomingData, from)
+          } else if (event == 'onselectall') {
+            this.onSelectAll(incomingData, from);
+          }
+          else if (event == 'ondeselectall') {
+            this.onDeSelectAll(incomingData, from);
+          } else if (event == 'onchangeto') {
+            this.onToYearChange(incomingData);
+          }
+        }
+        //console.log("llll"+JSON.stringify(this.router.url))
         //console.log("sub ebs" + JSON.stringify(res));
-        let incomingData = res.data, event = res.event.toLowerCase(), from = res.from;
-        if (event == 'onitemselect') {
-          this.onItemSelect(incomingData, from)
-        } else if (event == 'onitemdeselect') {
-          this.onItemDeSelect(incomingData, from)
-        } else if (event == 'onselectall') {
-          this.onSelectAll(incomingData, from);
-        }
-        else if (event == 'ondeselectall') {
-          this.onDeSelectAll(incomingData, from);
-        } else if (event == 'onchangeto') {
-          this.onToYearChange(incomingData);
-        }
+      
+
+
       });
     this._dataHandlerService.setDataForMainLayout(true);
 
   }
 
+
+  /**
+  * google chart method for bar selection
+  * @param event -  returns the events json with data inside the bar
+  */
+
   public selectBar(event: ChartSelectEvent) {
 
 
-    // drillDownStatusnew = (event.selectedRowValues[0]);
-    // status = drillDownStatusnew[0];
     // console.log("in the selectBar" + JSON.stringify(event.selectedRowValues[0]));
     if (event.message == 'select') {
-      //this.drillDownData=[];
+
       //console.log("the drilldown data is:" + JSON.stringify(this.drillDownData));
       this.openScModel.nativeElement.click();
       let drillDownStatusnew = [];
@@ -84,42 +95,41 @@ export class ScNewCasesComponent implements OnInit {
       this.data = event.selectedRowValues[0];
       //console.log("the data is:" + JSON.stringify(this.data));
       this.status = this.fdld(drillDownStatusnew);
-      console.log("the ld is:" + JSON.stringify(this.status));
+      //console.log("the ld is:" + JSON.stringify(this.status));
       $('.modal .modal-dialog').css('width', $(window).width() * 0.95);//fixed
       $('.modal .modal-body').css('height', $(window).height() * 0.77);//fixed
       $('tbody.SCModlTbody').css('max-height', $(window).height() * 0.69);
       $('tbody.SCModlTbody').css('overflow-y', 'scroll');
       $('tbody.SCModlTbody').css('overflow-x', 'hidden');
       $('tbody.SCModlTbody').css('width', '100%');
-      // status = this.fdld(status);
+
       //console.log("the fd ld is :"+JSON.stringify(status[0])+"the ld is :"+JSON.stringify(status[1]));
       this.filterChartData('drilldown');
-      //this.drillDown = [];
+
       this.newModelCounts = ''
       this.status = '';
-      console.log("end of messsage=-selectBar");
+      //console.log("end of messsage=-selectBar");
     }
   }
 
+  /**
+   * Export to excel method used to bind data from drill down response to an excel file.
+   */
   public exportToExcel() {
-    // }
+
     //console.log("the data is:" + JSON.stringify(this.drillDownData));
     this._excelService.exportAsExcelFile(this.drillDownData, 'Smart Client New Cases');
   }
 
 
 
+
+  /**
+   * calculating current month last day and less last years first day
+   * @param data passed data for calculating month last day and less last years first day
+   */
   public fdld(data) {
-    // let month = data.split('-')[0];
-    // let year = data.split('-')[1];
-    // let date = year + '-' + (this.monthArr.indexOf(month) + 1) + '-01';
-    // console.log("ddd" + this.convertDateMoment(date));
- //   let newDate = this.convertDateMoment(date)
-    //var dates = new Date(date);
-    //var firstDay = new Date(dates.getFullYear(), dates.getMonth(), 1);
-    //var lastDay = new Date(dates.getFullYear(), dates.getMonth() + 1, 0);
-    //console.log("the firstDay is:" + firstDay);
-    //console.log("the lastDay is:" + lastDay);
+
     let datesArr = [];
 
     let firstDay = moment(data).startOf('month').format('YYYY-MM-DD');
@@ -128,27 +138,14 @@ export class ScNewCasesComponent implements OnInit {
     datesArr.push(firstDay);
     datesArr.push(lastDay);
 
-   // let v = data.split(' ');
-    //console.log("the v is:"+moment(data).format('yyyy-MM-dd'));
-    // let arr = [];
-    // let newone = '01-' + v[0];
-    // let newtwo = v[1];
-    // let newthree = newone + newtwo;
-    // console.log("the newone is:" + newone);
-    // console.log("hhhhhhkk" + this.convertDateMoment(newtwo));
-    // console.log("the date is:" + JSON.stringify(newthree));
-    // let newModDate = new Date(newthree.replace('undefined', ''));
-    // let FirstDay = new Date(newModDate.getFullYear(), newModDate.getMonth(), 1).toLocaleDateString();
-    // let LastDay = new Date(newModDate.getFullYear(), newModDate.getMonth() + 1, 0).toLocaleDateString();
-    // let fd = moment(FirstDay).format('YYYY-MM-DD');
-    // let ld = moment(LastDay).format('YYYY-MM-DD');
-    // arr.push(fd);
-    // arr.push(ld);
-    // console.log("arr" + arr);
+
     return datesArr;
 
   }
 
+  /**
+ *  Getting data from API Call for Territories
+ */
   public getTerritories() {
     return new Promise((resolve, reject) => {
       let territories;
@@ -157,7 +154,7 @@ export class ScNewCasesComponent implements OnInit {
           territories = data;
           //console.log("territories" + territories)
         }, err => { console.log("getScTerritories error " + err) },
-          // the third argument is a function which runs on completion
+
           () => {
             let array = [];
             let count = 0;
@@ -165,24 +162,28 @@ export class ScNewCasesComponent implements OnInit {
             for (let i in territories) {
               if (territories[i].territory == 'OTHER') {
                 //console.log("The other territory " + territories[i].territory)
-                // otherTerritory = territories[i].territory
+
                 otherTerritory = { 'item_id': territories[i].territory, 'item_text': territories[i].territory };
               } else {
                 array.push({ 'item_id': territories[i].territory, 'item_text': territories[i].territory });
               }
             }
-            //array.push({ 'item_id': territories[i].territory, 'item_text': territories[i].territory });
             if (territories.length > 0)
               array.push(otherTerritory);
             resolve(array);
           }
         )
     }).catch((error) => {
-      // console.log('errorin getting data :', error);
+      console.log('errorin getting data :', error);
       reject(error);
 
     })
   }
+
+  /**
+   * 
+   * @param jsonobj - API Call Method for Drill Down Window passing data as an object
+   */
   public getSCDrillDownData(jsonobj) {
     return new Promise((resolve, reject) => {
       this._smartclientService.getSCNewCasesDrillDown(jsonobj)
@@ -198,13 +199,7 @@ export class ScNewCasesComponent implements OnInit {
   /* calculating current month last day and less last years first day   */
 
   makeInitDataLoadObj() {
-    // let now = new Date();
-    // let lastyear = new Date();
-    // lastyear.setMonth(now.getMonth() - 1);
-    // lastyear.setFullYear(now.getFullYear() - 1);
-    // lastyear.setDate(1);
-    // let currentYear = new Date();
-    // currentYear.setMonth(now.getMonth());
+
     let newCasesObj = new FilterFormat();
     let fd = new Date();
     let firstDay = moment(fd).startOf('month').format('YYYY-MM-DD');
@@ -213,7 +208,7 @@ export class ScNewCasesComponent implements OnInit {
     //console.log("ld is:"+result);
     //console.log("fd is:"+firstDay);
     //console.log("fd this year last day  is:"+last);
-    newCasesObj.from_date =result ;
+    newCasesObj.from_date = result;
     newCasesObj.to_date = last;
     // uncomment to pass first day of current years month
     //newCasesObj.to_date = firstDay; 
@@ -221,26 +216,21 @@ export class ScNewCasesComponent implements OnInit {
     newCasesObj.territory_data = [];
     newCasesObj.arrival_selected = false;
     newCasesObj.arrival_data = [];
-     console.log("makeInitDataLoadObj firstDate"+this.convertDateMoment(result));
-     console.log("makeInitDataLoadObj lastdate"+this.convertDateMoment(last));
-      // uncomment to pass first day of current years month
-     //console.log("makeInitDataLoadObj lastdate"+this.convertDateMoment(firstDay));
+    //console.log("makeInitDataLoadObj firstDate"+this.convertDateMoment(result));
+    //console.log("makeInitDataLoadObj lastdate"+this.convertDateMoment(last));
+    // uncomment to pass first day of current years month
+    //console.log("makeInitDataLoadObj lastdate"+this.convertDateMoment(firstDay));
 
     return newCasesObj;
   }
   public scNewCaseAllData: any;
   public datesInit = [];
+  /**
+   * API Call for SC New Cases 
+   */
   public getSCNewCases() {
     return new Promise((resolve, reject) => {
-      // let lastDate = this.convertDateMoment(new Date());//current date
-      // let firstDate = moment(new Date()).subtract(1, 'years');//earlier date
-      // let newCasesObj = new FilterFormat();
-      // newCasesObj.from_date = this.convertDateMoment(firstDate);
-      // newCasesObj.to_date = lastDate;
-      // newCasesObj.territory_selected = false;
-      // newCasesObj.territory_data = [];
-      // newCasesObj.arrival_selected = false;
-      // newCasesObj.arrival_data = [];
+
       this._smartclientService.getScNewCases(this.makeInitDataLoadObj())
         .subscribe(res => {
           this.scNewCaseAllData = res;//to use in only territoy or arival type filter
@@ -258,16 +248,16 @@ export class ScNewCasesComponent implements OnInit {
   */
   combiningDataForChart(scDataByMonthYr) {
     let filterSCByDate = [], arr;
-    console.log("the data is:"+JSON.stringify(scDataByMonthYr));
+    //console.log("the data is:"+JSON.stringify(scDataByMonthYr));
     for (let i in scDataByMonthYr) {
       arr = []
       arr.push(scDataByMonthYr[i].bymonth);
       arr.push(parseInt(scDataByMonthYr[i].case_count));
       arr.push(parseInt(scDataByMonthYr[i].case_count));
-      
+
       filterSCByDate.push(arr);
     }
-    console.log("filterSCByDate" + JSON.stringify(filterSCByDate));
+    //console.log("filterSCByDate" + JSON.stringify(filterSCByDate));
     return filterSCByDate;
   }
 
@@ -278,7 +268,6 @@ export class ScNewCasesComponent implements OnInit {
     return new Promise((resolve, reject) => {
       this._smartclientService.getScNewCases(newCasesObj)
         .subscribe(res => {
-          //this.scNewCaseAllData = res;//to use in only territoy or arival type filter
           resolve(res);
         }, error => {
           reject(error);
@@ -343,21 +332,21 @@ export class ScNewCasesComponent implements OnInit {
   public makeChartData(data) {
     let array = [];
     if (data.length == 0) {
-      console.log("the if of check for length");
+      //console.log("the if of check for length");
       this.checkDataSCNC = true;
       array = [['Months', 'Cases Counts'], ['Jan', 0], ['Feb ', 0], ['Mar ', 0], ['Apr ', 0], ['May ', 0], ['Jun ', 0], ['Jul ', 0], ['Aug ', 0], ['Sep ', 0], ['Oct ', 0], ['Nov ', 0], ['Dec ', 0]];
       this.drawChart(array);
 
     } else {
-      
-      array.push(['Months', 'Cases Counts',{ role: "annotation" }]);
-      console.log("the array of months data is:"+JSON.stringify(data));
+
+      array.push(['Months', 'Cases Counts', { role: "annotation" }]);
+      //console.log("the array of months data is:"+JSON.stringify(data));
 
       for (let i in data) {
-        
+
         array.push(data[i]);
       }
-      console.log("the array of months data is:"+JSON.stringify(array));
+      //console.log("the array of months data is:"+JSON.stringify(array));
 
       this.checkDataSCNC = false;
     }
@@ -365,7 +354,12 @@ export class ScNewCasesComponent implements OnInit {
   }
 
   public arrivalTypesArr = [];
-  // ng multiselect events implemented by Vishal Sehgal 12/2/2019
+
+  /**
+ * event for multiselect dropdowns
+ * @param item data to be handled
+ * @param from data coming from sources like territory workflow etc.
+ */
   onItemSelect(item, from) {
     if (from == 'territory') {
       this.territoriesArr.push(item);
@@ -377,6 +371,11 @@ export class ScNewCasesComponent implements OnInit {
 
   }
 
+  /**
+ * event for multiselect dropdowns
+ * @param item data to be handled
+ * @param from data coming from sources like territory workflow etc.
+ */
   onItemDeSelect(item, from) {
     if (from == 'territory') {
       this.territoriesArr = this.removeElementArr(this.territoriesArr, item);
@@ -387,6 +386,11 @@ export class ScNewCasesComponent implements OnInit {
     }
   }
 
+  /**
+* event for multiselect dropdowns
+* @param item data to be handled
+* @param from data coming from sources like territory workflow etc.
+*/
   onSelectAll(item, from) {
     if (from == 'territory') {
       this.territoriesArr = [];
@@ -399,6 +403,10 @@ export class ScNewCasesComponent implements OnInit {
     }
   }
 
+  /**
+ * event for to dates dropdown
+ * @param item passing data to be added to the array of dates
+ */
   onToYearChange(item) {
     this.datesData = [];
     this.datesData.push(item.firstDay);
@@ -408,6 +416,11 @@ export class ScNewCasesComponent implements OnInit {
 
   }
 
+  /**
+ * event for multiselect dropdowns
+ * @param item data to be handled
+ * @param from data coming from sources like territory workflow etc.
+ */
   onDeSelectAll(item, from) {
     if (from == 'territory') {
       this.territoriesArr = [];
@@ -417,6 +430,11 @@ export class ScNewCasesComponent implements OnInit {
     this.filterChartData('dropdown');
   }
 
+
+  /**
+ * Filters data from dropdown and drill down
+ * @param caseFrom check for called from drilldown or dropdown
+ */
   public filterChartData(caseFrom) {
     this.drillDownData = [];
     this.newModelCounts = '';
@@ -430,8 +448,7 @@ export class ScNewCasesComponent implements OnInit {
       let firstDay = moment(fd).startOf('month').format('YYYY-MM-DD');
       let last = moment(firstDay).endOf('month').format('YYYY-MM-DD');
       let result = moment(firstDay).subtract(1, 'years').format('YYYY-MM-DD');
-      // let lastDate = this.convertDateMoment(new Date());//current date
-      // let firstDate = moment(new Date()).subtract(1, 'years');//earlier date
+
       newCasesObj.from_date = result;
       newCasesObj.to_date = last;
     }
@@ -455,7 +472,7 @@ export class ScNewCasesComponent implements OnInit {
       else {
         newCasesObj.from_date = this.status[0];
         newCasesObj.to_date = this.status[1];
-        console.log("the data send is:"+JSON.stringify(newCasesObj));
+        //console.log("the data send is:"+JSON.stringify(newCasesObj));
         this.getSCDrillDownData(newCasesObj)
           .then((res: any) => {
             this.newModelCounts = res.length;
@@ -474,8 +491,7 @@ export class ScNewCasesComponent implements OnInit {
       //console.log("t0  a0");
       newCasesObj.territory_selected = false;
       newCasesObj.arrival_selected = false;
-      //newCasesObj.from_date = this.status[0];
-      //newCasesObj.to_date = this.status[1];
+
       if (caseFrom == 'dropdown') {
         this.checkDateDropdownSelected(newCasesObj)
           .then(result => {
@@ -489,14 +505,14 @@ export class ScNewCasesComponent implements OnInit {
       else {
         newCasesObj.from_date = this.status[0];
         newCasesObj.to_date = this.status[1];
-        //this.drillDownData=[];
-        console.log("the data send is:"+JSON.stringify(newCasesObj));
+
+        //console.log("the data send is:"+JSON.stringify(newCasesObj));
 
         this.getSCDrillDownData(newCasesObj)
           .then((res: any) => {
             this.newModelCounts = res.length;
             res = this.calculateNssAging(res);
-            console.log("uuu----"+JSON.stringify(res));
+            //console.log("uuu----"+JSON.stringify(res));
             this.drillDownData = res;
 
           }, error => {
@@ -509,8 +525,7 @@ export class ScNewCasesComponent implements OnInit {
       newCasesObj.territory_selected = false;
       newCasesObj.arrival_selected = true;
       newCasesObj.arrival_data = this.arrivalTypesArr;
-      // newCasesObj.from_date = this.status[0];
-      // newCasesObj.to_date = this.status[1];
+
       if (caseFrom == 'dropdown') {
         this.checkDateDropdownSelected(newCasesObj)
           .then(result => {
@@ -525,7 +540,7 @@ export class ScNewCasesComponent implements OnInit {
         newCasesObj.from_date = this.status[0];
         newCasesObj.to_date = this.status[1];
         //this.drillDownData=[];
-        console.log("the data send is:"+JSON.stringify(newCasesObj));
+        //console.log("the data send is:"+JSON.stringify(newCasesObj));
 
         this.getSCDrillDownData(newCasesObj)
           .then((res: any) => {
@@ -559,8 +574,8 @@ export class ScNewCasesComponent implements OnInit {
       else {
         newCasesObj.from_date = this.status[0];
         newCasesObj.to_date = this.status[1];
-        //this.drillDownData=[];
-        console.log("the data send is:"+JSON.stringify(newCasesObj));
+
+        //console.log("the data send is:"+JSON.stringify(newCasesObj));
 
         this.getSCDrillDownData(newCasesObj)
           .then((res: any) => {
@@ -575,25 +590,35 @@ export class ScNewCasesComponent implements OnInit {
     }
   }
 
+
+  /**
+ * for calculating NSS Aging
+ * @param res data from API as a response
+ */
   calculateNssAging(res) {
     let currentDate: any = new Date();
     //console.log("the data is:" + JSON.stringify(res));
-          for (let i in res) {
-            let caseCreationdate = new Date(moment(res[i].case_creation_date).format('YYYY-MM-DD'));
-            let statusChangedOnDate = new Date(moment(res[i].sts_changed_on).format('YYYY-MM-DD'));
-            let timeDiff = Math.abs(currentDate.getTime() - caseCreationdate.getTime());
-          if ( res[i].case_condition=='CLOSED'){
-            timeDiff = Math.abs(statusChangedOnDate.getTime() - caseCreationdate.getTime());
-          }
-          let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
-          //console.log("diff----"+diffDays)
-          res[i]['nss_aging'] = diffDays ;
-          res[i].case_creation_date = res[i].case_creation_date == null ? '-' : moment(res[i].case_creation_date).format('MM-DD-YYYY');         
-          res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('MM-DD-YYYY');
-          }
+    for (let i in res) {
+      let caseCreationdate = new Date(moment(res[i].case_creation_date).format('YYYY-MM-DD'));
+      let statusChangedOnDate = new Date(moment(res[i].sts_changed_on).format('YYYY-MM-DD'));
+      let timeDiff = Math.abs(currentDate.getTime() - caseCreationdate.getTime());
+      if (res[i].case_condition == 'CLOSED') {
+        timeDiff = Math.abs(statusChangedOnDate.getTime() - caseCreationdate.getTime());
+      }
+      let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+      //console.log("diff----"+diffDays)
+      res[i]['nss_aging'] = diffDays;
+      res[i].case_creation_date = res[i].case_creation_date == null ? '-' : moment(res[i].case_creation_date).format('MM-DD-YYYY');
+      res[i].contract_creation_date = res[i].contract_creation_date == null ? '-' : moment(res[i].contract_creation_date).format('MM-DD-YYYY');
+    }
     return res;
   }
 
+
+  /**
+   * metrhod for to dates filter 
+   * @param filterVal returning the selected Value
+   */
   public onChangeTo(filterVal: any) {
     let v = filterVal.split(' ');
     // console.log("the v is:"+v);
@@ -618,11 +643,6 @@ export class ScNewCasesComponent implements OnInit {
     this._dataHandlerService.setDataFromSideView(jsonObj);
   }
 
-  public clearAll() {
-    console.log("after the modal is closed:");
-    this.drillDownData = [];
-    console.log("the dd data is:" + JSON.stringify(this.drillDownData));
-  }
 
 
   /**
@@ -637,6 +657,9 @@ export class ScNewCasesComponent implements OnInit {
   }
 
 
+  /**
+*  API Call for Minimum and Maximum Dates
+*/
   public getMinMaxDates() {
     return new Promise((resolve, reject) => {
       this._smartclientService.getScMinMaxDates()
@@ -649,6 +672,10 @@ export class ScNewCasesComponent implements OnInit {
         })
     })
   }
+  /**
+* drawing chart for plotting chart
+* @param data passed an array for drawing chart for google chart
+*/
   public drawChart(data) {
     this.columnChart = {
       chartType: 'ColumnChart',
@@ -685,6 +712,10 @@ export class ScNewCasesComponent implements OnInit {
       }
     };
   }
+
+  /**
+*  Getting data from API Call for ArrivalType
+*/
   public getArrivalTypeData() {
     return new Promise((resolve, reject) => {
       let arrivalType;
@@ -709,7 +740,6 @@ export class ScNewCasesComponent implements OnInit {
         let chartData = this.makeChartData(res);
         //console.log("ggggg"+JSON.stringify(chartData));
         this.drawChart(chartData);
-        //this.drawChart(res);
       }, error => {
         console.log("error getSCNewCases " + error);
       });
@@ -725,26 +755,25 @@ export class ScNewCasesComponent implements OnInit {
       })
     this.getTerritories()
       .then((res: any) => {
-        //this.drawChart(res);
+
         this.sideViewDropDowns.showTerritory = true;
         this.sideViewDropDowns.territoryData = res;
         this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
       }).catch(error => {
         console.log("error getMinMaxDates " + error);
       })
-      this.getArrivalTypeData()
+    this.getArrivalTypeData()
       .then((res: any) => {
-        //this.drawChart(res);
-        console.log("Arrival type" + JSON.stringify(res));
+
+        //console.log("Arrival type" + JSON.stringify(res));
         this.sideViewDropDowns.showArrivalType = true;
         this.sideViewDropDowns.arrivalTypeData = res;
         this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);
       }, error => {
-        //console.log("error getWorkflowStatus " + error);
+        console.log("error getWorkflowStatus " + error);
       });
 
-    //this.sideViewDropDowns.showArrivalType = true;
-    //this.sideViewDropDowns.arrivalTypeData = ['SAOF', 'CPQ', 'Q2SC'];
+
     this.sideViewDropDowns.showYearDD = true;
     this.sideViewDropDowns.compHeading = appheading.graph3;
     this._dataHandlerService.setSideViewDropdown(this.sideViewDropDowns);

@@ -125,7 +125,7 @@ export class SideDropdownViewComponent implements OnInit {
 
  
   public makeDates(startDate, endDate) {
-    console.log("in satart dates is:"+JSON.stringify(startDate));
+    //console.log("in satart dates is:"+JSON.stringify(startDate));
     let start = startDate.split('-');
     let end = endDate.split('-');
     let startYear = parseInt(start[0]);
@@ -141,12 +141,12 @@ export class SideDropdownViewComponent implements OnInit {
         dates.push([i, displayMonth, '01'].join('-'));
       }
     }
-    console.log("in satart dates is:"+JSON.stringify(startDate));
-    console.log("in satart dates is:"+JSON.stringify(endDate));
-    console.log("the array of dates are :"+JSON.stringify(dates.length));
+    //console.log("in satart dates is:"+JSON.stringify(startDate));
+    //console.log("in satart dates is:"+JSON.stringify(endDate));
+    //console.log("the array of dates are :"+JSON.stringify(dates.length));
     this.finalarr = this.makeDateFormat(dates);
-    console.log("the dates are:"+JSON.stringify(this.finalarr));
-    console.log("the dates are:"+JSON.stringify(this.finalarr.length));
+    //console.log("the dates are:"+JSON.stringify(this.finalarr));
+    //console.log("the dates are:"+JSON.stringify(this.finalarr.length));
     return  this.finalarr;
   }
 
@@ -180,7 +180,7 @@ export class SideDropdownViewComponent implements OnInit {
    * @param filterVal-date value selected 
    */
   public onChangeFrom(filterVal: any) {
-    console.log("the data "+JSON.stringify(filterVal));
+    //console.log("the data "+JSON.stringify(filterVal));
     let current = moment();
     let check = moment(current, 'YYYY/MM/DD');
     let monthval = check.format('MMM YYYY');

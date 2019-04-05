@@ -90,7 +90,7 @@ router.get('/ebs_arrival_type', (req, res, next) => {
         }
         response.data = result.rows;
         res.json(response);
-        console.log("ebs.js arrival_type data"+result.rows);
+       // console.log("ebs.js arrival_type data"+result.rows);
         //release connection back to pool
         conn.doRelease(dbConn);
       });
