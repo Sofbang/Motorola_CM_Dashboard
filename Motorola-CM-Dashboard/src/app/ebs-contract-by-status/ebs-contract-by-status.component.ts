@@ -487,6 +487,7 @@ export class EbsContractByStatusComponent implements OnInit {
               res[i].contract_start_date = res[i].contract_start_date == null ? '-' : moment(res[i].contract_start_date).format('MM-DD-YYYY');
 
             }
+            this.drillDownData = res;
           }, error => {
             console.log("error getTerritories " + error);
           });

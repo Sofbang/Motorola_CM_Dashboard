@@ -13,20 +13,14 @@ import { HttpModule }
 import { HttpClientModule }
   from '@angular/common/http';
 import { LoginComponent } from './login/login.component';
-import { DashboardComponent } from './dashboard/dashboard.component'
-//import { RouterModule, Routes } from '@angular/router';
-import { OktaConfig }
-  from '@okta/okta-angular/dist/okta/models/okta.config';
-// Okta Guard and Service
-//import { OktaAuthGuard } from './app.guard';
+
 import {
   OktaAuthModule,
   OktaCallbackComponent,
 } from '@okta/okta-angular';
 import { Routes, RouterModule }
   from '@angular/router';
-import { OktaAuthGuard } from './app.guard';
-import { OktaAuthService } from './app.service';
+
 
 
 // app.module.ts
@@ -83,7 +77,7 @@ const appRoutes: Routes = [
 
     RouterModule.forRoot(appRoutes),
     OktaAuthModule.initAuth(config)
-  ], providers: [CookieService,EnvServiceProvider],
+  ], providers: [EnvServiceProvider,CookieService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

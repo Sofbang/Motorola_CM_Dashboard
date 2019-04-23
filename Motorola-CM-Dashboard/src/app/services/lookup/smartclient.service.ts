@@ -19,20 +19,20 @@ export class SmartclientService {
   constructor(private http: Http,private _cookieService:CookieService) { }
 
   getSCCases() {
-    return this.http.get('api/sc_case_status')
+    return this.http.get('api/sc_case_status', this.options)
       .map(result => this.result = result.json().data);
   }
   getSCCasesAvg() {
-    return this.http.get('api/sc_case_status_avg')
+    return this.http.get('api/sc_case_status_avg', this.options)
       .map(result => this.result = result.json().data);
   }
   getScTerritories() {
-    return this.http.get('api/sc_territories')
+    return this.http.get('api/sc_territories', this.options)
       .map(result => this.result = result.json().data);
   }
 
   getScWorkflowStatus() {
-    return this.http.get('api/sc_workflow_status')
+    return this.http.get('api/sc_workflow_status', this.options)
       .map(result => this.result = result.json().data);
   }
 
@@ -60,7 +60,7 @@ export class SmartclientService {
   }
 
   getScMinMaxDates() {
-    return this.http.get("api/sc_dates_max_min")
+    return this.http.get("api/sc_dates_max_min", this.options)
       .map(response => this.result = response.json().data);
   }
 
@@ -74,7 +74,7 @@ export class SmartclientService {
       .map(result => this.result = result.json().data);
   }
   getScArrivalType() {
-    return this.http.get('api/sc_arrival_type')
+    return this.http.get('api/sc_arrival_type', this.options)
       .map(result => this.result = result.json().data);
   }
   getSCByStatus(scObj) {

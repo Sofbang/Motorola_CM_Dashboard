@@ -24,17 +24,17 @@ export class EbsService {
   }
 
   getEBSTerritories() {
-    return this.http.get('api/ebs_territories')
+    return this.http.get('api/ebs_territories', this.options)
       .map(result => this.result = result.json().data);
   }
 
   getEBSWorkflowStatus() {
-    return this.http.get('api/ebs_workflow_status')
+    return this.http.get('api/ebs_workflow_status', this.options)
       .map(result => this.result = result.json().data);
   }
 
   getEBSContractsAvg() {
-    return this.http.get('api/ebs_contract_state_avg')
+    return this.http.get('api/ebs_contract_state_avg', this.options)
       .map(result => this.result = result.json().data);
   }
 
@@ -64,12 +64,12 @@ export class EbsService {
   }
 
   getEBSMinMaxDates() {
-    return this.http.get("api/ebs_dates_max_min")
+    return this.http.get("api/ebs_dates_max_min", this.options)
       .map(response => this.result = response.json().data);
   }
 
   getEBSArrivalType() {
-    return this.http.get("api/ebs_arrival_type")
+    return this.http.get("api/ebs_arrival_type", this.options)
       .map(response => this.result = response.json().data);
   }
 }

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import * as $ from 'jquery';
 import { OktaAuthService } from '../../app.service';
 
-import { CookieService } from 'ngx-cookie-service';
+import { AppComponent } from '../../app.component';
 
 import { Router } from '@angular/router';
 
@@ -14,7 +14,7 @@ import { Router } from '@angular/router';
 export class AppHeaderComponent implements OnInit {
   public toggleClkCount = 0;
 
-  constructor(private okta: OktaAuthService, private router: Router, private cookieService: CookieService) { }
+  constructor(private okta: OktaAuthService, private router: Router, private appcomponent: AppComponent) { }
   sidebarTogglerClk() {
     this.toggleClkCount++;
     if (this.toggleClkCount % 2 == 0) {
@@ -27,22 +27,8 @@ export class AppHeaderComponent implements OnInit {
   ngOnInit() {
   }
 
-  logout() {
-
-    console.log("In logut");
-
-    localStorage.clear();
-    sessionStorage.clear();
-
-    // Get all cookies as an object
-    this.cookieService.deleteAll();
-    this.cookieService.delete('okta-oauth-state');
-    this.cookieService.delete('okta-oauth-redirect-params');
-    this.cookieService.delete('okta-oauth-nonce');
-  // this.okta.login();
-    // Redirect the user to your custom login page
-   this.router.navigate(['/logout']);
-
-  }
+ logout(){
+   this.appcomponent.logout();
+ }
 
 }
