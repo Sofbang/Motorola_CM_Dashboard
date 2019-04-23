@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 // import { Observable } from 'rxjs';
 import { Http, Headers, RequestOptions } from '@angular/http';
 import 'rxjs/add/operator/map';
+import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,12 +11,12 @@ export class SmartclientService {
   result: any;
   headers = new Headers({
     'Content-Type': 'application/json',
-    //"Authorization": "Bearer " + this._cookieService.get('tokenId') ,
+    "Authorization": "Bearer " + this._cookieService.get('app-access-token') ,
     'Cache-Control': 'no-cache',
     'Pragma': 'no-cache'
   });
   options = new RequestOptions({ headers: this.headers });
-  constructor(private http: Http) { }
+  constructor(private http: Http,private _cookieService:CookieService) { }
 
   getSCCases() {
     return this.http.get('api/sc_case_status')

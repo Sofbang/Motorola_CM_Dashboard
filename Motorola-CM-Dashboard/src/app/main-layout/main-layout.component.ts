@@ -21,7 +21,7 @@ export class MainLayoutComponent implements OnInit {
     // } else {
     //   this.showSideDrpdowns = true;
     // }
-     console.log("main" + this.router.url)
+     //console.log("main" + this.router.url)
   }
 
 }

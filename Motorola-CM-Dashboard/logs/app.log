@@ -4,3 +4,59 @@
 2019-03-31T04:53:10.760Z [Info] error: syntax error at or near "WHERE"
 2019-03-31T04:54:19.138Z [Info] error: could not determine data type of parameter $1
 2019-03-31T04:56:12.747Z [Info] error: syntax error at or near "WHERE"
+2019-04-04T07:36:17.091Z [Info] error: connect ETIMEDOUT 10.41.51.232:5432
+2019-04-05T11:23:08.951Z [Info] error: uncaughtException: procee is not defined
+ReferenceError: procee is not defined
+    at Object.<anonymous> (D:\Projects\Github\Motorola_CM_Dashboard\Motorola-CM-Dashboard\app.js:14:21)
+    at Module._compile (module.js:652:30)
+    at Object.Module._extensions..js (module.js:663:10)
+    at Module.load (module.js:565:32)
+    at tryModuleLoad (module.js:505:12)
+    at Function.Module._load (module.js:497:3)
+    at Function.Module.runMain (module.js:693:10)
+    at startup (bootstrap_node.js:191:16)
+    at bootstrap_node.js:612:3
+2019-04-23T09:05:54.633Z [Info] error: uncaughtException: Cannot find module 'jsonwebtoken'
+Error: Cannot find module 'jsonwebtoken'
+    at Function.Module._resolveFilename (module.js:547:15)
+    at Function.Module._load (module.js:474:25)
+    at Module.require (module.js:596:17)
+    at require (internal/module.js:11:18)
+    at Object.<anonymous> (D:\Projects\Github\Motorola_CM_Dashboard\Motorola-CM-Dashboard\app.js:9:13)
+    at Module._compile (module.js:652:30)
+    at Object.Module._extensions..js (module.js:663:10)
+    at Module.load (module.js:565:32)
+    at tryModuleLoad (module.js:505:12)
+    at Function.Module._load (module.js:497:3)
+2019-04-23T09:20:03.279Z [Info] error: Cannot read property 'substr' of undefined
+2019-04-23T09:33:13.022Z [Info] error: connect ETIMEDOUT 10.41.51.232:5432
+2019-04-23T09:33:52.439Z [Info] error: connect ETIMEDOUT 10.41.51.232:5432
+2019-04-23T11:37:35.222Z [Info] error: Can't set headers after they are sent.
+2019-04-23T11:37:35.227Z [Info] error: Can't set headers after they are sent.
+2019-04-23T11:39:09.002Z [Info] error: Can't set headers after they are sent.
+2019-04-23T11:39:09.007Z [Info] error: Can't set headers after they are sent.
+2019-04-23T11:39:36.509Z [Info] error: Can't set headers after they are sent.
+2019-04-23T11:39:36.515Z [Info] error: Can't set headers after they are sent.
+2019-04-23T11:53:59.305Z [Info] error: Can't set headers after they are sent.
+2019-04-23T11:53:59.313Z [Info] error: Can't set headers after they are sent.
+2019-04-23T11:54:32.211Z [Info] error: Can't set headers after they are sent.
+2019-04-23T11:54:32.220Z [Info] error: Can't set headers after they are sent.
+2019-04-23T11:54:57.354Z [Info] error: Can't set headers after they are sent.
+2019-04-23T11:54:57.359Z [Info] error: Can't set headers after they are sent.
+2019-04-23T11:56:14.966Z [Info] error: Can't set headers after they are sent.
+2019-04-23T11:56:14.972Z [Info] error: Can't set headers after they are sent.
+2019-04-23T11:59:00.809Z [Info] error: Can't set headers after they are sent.
+2019-04-23T11:59:00.815Z [Info] error: Can't set headers after they are sent.
+2019-04-23T12:01:41.785Z [Info] error: Can't set headers after they are sent.
+2019-04-23T12:01:41.794Z [Info] error: Can't set headers after they are sent.
+2019-04-23T12:04:09.943Z [Info] error: Can't set headers after they are sent.
+2019-04-23T12:04:09.948Z [Info] error: Can't set headers after they are sent.
+2019-04-23T12:04:58.691Z [Info] error: Can't set headers after they are sent.
+2019-04-23T12:04:58.697Z [Info] error: Can't set headers after they are sent.
+2019-04-23T12:08:21.763Z [Info] error: Can't set headers after they are sent.
+2019-04-23T12:08:21.774Z [Info] error: Can't set headers after they are sent.
+2019-04-23T12:08:34.838Z [Info] error: Can't set headers after they are sent.
+2019-04-23T12:08:34.839Z [Info] error: Can't set headers after they are sent.
+2019-04-23T12:10:02.903Z [Info] error: Can't set headers after they are sent.
+2019-04-23T12:10:02.907Z [Info] error: Can't set headers after they are sent.
+2019-04-23T12:19:27.737Z [Info] error: connect ETIMEDOUT 10.41.51.232:5432

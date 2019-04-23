@@ -30,7 +30,7 @@ import { OktaAuthService } from './app.service';
 
 
 // app.module.ts
-
+import { EnvServiceProvider } from './env.service.provider';
 import { CallbackComponent } from './callback.component';
 
 import { ProtectedComponent } from './protected.component';
@@ -83,7 +83,7 @@ const appRoutes: Routes = [
 
     RouterModule.forRoot(appRoutes),
     OktaAuthModule.initAuth(config)
-  ], providers: [CookieService],
+  ], providers: [CookieService,EnvServiceProvider],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
