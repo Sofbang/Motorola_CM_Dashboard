@@ -1,22 +1,25 @@
 import { Component }
     from '@angular/core';
-import { OktaAuthService }
-    from '@okta/okta-angular';
+// import { OktaAuthService }
+//     from '@okta/okta-angular';
 //import {oktaAuth} from './app.service';
 import { Injectable }
     from '@angular/core';
-import { Router, RouterOutlet }
+import { Router, RouterOutlet, ActivatedRoute }
     from '@angular/router';
-import *
-    as OktaAuth from
-    '@okta/okta-auth-js';
 
-import {
-    OKTA_CONFIG,
-    OktaAuthModule
-} from '@okta/okta-angular';
-import { logging } from 'protractor';
-import { LoginComponent } from './login/login.component';
+import { OktaAuthService } from './app.service';
+import { CookieService } from 'ngx-cookie-service';
+// import *
+//     as OktaAuth from
+//     '@okta/okta-auth-js';
+
+// import {
+//     OKTA_CONFIG,
+//     OktaAuthModule
+// } from '@okta/okta-angular';
+// import { logging } from 'protractor';
+// import { LoginComponent } from './login/login.component';
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
@@ -25,58 +28,49 @@ import { LoginComponent } from './login/login.component';
 })
 export class AppComponent {
     title = 'Motorola-CM-Dashboard';
-    verifyauthentication: boolean;
-    public count = localStorage.getItem('countValues');
-    oktaAuth = new OktaAuth({
-        url: 'https://motorolasolutions.okta.com/oauth2/default',
-        clientId: '0oaa7ok51xruc9PBy1t7',
-        issuer: 'https://motorolasolutions.okta.com/oauth2/default',
-        redirectUri: 'https://svccontractmetrics-dev.mot-solutions.com/Motorola-CM-Dashboard/home/dashboard',
-    });
-
-
-    async isAuthenticated() {
-        // Checks if there is a current accessToken in the TokenManger.
-        return !!(await
-            this.oktaAuth.tokenManager.get('accessToken'));
+    isAuthenticated: any;
+    isInit: boolean = false;
+    //authenticationSessionVariable=sessionStorage.getItem('isAuthenticated')
+    constructor(public oktaAuth: OktaAuthService, public router: Router, private activatedRoute: ActivatedRoute, private cookieService: CookieService) {
+        // Subscribe to authentication state changes
+        this.cookieService.set('cookieApp', 'Welcome you, Anil!');
+        cookieService.deleteAll();
+     
     }
-    login() {
-
-        console.log(" Login request");
-        // Launches the login redirect.
-        this.oktaAuth.token.getWithRedirect({
-            responseType: ['id_token',
-                'token'],
-            scopes: ['openid',
-                'email', 'profile']
-        });
-
-        this.oktaAuth.loginRedirect('/home/dashboard');
 
 
-    }
-    ngOnInit() {
-        if (localStorage.getItem('countValues') == null) {
-            localStorage.setItem('countValues', '0');
-            this.login()
+    async ngOnInit() {
+        //validating id_token from the url
+        let id_token = this.getParameterByName('id_token');
+
+        let error=this.getParameterByName('error')
+
+        if(error!=null)
+        {
+            id_token='error';
+            this.router.navigate(['/logout']);
         }
 
+        if (id_token != null && id_token != '') {
+            this.isInit=true;
+            console.log("id_token::" + id_token);
+        } else {
+            this.oktaAuth.handleAuthentication();
+            this.oktaAuth.login();
+            console.log("id_token is null::" + id_token);
+        }
     }
 
-    async handleAuthentication() {
-        const tokens =
-            await this.oktaAuth.token.parseFromUrl();
-        tokens.forEach(token => {
-            if (token.idToken) {
-                this.oktaAuth.tokenManager.add('idToken', token);
-            }
-            if (token.accessToken) {
-                this.oktaAuth.tokenManager.add('accessToken', token);
-            }
-        });
+    getParameterByName(name) {
+        var url = window.location.href;
+        name = name.replace(/[\[\]]/g, '\\$&');
+        var regex = new RegExp('[#&]' + name + '(=([^&#]*)|&|#|$)'),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, ' '));
     }
-    async logout() {
-        this.oktaAuth.tokenManager.clear();
-        await this.oktaAuth.signOut();
-    }
+
+
+
 }

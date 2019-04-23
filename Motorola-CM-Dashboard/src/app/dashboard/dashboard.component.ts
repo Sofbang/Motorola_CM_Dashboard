@@ -16,19 +16,20 @@ export class DashboardComponent
   constructor(private _lookupService: LookupService, private _dataHandlerService:
     DataHandlerService) {
     this._dataHandlerService.setDataForMainLayout(false);
- 
+
   }
   linkClick(link) {
     this._dataHandlerService.clickDashboardLink(link);
     //console.log("click");
   }
-  ngOnInit(){
-
+  ngOnInit() {
+    console.log("dashboard component");
+    sessionStorage.setItem('dashboardCount', '1')
   }
-    // demo test service for starting the Project
-    // this._lookupService.getLookup()
-    // .subscribe(res => {
-    // console.log("service" + JSON.stringify(res));
-    // });
-  
+  // demo test service for starting the Project
+  // this._lookupService.getLookup()
+  // .subscribe(res => {
+  // console.log("service" + JSON.stringify(res));
+  // });
+
 }
