@@ -31,10 +31,15 @@ import { ProtectedComponent } from './protected.component';
 import { CookieService } from 'ngx-cookie-service';
 
 const config = {
-  url: 'https://dev-661609.okta.com/oauth2/default',
-  clientId: '0oahj98soNTDc4c0M356',
-  issuer: 'https://dev-661609.okta.com/oauth2/default',
-  redirectUri: 'http://localhost:4000/Motorola-CM-Dashboard/home/dashboard',
+    url: 'https://motorolasolutions.okta.com/oauth2/default',
+    clientId: '0oaa7ok51xruc9PBy1t7',
+    issuer: 'https://motorolasolutions.okta.com/oauth2/default',
+    redirectUri: 'https://svccontractmetrics-dev.mot-solutions.com/Motorola-CM-Dashboard/home/dashboard',
+ 
+  // url: 'https://dev-661609.okta.com/oauth2/default',
+  // clientId: '0oahj98soNTDc4c0M356',
+  // issuer: 'https://dev-661609.okta.com/oauth2/default',
+  // redirectUri: 'http://localhost:4000/Motorola-CM-Dashboard/home/dashboard',
 }
 
 export function onAuthRequired({ oktaAuth, router }) {

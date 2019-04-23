@@ -3,6 +3,8 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const http = require('http');
 const app = express();
+const rateLimit = require("express-rate-limit");
+app.enable("trust proxy");
 //for app logging
 const logger = require('./app_configuration/logger');
 //For jwt auth
@@ -96,3 +98,10 @@ const server = http.createServer(app);
 //const server = https.createServer(options, app);//to run on https
 
 server.listen(port, () => console.log(`Running on localhost:${port}`));
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100 // limit each IP to 100 requests per windowMs
+});
+ 
+//  apply to all requests
+app.use(limiter);
