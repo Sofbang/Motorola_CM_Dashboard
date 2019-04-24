@@ -35,8 +35,7 @@ export class AppComponent {
         //validating id_token from the url
         this._cookieService.set("test", "test");
         console.log("Set Test Cookie as Test");
-        this._cookieService.get("test");
-        this._cookieService.delete('test');
+
         let id_token = this.getParameterByName('id_token');
 
         let error = this.getParameterByName('error')
@@ -49,24 +48,28 @@ export class AppComponent {
         if (id_token != null && id_token != '') {
             this.isInit = true;
             //if (!this._cookieService.check('id_token'))
-                this._cookieService.set("id_token", id_token);
+            console.log("id_token is ::" + id_token);
+            this._cookieService.set("id_token", id_token);
 
-           
-                this._genTokenService.generateToken()
+            // window.setTimeout(function () {
+                this._genTokenService.generateToken(id_token)
                     .subscribe(res => {
-                        //console.log("generateToken::" + JSON.stringify(res));
-                    //   this._cookieService.delete("app-access-token");
-                       this._cookieService.set("app-access-token", res.accessToken,1);
-                        console.log("this._cookieService.get('app-access-token')" + this._cookieService.get('okta-oauth-state'));
+                        console.log("generateToken::" + JSON.stringify(res));
+                    //     this._cookieService.delete("app-access-token");
+                        this._cookieService.set("app-access-token", res.accessToken);
+                        console.log("this._cookieService.get('app-access-token')" + this._cookieService.get('app-access-token'));
                     })
-            
-            console.log("this._cookieService.check('app-access-token')"+this._cookieService.check('app-access-token'));
-         console.log("this._cookieService.get('id_token')"+this._cookieService.get('id_token'));
-             console.log("this._cookieService.get('app-access-token')"+this._cookieService.get('app-access-token'));
+
+            // }, 1000)
+
+            console.log("this._cookieService.check('app-access-token')" + this._cookieService.check('app-access-token'));
+            console.log("this._cookieService.get('id_token')" + this._cookieService.get('id_token'));
+            console.log("this._cookieService.get('app-access-token')" + this._cookieService.get('app-access-token'));
         } else {
             this.oktaAuth.handleAuthentication();
             this.oktaAuth.login();
             console.log("id_token is null::" + id_token);
+
         }
     }
 
@@ -83,19 +86,17 @@ export class AppComponent {
     logout() {
 
         console.log("In logut");
-    
+
         localStorage.clear();
         sessionStorage.clear();
-    
+
         // Get all cookies as an object
-        this._cookieService.deleteAll();
-        this._cookieService.delete('okta-oauth-state');
-        this._cookieService.delete('okta-oauth-redirect-params');
-        this._cookieService.delete('okta-oauth-nonce');
-      // this.okta.login();
+        this._cookieService.deleteAll('/ ');
+        //this.oktaAuth.logout();
+        // this.okta.login();
         // Redirect the user to your custom login page
-       this.router.navigate(['/logout']);
-    
-      }
+        this.router.navigate(['/logout']);
+
+    }
 
 }

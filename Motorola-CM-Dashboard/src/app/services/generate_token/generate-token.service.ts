@@ -8,9 +8,9 @@ import 'rxjs/add/operator/map';
 })
 export class GenerateTokenService {
   result: any;
-  tokenJson = {
-    oktatoken: this._cookieService.get('id_token') + this._envService.app_secret
-  };
+  // tokenJson = {
+  //   oktatoken: this._cookieService.get('id_token') + this._envService.app_secret
+  // };
   headers = new Headers({
     'Content-Type': 'application/json',
     //"Authorization": "Bearer " + this._cookieService.get('tokenId')+this._envService.app_secret ,
@@ -19,8 +19,11 @@ export class GenerateTokenService {
   });
   constructor(private http: Http, private _envService: EnvService, private _cookieService: CookieService) { }
   options = new RequestOptions({ headers: this.headers });
-  generateToken() {
-    return this.http.post('api/generateToken', JSON.stringify(this.tokenJson), this.options)
+  generateToken(id_token) {
+   let tokenJson = {
+      oktatoken:id_token + this._envService.app_secret
+    };
+    return this.http.post('api/generateToken', JSON.stringify(tokenJson), this.options)
       .map(result => this.result = result.json().data);
   }
 
